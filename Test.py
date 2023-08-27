@@ -4,6 +4,13 @@ from datetime import datetime
 import time
 import random
 
+
+def create_txts(lst):
+    for txt in lst:
+        if not os.path.isfile(txt):
+            with open(txt, 'w') as f:
+                pass
+
 def is_katakana(string):
     for i in range(len(string)):
         char = string[i]
@@ -82,40 +89,83 @@ def append_lst2txt(lst,txt):
             if not word in txt_words_lst:
                 f.write(f"{word}\n")
 
+def append_lst2txt_combined(lsts, txts):
+    if len(lsts) != len(txts):
+        print("Lengths are different.")
+        return
+    for i in range(len(lsts)):
+        append_lst2txt(lsts[i], txts[i])
+
+def word_count_combined(txts):
+    result = 0
+    for txt in txts:
+        result += word_count(txt)
+    return result
+
+def print_word_duplicated_combined(txts):
+    for txt in txts:
+        print_word_duplicated(txt)
+
 cwd = os.path.join(os.getcwd(),"OneDrive","바탕 화면","test_program")
 save_folder = os.path.join(cwd,'test_log')
+
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
 adverbs_txt = os.path.join(cwd,'classified','adverbs.txt')
 diff_kanjis_txt = os.path.join(cwd,'classified','diff_kanjis.txt')
 katakanas_txt = os.path.join(cwd,'classified','katakanas.txt')
 jinn_ninn_txt = os.path.join(cwd,'classified','jinn_ninn.txt')
+komu_txt = os.path.join(cwd,'classified','komu.txt')
 etc_txt = os.path.join(cwd,'classified','etc.txt')
 
+verb_lst = []
+adverb_lst = []
+diff_kanji_lst = []
+katakana_lst = []
+jinn_ninn_lst = []
+komu_lst = []
+etc_lst = []
+
+classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
+                  jinn_ninn_txt, komu_txt,\
+                  etc_txt]
+append_txts = [verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
+              jinn_ninn_txt, komu_txt,\
+              etc_txt]
+append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
+              jinn_ninn_lst, komu_lst,\
+              etc_lst]
 
 if not os.path.exists(save_folder):
     os.mkdir(save_folder)
-if not os.path.isfile(retry_txt):
-    with open(retry_txt, 'w') as f:
-        pass
-if not os.path.isfile(verbs_txt):
-    with open(verbs_txt, 'w') as f:
-        pass
-if not os.path.isfile(adverbs_txt):
-    with open(adverbs_txt, 'w') as f:
-        pass
-if not os.path.isfile(diff_kanjis_txt):
-    with open(diff_kanjis_txt, 'w') as f:
-        pass
-if not os.path.isfile(katakanas_txt):
-    with open(katakanas_txt, 'w') as f:
-        pass
-if not os.path.isfile(jinn_ninn_txt):
-    with open(jinn_ninn_txt, 'w') as f:
-        pass
-if not os.path.isfile(etc_txt):
-    with open(etc_txt, 'w') as f:
-        pass
+create_txts(classified_txts)
+
+# if not os.path.isfile(retry_txt):
+#     with open(retry_txt, 'w') as f:
+#         pass
+# if not os.path.isfile(verbs_txt):
+#     with open(verbs_txt, 'w') as f:
+#         pass
+# if not os.path.isfile(adverbs_txt):
+#     with open(adverbs_txt, 'w') as f:
+#         pass
+# if not os.path.isfile(diff_kanjis_txt):
+#     with open(diff_kanjis_txt, 'w') as f:
+#         pass
+# if not os.path.isfile(katakanas_txt):
+#     with open(katakanas_txt, 'w') as f:
+#         pass
+# if not os.path.isfile(jinn_ninn_txt):
+#     with open(jinn_ninn_txt, 'w') as f:
+#         pass
+# if not os.path.isfile(komu_txt):
+#     with open(komu_txt, 'w') as f:
+#         pass
+# if not os.path.isfile(etc_txt):
+#     with open(etc_txt, 'w') as f:
+#         pass
+
+
 date_files = sorted(glob.glob(os.path.join(save_folder,"*.txt")))
 katakana_reverse = False
 
@@ -139,6 +189,7 @@ print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
 print('J: jinn_ninn.txt')
 print('K: katakanas.txt')
+print('M: komu.txt')
 print('R: retry.txt')
 print('V: verbs.txt')
 first_input = input()
@@ -168,6 +219,8 @@ else:
             groups.append(os.path.join('classified','diff_kanjis.txt'))
         elif first_input[i].lower() == 'j':
             groups.append(os.path.join('classified','jinn_ninn.txt'))
+        elif first_input[i].lower() == 'm':
+            groups.append(os.path.join('classified','komu.txt'))
         
 print()
 
@@ -202,13 +255,6 @@ for group_index in range(len(groups)):
                     origins.append(origin)
                     answers.append(answer)
 
-verb_lst = []
-adverb_lst = []
-diff_kanji_lst = []
-katakana_lst = []
-jinn_ninn_lst = []
-etc_lst = []
-
 
 is_adverb = (first_input == 'a' or first_input == 'A')
 
@@ -217,12 +263,13 @@ while origins:
     if not input_retry:
         flag += 1
         if flag%20 == 0:
-            append_lst2txt(verb_lst,verbs_txt)
-            append_lst2txt(adverb_lst,adverbs_txt)
-            append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-            append_lst2txt(katakana_lst,katakanas_txt)
-            append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-            append_lst2txt(etc_lst,etc_txt)
+            append_lst2txt_combined(append_lsts,append_txts)
+            # append_lst2txt(verb_lst,verbs_txt)
+            # append_lst2txt(adverb_lst,adverbs_txt)
+            # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
+            # append_lst2txt(katakana_lst,katakanas_txt)
+            # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
+            # append_lst2txt(etc_lst,etc_txt)
     rand_index = random.randrange(len(origins))
     if not input_retry:
         print(f"(origin: {len(origins)}, completed: {len(completed_words_lst)}, total: {len(origins)+len(completed_words_lst)})", end=" ")
@@ -249,23 +296,25 @@ while origins:
         print(answers[rand_index], end=" ")
     if input_X.lower() == 'x':
         if not input_retry:
-            append_lst2txt(verb_lst,verbs_txt)
-            append_lst2txt(adverb_lst,adverbs_txt)
-            append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-            append_lst2txt(katakana_lst,katakanas_txt)
-            append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-            append_lst2txt(etc_lst,etc_txt)
+            append_lst2txt_combined(append_lsts,append_txts)
+            # append_lst2txt(verb_lst,verbs_txt)
+            # append_lst2txt(adverb_lst,adverbs_txt)
+            # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
+            # append_lst2txt(katakana_lst,katakanas_txt)
+            # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
+            # append_lst2txt(etc_lst,etc_txt)
         break
     time.sleep(0.5)
     if not input_retry:
         input_X = input()
         if input_X.lower() == 'x':
-            append_lst2txt(verb_lst,verbs_txt)
-            append_lst2txt(adverb_lst,adverbs_txt)
-            append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-            append_lst2txt(katakana_lst,katakanas_txt)
-            append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-            append_lst2txt(etc_lst,etc_txt)
+            append_lst2txt_combined(append_lsts,append_txts)
+            # append_lst2txt(verb_lst,verbs_txt)
+            # append_lst2txt(adverb_lst,adverbs_txt)
+            # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
+            # append_lst2txt(katakana_lst,katakanas_txt)
+            # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
+            # append_lst2txt(etc_lst,etc_txt)
             break
         elif input_X.lower() == 'v':
             verb_lst.append(f"{origins[rand_index]}/-/{answers[rand_index]}")
@@ -292,6 +341,11 @@ while origins:
             completed_words_lst.append(origins[rand_index])
             del origins[rand_index]
             del answers[rand_index]
+        elif input_X.lower() == 'm':
+            komu_lst.append(f"{origins[rand_index]}/-/{answers[rand_index]}")
+            completed_words_lst.append(origins[rand_index])
+            del origins[rand_index]
+            del answers[rand_index]
         elif input_X == '2' or input_X.lower() == 'o':
             etc_lst.append(f"{origins[rand_index]}/-/{answers[rand_index]}")
             completed_words_lst.append(origins[rand_index])
@@ -311,12 +365,13 @@ while origins:
             del answers[rand_index]
     print()
 if not input_retry:
-    append_lst2txt(verb_lst,verbs_txt)
-    append_lst2txt(adverb_lst,adverbs_txt)
-    append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-    append_lst2txt(katakana_lst,katakanas_txt)
-    append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-    append_lst2txt(etc_lst,etc_txt)
+    append_lst2txt_combined(append_lsts,append_txts)
+    # append_lst2txt(verb_lst,verbs_txt)
+    # append_lst2txt(adverb_lst,adverbs_txt)
+    # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
+    # append_lst2txt(katakana_lst,katakanas_txt)
+    # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
+    # append_lst2txt(etc_lst,etc_txt)
     currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
     with open(currtime_txt, 'wt', encoding='utf-8') as f:
         for word in completed_words_lst:
@@ -325,17 +380,18 @@ if not input_retry:
 print()
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
-print_word_duplicated(retry_txt)
-print_word_duplicated(verbs_txt)
-print_word_duplicated(adverbs_txt)
-print_word_duplicated(diff_kanjis_txt)
-print_word_duplicated(katakanas_txt)
-print_word_duplicated(jinn_ninn_txt)
-print_word_duplicated(etc_txt)
-print_word_duplicated(last_test)
+print_word_duplicated_combined(classified_txts)
+# print_word_duplicated(retry_txt)
+# print_word_duplicated(verbs_txt)
+# print_word_duplicated(adverbs_txt)
+# print_word_duplicated(diff_kanjis_txt)
+# print_word_duplicated(katakanas_txt)
+# print_word_duplicated(jinn_ninn_txt)
+# print_word_duplicated(etc_txt)
+# print_word_duplicated(last_test)
 
-print(word_count(verbs_txt) + word_count(adverbs_txt) + word_count(diff_kanjis_txt) + word_count(katakanas_txt) + word_count(etc_txt) + word_count(jinn_ninn_txt) , word_count(last_test))
-print(properly_included([verbs_txt,adverbs_txt,diff_kanjis_txt,katakanas_txt,jinn_ninn_txt,etc_txt],last_test))
+print(word_count_combined(append_txts) , word_count(last_test))
+print(properly_included(append_txts,last_test))
 
 # print(ord('ぁ'))
 # for i in range(0,86):
