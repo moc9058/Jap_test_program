@@ -217,7 +217,7 @@ else:
             groups.append(os.path.join('classified','adverbs.txt'))
         elif first_input[i].lower() == 'd':
             groups.append(os.path.join('classified','diff_kanjis.txt'))
-        elif first_input[i].lower() == 'j':
+        elif first_input[i].lower() == 'j' or first_input[i].lower() == 'n':
             groups.append(os.path.join('classified','jinn_ninn.txt'))
         elif first_input[i].lower() == 'm':
             groups.append(os.path.join('classified','komu.txt'))
@@ -336,7 +336,7 @@ while origins:
             completed_words_lst.append(origins[rand_index])
             del origins[rand_index]
             del answers[rand_index]
-        elif input_X.lower() == 'j':
+        elif input_X.lower() == 'j' or input_X.lower() == 'n':
             jinn_ninn_lst.append(f"{origins[rand_index]}/-/{answers[rand_index]}")
             completed_words_lst.append(origins[rand_index])
             del origins[rand_index]
