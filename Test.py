@@ -245,7 +245,7 @@ while origins:
         print(f"({len(origins)} left)", end=" ")
     try_again = ""
     if origins[rand_index] in retry_words_lst:
-        try_again = "\t*retry"
+        try_again = " (retry)"
     katakana_reverse = is_katakana(origins[rand_index])
     if katakana_reverse:
         print(f"{answers[rand_index]}{try_again}", end=" ")
