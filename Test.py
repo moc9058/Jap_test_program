@@ -140,32 +140,6 @@ if not os.path.exists(save_folder):
     os.mkdir(save_folder)
 create_txts(classified_txts)
 
-# if not os.path.isfile(retry_txt):
-#     with open(retry_txt, 'w') as f:
-#         pass
-# if not os.path.isfile(verbs_txt):
-#     with open(verbs_txt, 'w') as f:
-#         pass
-# if not os.path.isfile(adverbs_txt):
-#     with open(adverbs_txt, 'w') as f:
-#         pass
-# if not os.path.isfile(diff_kanjis_txt):
-#     with open(diff_kanjis_txt, 'w') as f:
-#         pass
-# if not os.path.isfile(katakanas_txt):
-#     with open(katakanas_txt, 'w') as f:
-#         pass
-# if not os.path.isfile(jinn_ninn_txt):
-#     with open(jinn_ninn_txt, 'w') as f:
-#         pass
-# if not os.path.isfile(komu_txt):
-#     with open(komu_txt, 'w') as f:
-#         pass
-# if not os.path.isfile(etc_txt):
-#     with open(etc_txt, 'w') as f:
-#         pass
-
-
 date_files = sorted(glob.glob(os.path.join(save_folder,"*.txt")))
 katakana_reverse = False
 
@@ -264,57 +238,42 @@ while origins:
         flag += 1
         if flag%20 == 0:
             append_lst2txt_combined(append_lsts,append_txts)
-            # append_lst2txt(verb_lst,verbs_txt)
-            # append_lst2txt(adverb_lst,adverbs_txt)
-            # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-            # append_lst2txt(katakana_lst,katakanas_txt)
-            # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-            # append_lst2txt(etc_lst,etc_txt)
     rand_index = random.randrange(len(origins))
     if not input_retry:
         print(f"(origin: {len(origins)}, completed: {len(completed_words_lst)}, total: {len(origins)+len(completed_words_lst)})", end=" ")
     else:
         print(f"({len(origins)} left)", end=" ")
+    try_again = ""
+    if origins[rand_index] in retry_words_lst:
+        try_again = "\t*retry"
     katakana_reverse = is_katakana(origins[rand_index])
     if katakana_reverse:
-        print(answers[rand_index], end=" ")
+        print(f"{answers[rand_index]}{try_again}", end=" ")
         input_X = input()
         print(origins[rand_index], end=" ")
     elif is_adverb:
         if contains_kanji(origins[rand_index]):
             ans_split_index = answers.find(" ")
-            print(answers[:ans_split_index].strip(), end=" ")
+            print(f"{answers[:ans_split_index].strip()}{try_again}", end=" ")
             input_X = input()
             print(f"{origins[rand_index]} {answers[ans_split_index:].strip()}", end=" ")
         else:
-            print(origins[rand_index], end=" ")
+            print(f"{origins[rand_index]}{try_again}", end=" ")
             input_X = input()
             print(answers[rand_index], end=" ")
     else:
-        print(origins[rand_index], end=" ")
+        print(f"{origins[rand_index]}{try_again}", end=" ")
         input_X = input()
         print(answers[rand_index], end=" ")
     if input_X.lower() == 'x':
         if not input_retry:
             append_lst2txt_combined(append_lsts,append_txts)
-            # append_lst2txt(verb_lst,verbs_txt)
-            # append_lst2txt(adverb_lst,adverbs_txt)
-            # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-            # append_lst2txt(katakana_lst,katakanas_txt)
-            # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-            # append_lst2txt(etc_lst,etc_txt)
         break
     time.sleep(0.5)
     if not input_retry:
         input_X = input()
         if input_X.lower() == 'x':
             append_lst2txt_combined(append_lsts,append_txts)
-            # append_lst2txt(verb_lst,verbs_txt)
-            # append_lst2txt(adverb_lst,adverbs_txt)
-            # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-            # append_lst2txt(katakana_lst,katakanas_txt)
-            # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-            # append_lst2txt(etc_lst,etc_txt)
             break
         elif input_X.lower() == 'v':
             verb_lst.append(f"{origins[rand_index]}/-/{answers[rand_index]}")
@@ -366,12 +325,6 @@ while origins:
     print()
 if not input_retry:
     append_lst2txt_combined(append_lsts,append_txts)
-    # append_lst2txt(verb_lst,verbs_txt)
-    # append_lst2txt(adverb_lst,adverbs_txt)
-    # append_lst2txt(diff_kanji_lst,diff_kanjis_txt)
-    # append_lst2txt(katakana_lst,katakanas_txt)
-    # append_lst2txt(jinn_ninn_lst,jinn_ninn_txt)
-    # append_lst2txt(etc_lst,etc_txt)
     currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
     with open(currtime_txt, 'wt', encoding='utf-8') as f:
         for word in completed_words_lst:
