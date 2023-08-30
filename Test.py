@@ -314,11 +314,12 @@ while origins:
             if not origins[rand_index] in retry_words_lst:
                 with open(retry_txt, 'a', encoding='utf-8') as f:
                     f.write(f"{origins[rand_index]}/-/{answers[rand_index]}\n")
+                retry_words_lst.append(origins[rand_index])
     else:
         input_X = input()
         if input_X.lower() == 'x':
             break
-        elif input_X == '2' or input_X.lower() == 'o':
+        elif input_X == '2' or input_X.lower() in ['o','a','v','d','j','n','m','d','k']:
             completed_words_lst.append(origins[rand_index])
             del origins[rand_index]
             del answers[rand_index]
