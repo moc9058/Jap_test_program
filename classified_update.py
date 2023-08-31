@@ -1,6 +1,6 @@
 import os
 
-cwd = os.path.join(os.getcwd(),"OneDrive","바탕 화면","test_program")
+cwd = os.getcwd()
 save_folder = os.path.join(cwd,'test_log')
 
 group_1_txt = os.path.join(cwd, 'Group 1.txt')
@@ -25,31 +25,46 @@ etc_lst = []
 classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
                   jinn_ninn_txt, komu_txt,\
                   etc_txt]
-with open(group_1_txt, 'r', encoding='utf-8') as f1:
-    group_1_origins = []
-    group_1_answers = []
-    while True:
-        line = f1.readline()
-        if not line: break
-        line = line.split('/-/')
-        group_1_origins.append(line[0].strip())
-        group_1_answers.append(line[1].strip())
+for txt in classified_txts:
+    origins = []
+    with open(txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            if line == '\n':
+                continue
+            origins.append(line.strip())
+    origins.sort()
+    with open(txt,'w',encoding='utf-8') as f:
+        while origins:
+            f.write(origins.pop(0)+'\n')
 
-    for txt in classified_txts:
-        origins = []
-        answers = []
-        with open(txt, 'r', encoding='utf-8') as f2:
-            while True:
-                line = f2.readline()
-                if not line: break
-                line = line.split('/-/')
-                origins.append(line[0].strip())
-                answers.append(line[1].strip())
-            
-        with open(txt, 'w', encoding='utf-8') as f2:
-            for i in range(len(origins)):
-                try:
-                    j = group_1_origins.index(origins[i])
-                    f2.write(f"{group_1_origins[j]}/-/{group_1_answers[j]}\n")
-                except:
-                    f2.write(f"{origins[i]}/-/{answers[i]}\n")
+def previous():
+    with open(group_1_txt, 'r', encoding='utf-8') as f1:
+        group_1_origins = []
+        group_1_answers = []
+        while True:
+            line = f1.readline()
+            if not line: break
+            line = line.split('/-/')
+            group_1_origins.append(line[0].strip())
+            group_1_answers.append(line[1].strip())
+
+        for txt in classified_txts:
+            origins = []
+            answers = []
+            with open(txt, 'r', encoding='utf-8') as f2:
+                while True:
+                    line = f2.readline()
+                    if not line: break
+                    line = line.split('/-/')
+                    origins.append(line[0].strip())
+                    answers.append(line[1].strip())
+                
+            with open(txt, 'w', encoding='utf-8') as f2:
+                for i in range(len(origins)):
+                    try:
+                        j = group_1_origins.index(origins[i])
+                        f2.write(f"{group_1_origins[j]}/-/{group_1_answers[j]}\n")
+                    except:
+                        f2.write(f"{origins[i]}/-/{answers[i]}\n")
