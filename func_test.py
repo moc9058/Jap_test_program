@@ -1,8 +1,14 @@
-def func(lst):
-    lst.append('a')
+if not []:
+    print('hi')
+else:
+    print('ff')
 
-lst = [1,2,3]
-lst_tmp = lst
-lst_tmp.append('a')
-# func(lst)
-print(lst)
+
+a = [1,2,3,4,5]
+x = input()
+if x == 'x':
+    b = a
+else:
+    b = [6,7,8]
+b.remove(3)
+print(b)

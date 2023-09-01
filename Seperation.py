@@ -49,3 +49,13 @@ def seperation(new_seperator, new_txt_name):
 
 seperation('人','jinn_ninn.txt')
 seperation('込む','komu.txt')
+
+def take_origin_only(curr_txt_name, new_txt_name):
+    # assume curr_txt_name as 日本語/-/にほんご 일본어
+    with open(curr_txt_name, 'r', encoding='utf-8') as f1:
+        with open(new_txt_name, 'w', encoding='utf-8') as f2:
+            while True:
+                line = f1.readline()
+                if not line: break
+                line = line.split('/-/')[0].split()
+                f2.write(line)
