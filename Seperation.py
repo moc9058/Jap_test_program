@@ -22,33 +22,30 @@ if not os.path.isfile(etc_txt):
 
 current_txts = [verbs_txt,adverbs_txt,diff_kanjis_txt,etc_txt]
 
-def seperation(new_seperator, new_txt_name):
+def seperation(new_seperator_lst, new_txt_name, curr_txts):
     new_txt = os.path.join(cwd,'classified',new_txt_name)
     
-    if not os.path.isfile(new_txt):
-        with open(new_txt, 'w') as f:
-            pass
-    
-    with open(new_txt, 'a', encoding='utf-8') as f:
-        for txt in current_txts:
+    with open(new_txt, 'w', encoding='utf-8') as f:
+        for txt in curr_txts:
             words = []
-            answers = []
             with open(txt,'r', encoding='utf-8') as g:
                 while True:
                     line = g.readline()
                     if not line: break
-                    words.append(line.split('/-/')[0].strip())
-                    answers.append(line.split('/-/')[1].strip())
+                    words.append(line.strip())
 
             with open(txt,'w', encoding='utf-8') as g:
                 for i in range(len(words)):
-                    if new_seperator in words[i]:
-                        f.write(f"{words[i]}/-/{answers[i]}\n")
-                    else:
-                        g.write(f"{words[i]}/-/{answers[i]}\n")
+                    seperated = False
+                    for new_seperator in new_seperator_lst:
+                        if new_seperator in words[i]:
+                            f.write(f"{words[i]}\n")
+                            seperated = True
+                            break
+                    if not seperated:
+                        g.write(f"{words[i]}\n")
 
-seperation('人','jinn_ninn.txt')
-seperation('込む','komu.txt')
+# seperation('人','jinn_ninn.txt',current_txts)
 
 def take_origin_only(curr_txt_name, new_txt_name):
     # assume curr_txt_name as 日本語/-/にほんご 일본어

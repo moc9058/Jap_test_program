@@ -1,5 +1,5 @@
 import os
-cwd = os.path.join(os.getcwd(),"OneDrive","바탕 화면","test_program")
+cwd = os.getcwd()
 groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
 cumulative_lengths = []
 origins = []
@@ -39,3 +39,17 @@ for group_index in range(len(groups)):
                             
         origin_index += num_lines
     print()
+
+def duplicate(txt_name):
+    txt = os.path.join(os.getcwd(),txt_name)
+    lst = []
+    with open(txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            if line in lst:
+                return True
+            lst.append(line.strip())
+    return False
+
+print(duplicate(os.path.join('test_log','2023_09_01_18_43_53.txt')))

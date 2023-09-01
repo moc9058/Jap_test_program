@@ -117,6 +117,40 @@ def print_word_duplicated_combined(txts):
     for txt in txts:
         print_word_duplicated(txt)
 
+def seperation(new_seperators, new_txt, curr_txts):
+    words = []
+    with open(new_txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            words.append(line.strip())
+    
+    with open(new_txt, 'w', encoding='utf-8') as f:
+        for txt in curr_txts:
+            txt_words = []
+            with open(txt,'r', encoding='utf-8') as g:
+                while True:
+                    line = g.readline()
+                    if not line: break
+                    txt_words.append(line.strip())
+            txt_words.sort()
+
+            with open(txt,'w', encoding='utf-8') as g:
+                for txt_word in txt_words:
+                    seperated = False
+                    for new_seperator in new_seperators:
+                        if new_seperator in txt_word:
+                            words.append(txt_word)
+                            seperated = True
+                            break
+                    if not seperated:
+                        g.write(txt_word+'\n')
+        words.sort()
+        for word in words:
+            f.write(word+'\n')
+    
+
+            
 cwd = os.getcwd()
 save_folder = os.path.join(cwd,'test_log')
 
@@ -125,8 +159,8 @@ verbs_txt = os.path.join(cwd,'classified','verbs.txt')
 adverbs_txt = os.path.join(cwd,'classified','adverbs.txt')
 diff_kanjis_txt = os.path.join(cwd,'classified','diff_kanjis.txt')
 katakanas_txt = os.path.join(cwd,'classified','katakanas.txt')
-jinn_ninn_txt = os.path.join(cwd,'classified','jinn_ninn.txt')
-compound_txt = os.path.join(cwd,'classified','compound.txt')
+hononyms_txt = os.path.join(cwd,'classified','hononyms.txt')
+compounds_txt = os.path.join(cwd,'classified','compounds.txt')
 etc_txt = os.path.join(cwd,'classified','etc.txt')
 
 retry_lst = []
@@ -134,22 +168,22 @@ verb_lst = []
 adverb_lst = []
 diff_kanji_lst = []
 katakana_lst = []
-jinn_ninn_lst = []
+hononym_lst = []
 compound_lst = []
 etc_lst = []
 
 
 classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-                  jinn_ninn_txt, compound_txt,\
+                  hononyms_txt, compounds_txt,\
                   etc_txt]
 classified_lsts = [retry_lst, verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-                  jinn_ninn_lst, compound_lst,\
+                  hononym_lst, compound_lst,\
                   etc_lst]
 append_txts = [verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-              jinn_ninn_txt, compound_txt,\
+              hononyms_txt, compounds_txt,\
               etc_txt]
 append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-              jinn_ninn_lst, compound_lst,\
+              hononym_lst, compound_lst,\
               etc_lst]
 
 if not os.path.exists(save_folder):
@@ -161,7 +195,7 @@ copy_txt2lst_combined(classified_lsts, classified_txts)
 print('Do you want to test retry words? Default is \"NO\".')
 print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
-print('J: jinn_ninn.txt')
+print('J: hononym.txt')
 print('K: katakanas.txt')
 print('C: compound.txt')
 print('R: retry.txt')
@@ -198,6 +232,7 @@ if len(date_files) > 0:
             line = f.readline()
             if not line: break
             line = line.strip()
+            # print(line)
             if line in origin_candidates:
                 completed_words_lst.append(line)
 
@@ -222,8 +257,8 @@ else:
             groups.append(os.path.join('classified','adverbs.txt'))
         elif first_input[i].lower() == 'd':
             groups.append(os.path.join('classified','diff_kanjis.txt'))
-        elif first_input[i].lower() == 'j' or first_input[i].lower() == 'n':
-            groups.append(os.path.join('classified','jinn_ninn.txt'))
+        elif first_input[i].lower() == 'h':
+            groups.append(os.path.join('classified','hononym.txt'))
         elif first_input[i].lower() == 'c':
             groups.append(os.path.join('classified','compound.txt'))
         
@@ -235,6 +270,13 @@ answers = []
 if not input_retry:
     origins = origin_candidates.copy()
     answers = answer_candidates.copy()
+    for i in range(len(completed_words_lst)):
+        word = completed_words_lst[i]
+        if word in origins:
+            j = origins.index(word)
+            del origins[j]
+            del answers[j]
+
 else:
     for group in groups:
         filename = os.path.join(cwd, group)
@@ -247,8 +289,7 @@ else:
                 line = f.readline()
                 if not line: break
                 
-                origin = line.strip()
-                origins.append(origin)
+                origins.append(line.strip())
     for i in range(len(origins)):
         origin = origins[i]
         try:
@@ -287,9 +328,9 @@ while origins:
     elif origin in etc_lst:
         classified_lst = etc_lst
         classified_name = '(etc.txt)'
-    elif origin in jinn_ninn_lst:
-        classified_lst = jinn_ninn_lst
-        classified_name = '(jinn_ninn.txt)'
+    elif origin in hononym_lst:
+        classified_lst = hononym_lst
+        classified_name = '(hononym.txt)'
     elif origin in katakana_lst:
         classified_lst = katakana_lst
         classified_name = '(katakanas.txt)'
@@ -321,14 +362,11 @@ while origins:
         input_X = input()
         print(answer, end=" ")
     if input_X.lower() == 'x':
-        # if not input_retry:
-        #     update_lst2txt_combined(append_lsts,append_txts)
         break
     time.sleep(0.5)
     if not input_retry:
         input_X = input()
         if input_X.lower() == 'x':
-            # update_lst2txt_combined(append_lsts,append_txts)
             break
         elif input_X.lower() == 'v':
             try:
@@ -375,14 +413,14 @@ while origins:
             completed_words_lst.append(origin)
             del origins[rand_index]
             del answers[rand_index]
-        elif input_X.lower() == 'j' or input_X.lower() == 'n':
+        elif input_X.lower() == 'h':
             try:
                 classified_lst.remove(origin)
             except:
                 pass
             
-            if not origin in jinn_ninn_lst:
-                jinn_ninn_lst.append(origin)
+            if not origin in hononym_lst:
+                hononym_lst.append(origin)
             completed_words_lst.append(origin)
             del origins[rand_index]
             del answers[rand_index]
@@ -410,26 +448,26 @@ while origins:
             del answers[rand_index]
         else:
             if not origin in retry_lst:
-                with open(retry_txt, 'a', encoding='utf-8') as f:
-                    f.write(origin+'\n')
                 retry_lst.append(origin)
     else:
         input_X = input()
         if input_X.lower() == 'x':
             break
-        elif input_X == '2' or input_X.lower() in ['o','a','v','d','j','n','c','d','k']:
+        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k']:
             del origins[rand_index]
             del answers[rand_index]
     print()
 
 if not input_retry:
-    update_lst2txt_combined(append_lsts,append_txts, origin_candidates)
+    update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
     currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
     with open(currtime_txt, 'wt', encoding='utf-8') as f:
         for word in completed_words_lst:
-            f.write(word+"\n")
+            if word in origin_candidates:
+                f.write(word+"\n")
 
 print()
+seperation(['人','日','名'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 print_word_duplicated_combined(classified_txts)
