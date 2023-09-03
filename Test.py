@@ -90,7 +90,18 @@ def copy_txt2lst_combined(lsts, txts):
     for i in range(len(lsts)):
         copy_txt2lst(lsts[i],txts[i])
 
-def update_lst2txt(lst,txt, origin_candidates):
+def update_lst2txt(lst, txt, origin_candidates):
+    txt_lst = []
+    with open(txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            txt_lst.append(line.strip())
+    
+    for txt_word in txt_lst:
+        if not txt_word in lst:
+            lst.append(txt_word)
+    
     lst.sort()
     with open(txt,'w',encoding='utf-8') as f:
         while lst:
@@ -123,7 +134,9 @@ def seperation(new_seperators, new_txt, curr_txts):
         while True:
             line = f.readline()
             if not line: break
-            words.append(line.strip())
+            line = line.strip()
+            if not line in words:
+                words.append(line)
     
     with open(new_txt, 'w', encoding='utf-8') as f:
         for txt in curr_txts:
@@ -140,7 +153,8 @@ def seperation(new_seperators, new_txt, curr_txts):
                     seperated = False
                     for new_seperator in new_seperators:
                         if new_seperator in txt_word:
-                            words.append(txt_word)
+                            if not txt_word in words:
+                                words.append(txt_word)
                             seperated = True
                             break
                     if not seperated:
