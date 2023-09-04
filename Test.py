@@ -5,6 +5,25 @@ import time
 import random
 
 
+def is_verb(string):
+    # assume string has been stripped.
+    return string[-1] in ['う','る','つ','ぶ','ぬ','む','く','ぐ','す']
+
+def is_sorted(txt):
+    curr_line = None
+    with open(txt, 'r', encoding='utf-8') as f:
+        while True:
+            new_line = f.readline()
+            if not new_line: break
+            if not curr_line:
+                curr_line = new_line
+                continue
+            if curr_line > new_line:
+                return False
+    return True
+                
+
+
 def create_txts(lst):
     for txt in lst:
         if not os.path.isfile(txt):
