@@ -52,4 +52,4 @@ def duplicate(txt_name):
             lst.append(line.strip())
     return False
 
-print(duplicate(os.path.join('test_log','2023_09_01_18_43_53.txt')))
+# print(duplicate(os.path.join('test_log','2023_09_01_18_43_53.txt')))

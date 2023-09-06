@@ -4,25 +4,22 @@ from datetime import datetime
 import time
 import random
 
-
 def is_verb(string):
     # assume string has been stripped.
     return string[-1] in ['う','る','つ','ぶ','ぬ','む','く','ぐ','す']
-
-def is_sorted(txt):
-    curr_line = None
-    with open(txt, 'r', encoding='utf-8') as f:
-        while True:
-            new_line = f.readline()
-            if not new_line: break
-            if not curr_line:
-                curr_line = new_line
-                continue
-            if curr_line > new_line:
-                return False
-    return True
                 
 
+def sort(txt):
+    lines = []
+    with open(txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            lines.append(line)
+    lines.sort()
+    with open(txt, 'w', encoding='utf-8') as f:
+        while lines:
+            f.write(lines.pop(0))
 
 def create_txts(lst):
     for txt in lst:
@@ -128,7 +125,7 @@ def update_lst2txt(lst, txt, origin_candidates):
             if word in origin_candidates:
                 f.write(word + '\n')
             else:
-                print(word)
+                print(f"{word} is not included in the Group.")
 
 def update_lst2txt_combined(lsts, txts, origin_candidates):
     if len(lsts) != len(txts):
@@ -186,6 +183,7 @@ def seperation(new_seperators, new_txt, curr_txts):
             
 cwd = os.getcwd()
 save_folder = os.path.join(cwd,'test_log')
+group_1_txt = os.path.join(cwd,'Group 1.txt')
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -395,6 +393,7 @@ while origins:
         input_X = input()
         print(answer, end=" ")
     if input_X.lower() == 'x':
+        print()
         break
     time.sleep(0.5)
     if not input_retry:
@@ -500,7 +499,7 @@ if not input_retry:
                 f.write(word+"\n")
 
 print()
-seperation(['人','日','名'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+seperation(['人','日','名','存'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 print_word_duplicated_combined(classified_txts)
@@ -508,6 +507,7 @@ print_word_duplicated_combined(classified_txts)
 print(word_count_combined(append_txts) , word_count(last_test))
 print(properly_included(append_txts,last_test))
 
+sort(group_1_txt)
 # print(ord('ぁ'))
 # for i in range(0,86):
 #     print(chr(12353+i))
