@@ -119,6 +119,11 @@ def update_lst2txt(lst, txt, origin_candidates):
             lst.append(txt_word)
     
     lst.sort()
+    tmp_lst = lst.copy()
+    for i in range(len(tmp_lst)-1):
+        if tmp_lst[i] == tmp_lst[i+1]:
+            lst.remove(tmp_lst[i])
+            
     with open(txt,'w',encoding='utf-8') as f:
         while lst:
             word = lst.pop(0).strip()
@@ -277,6 +282,7 @@ else:
     input_retry = True
     for i in range(len(first_input)):
         if first_input[i].lower() == 'x':
+            update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
             break
         elif first_input[i].lower() == 'r':
             groups.append(os.path.join('classified','retry.txt'))
