@@ -7,6 +7,7 @@ import random
 def is_verb(string):
     # assume string has been stripped.
     return string[-1] in ['う','る','つ','ぶ','ぬ','む','く','ぐ','す']
+    
                 
 
 def sort(txt):
@@ -237,7 +238,7 @@ print('C: compound.txt')
 print('R: retry.txt')
 print('V: verbs.txt')
 first_input = input()
-answer_groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
+answer_groups = ['Group 1.txt']
 origin_candidates = []
 answer_candidates = []
 for answer_group in answer_groups:
