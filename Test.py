@@ -7,8 +7,6 @@ import random
 def is_verb(string):
     # assume string has been stripped.
     return string[-1] in ['う','る','つ','ぶ','ぬ','む','く','ぐ','す']
-    
-                
 
 def sort(txt):
     lines = []
@@ -208,7 +206,6 @@ katakana_lst = []
 hononym_lst = []
 compound_lst = []
 etc_lst = []
-
 
 classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
                   hononyms_txt, compounds_txt,\
@@ -506,7 +503,7 @@ if not input_retry:
                 f.write(word+"\n")
 
 print()
-seperation(['人','日','名','存'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+seperation(['人','日','名','存', '下'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 print_word_duplicated_combined(classified_txts)
