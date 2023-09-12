@@ -4,190 +4,14 @@ from datetime import datetime
 import time
 import random
 
-def is_verb(string):
-    # assume string has been stripped.
-    return string[-1] in ['う','る','つ','ぶ','ぬ','む','く','ぐ','す']
-
-def sort(txt):
-    lines = []
-    with open(txt, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            lines.append(line)
-    lines.sort()
-    with open(txt, 'w', encoding='utf-8') as f:
-        while lines:
-            f.write(lines.pop(0))
-
-def create_txts(lst):
-    for txt in lst:
-        if not os.path.isfile(txt):
-            with open(txt, 'w') as f:
-                pass
-
-def is_katakana(string):
-    for i in range(len(string)):
-        char = string[i]
-        if ord(char) < 12449 or ord(char) >= 12541:
-            return False
-    return True
-
-def contains_kanji(string):
-    for i in range(len(string)):
-        char = string[i]
-        if ord(char) < 12353:
-            return True
-        elif ord(char) >= 12439 and ord(char) < 12449:
-            return True
-        elif ord(char) >= 12541:
-            return True
-    return False
-
-def print_word_duplicated(txt_name):
-    origin_lst = []
-    dup_lst = []
-    with open(txt_name, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            origin_lst.append(line.strip())
-    for i in range(len(origin_lst)):
-        for j in range(i):
-            if origin_lst[i] == origin_lst[j]:
-                dup_lst.append(origin_lst[i])
-    if dup_lst:
-        print(f"{os.path.basename(txt_name)}\n{dup_lst}")
-    else:
-        return
-    
-def word_count(txt_name):
-    count = 0
-    with open(txt_name, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            count += 1
-    return count
-
-def properly_included(member_txt_lst, group_txt):
-    improper_words = []
-    group_words = []
-    with open(group_txt, 'r', encoding='utf-8') as group_f:
-        while True:
-            line = group_f.readline()
-            if not line: break
-            group_words.append(line.split('/-/')[0].strip())
-    
-    for member_txt in member_txt_lst:
-        with open(member_txt, 'r', encoding='utf-8') as member_f:
-            while True:
-                line = member_f.readline()
-                if not line: break
-                line = line.strip()
-                if not (line in group_words):
-                    improper_words.append(f"{os.path.basename(member_txt)}, {line}")
-                else:
-                    group_words.remove(line)
-    return group_words
-
-def copy_txt2lst(lst,txt):
-    with open(txt,'r',encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            lst.append(line.strip())
-
-def copy_txt2lst_combined(lsts, txts):
-    if len(lsts) != len(txts):
-        print("Lengths are different.")
-        return
-    for i in range(len(lsts)):
-        copy_txt2lst(lsts[i],txts[i])
-
-def update_lst2txt(lst, txt, origin_candidates):
-    txt_lst = []
-    with open(txt, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            txt_lst.append(line.strip())
-    
-    for txt_word in txt_lst:
-        if not txt_word in lst:
-            lst.append(txt_word)
-    
-    lst.sort()
-    tmp_lst = lst.copy()
-    for i in range(len(tmp_lst)-1):
-        if tmp_lst[i] == tmp_lst[i+1]:
-            lst.remove(tmp_lst[i])
-            
-    with open(txt,'w',encoding='utf-8') as f:
-        while lst:
-            word = lst.pop(0).strip()
-            if word in origin_candidates:
-                f.write(word + '\n')
-            else:
-                print(f"{word} is not included in the Group.")
-
-def update_lst2txt_combined(lsts, txts, origin_candidates):
-    if len(lsts) != len(txts):
-        print("Lengths are different.")
-        return
-    for i in range(len(lsts)):
-        update_lst2txt(lsts[i], txts[i], origin_candidates)
-
-def word_count_combined(txts):
-    result = 0
-    for txt in txts:
-        result += word_count(txt)
-    return result
-
-def print_word_duplicated_combined(txts):
-    for txt in txts:
-        print_word_duplicated(txt)
-
-def seperation(new_seperators, new_txt, curr_txts):
-    words = []
-    with open(new_txt, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            line = line.strip()
-            if not line in words:
-                words.append(line)
-    
-    with open(new_txt, 'w', encoding='utf-8') as f:
-        for txt in curr_txts:
-            txt_words = []
-            with open(txt,'r', encoding='utf-8') as g:
-                while True:
-                    line = g.readline()
-                    if not line: break
-                    txt_words.append(line.strip())
-            txt_words.sort()
-
-            with open(txt,'w', encoding='utf-8') as g:
-                for txt_word in txt_words:
-                    seperated = False
-                    for new_seperator in new_seperators:
-                        if new_seperator in txt_word:
-                            if not txt_word in words:
-                                words.append(txt_word)
-                            seperated = True
-                            break
-                    if not seperated:
-                        g.write(txt_word+'\n')
-        words.sort()
-        for word in words:
-            f.write(word+'\n')
-    
+import functions as func
 
             
 cwd = os.getcwd()
 save_folder = os.path.join(cwd,'test_log')
 group_1_txt = os.path.join(cwd,'Group 1.txt')
+group_2_txt = os.path.join(cwd,'Group 2.txt')
+group_3_txt = os.path.join(cwd,'Group 3.txt')
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -222,9 +46,9 @@ append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
 
 if not os.path.exists(save_folder):
     os.mkdir(save_folder)
-create_txts(classified_txts)
+func.create_txts(classified_txts)
 
-copy_txt2lst_combined(classified_lsts, classified_txts)
+func.copy_txt2lst_combined(classified_lsts, classified_txts)
 
 print('Do you want to test retry words? Default is \"NO\".')
 print('A: adverbs.txt')
@@ -280,7 +104,7 @@ else:
     input_retry = True
     for i in range(len(first_input)):
         if first_input[i].lower() == 'x':
-            update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
+            func.update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
             break
         elif first_input[i].lower() == 'r':
             groups.append(os.path.join('classified','retry.txt'))
@@ -348,7 +172,7 @@ while origins:
     try_again = ""
     if origin in retry_lst:
         try_again = "(retry)"
-    katakana_reverse = is_katakana(origin)
+    katakana_reverse = func.is_katakana(origin)
     is_adverb = False
 
     classified_name = ""
@@ -383,7 +207,7 @@ while origins:
         input_X = input()
         print(origin, end=" ")
     elif is_adverb:
-        if contains_kanji(origin):
+        if func.contains_kanji(origin):
             ans_split_index = answer.find(" ")
             print(f"{answer[:ans_split_index].strip()} {classified_name}{try_again}", end=" ")
             input_X = input()
@@ -495,7 +319,7 @@ while origins:
     print()
 
 if not input_retry:
-    update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
+    func.update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
     currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
     with open(currtime_txt, 'wt', encoding='utf-8') as f:
         for word in completed_words_lst:
@@ -503,15 +327,22 @@ if not input_retry:
                 f.write(word+"\n")
 
 print()
-seperation(['人','日','名','存', '下'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+func.seperation(['人','日','名','存', '下', '大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
-print_word_duplicated_combined(classified_txts)
+func.print_word_duplicated_combined(classified_txts)
 
-print(word_count_combined(append_txts) , word_count(last_test))
-print(properly_included(append_txts,last_test))
+print(func.word_count_combined(append_txts), func.word_count(last_test))
+print(func.properly_included(append_txts,last_test))
 
-sort(group_1_txt)
+func.sort(group_1_txt)
+
+if os.path.isfile(group_2_txt):
+    func.sort(group_2_txt)
+
+if os.path.isfile(group_3_txt):
+    func.sort(group_3_txt)
+
 # print(ord('ぁ'))
 # for i in range(0,86):
 #     print(chr(12353+i))

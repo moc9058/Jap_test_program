@@ -1,18 +1,10 @@
 import os
+import functions as func
 
-file = os.path.join(os.getcwd(),'Group 1.txt')
+cwd = os.getcwd()
+group_2_txt = os.path.join(cwd,'Group 2.txt')
+extracted_txt = os.path.join(cwd,'extracted_verbs.txt')
+extracted_txt_retry = os.path.join(cwd,'extracted_verbs_retry.txt')
+func.verb_extractor(group_2_txt,extracted_txt, 1)
+func.verb_extractor(group_2_txt,extracted_txt_retry, 0)
 
-def is_sorted(txt):
-    curr_line = None
-    with open(txt, 'r', encoding='utf-8') as f:
-        while True:
-            new_line = f.readline()
-            if not new_line: break
-            if not curr_line:
-                curr_line = new_line
-                continue
-            if curr_line > new_line:
-                return False
-    return True
-
-print(is_sorted(file))
