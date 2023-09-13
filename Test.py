@@ -152,8 +152,8 @@ else:
             while True:
                 line = f.readline()
                 if not line: break
-                
                 origins.append(line.strip())
+
     for i in range(len(origins)):
         origin = origins[i]
         try:
@@ -211,23 +211,23 @@ while origins:
 
 
     if katakana_reverse:
-        print(f"{answer} {classified_name}{try_again}", end=" ")
+        print(f"{answer}", end=" ")
         input_X = input()
-        print(origin, end=" ")
+        print(f"{classified_name}{try_again} {origin}", end=" ")
     elif is_adverb:
         if func.contains_kanji(origin):
             ans_split_index = answer.find(" ")
-            print(f"{answer[:ans_split_index].strip()} {classified_name}{try_again}", end=" ")
+            print(f"{answer[:ans_split_index].strip()}", end=" ")
             input_X = input()
-            print(f"{origin} {answer[ans_split_index:].strip()}", end=" ")
+            print(f"{classified_name}{try_again} {origin} {answer[ans_split_index:].strip()}", end=" ")
         else:
-            print(f"{origin} {classified_name}{try_again}", end=" ")
+            print(f"{origin}", end=" ")
             input_X = input()
-            print(answer, end=" ")
+            print(f"{classified_name}{try_again} {answer}", end=" ")
     else:
-        print(f"{origin} {classified_name}{try_again}", end=" ")
+        print(f"{origin}", end=" ")
         input_X = input()
-        print(answer, end=" ")
+        print(f"{classified_name}{try_again} {answer}", end=" ")
     if input_X.lower() == 'x':
         print()
         break
@@ -332,7 +332,7 @@ while origins:
         input_X = input()
         if input_X.lower() == 'x':
             break
-        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k']:
+        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k','e']:
             del origins[rand_index]
             del answers[rand_index]
     print()
