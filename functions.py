@@ -56,14 +56,20 @@ def is_katakana(string):
             return False
     return True
 
+def is_kanji(char):
+    if ord(char) < 12353:
+        return True
+    elif ord(char) >= 12439 and ord(char) < 12449:
+        return True
+    elif ord(char) >= 12541:
+        return True
+    else:
+        return False
+
 def contains_kanji(string):
     for i in range(len(string)):
         char = string[i]
-        if ord(char) < 12353:
-            return True
-        elif ord(char) >= 12439 and ord(char) < 12449:
-            return True
-        elif ord(char) >= 12541:
+        if is_kanji(char):
             return True
     return False
 

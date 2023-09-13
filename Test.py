@@ -20,6 +20,7 @@ diff_kanjis_txt = os.path.join(cwd,'classified','diff_kanjis.txt')
 katakanas_txt = os.path.join(cwd,'classified','katakanas.txt')
 hononyms_txt = os.path.join(cwd,'classified','hononyms.txt')
 compounds_txt = os.path.join(cwd,'classified','compounds.txt')
+expressions_txt = os.path.join(cwd,'classified','expressions.txt')
 etc_txt = os.path.join(cwd,'classified','etc.txt')
 
 retry_lst = []
@@ -29,19 +30,20 @@ diff_kanji_lst = []
 katakana_lst = []
 hononym_lst = []
 compound_lst = []
+expression_lst = []
 etc_lst = []
 
 classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-                  hononyms_txt, compounds_txt,\
+                  hononyms_txt, compounds_txt, expressions_txt,\
                   etc_txt]
 classified_lsts = [retry_lst, verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-                  hononym_lst, compound_lst,\
+                  hononym_lst, compound_lst, expression_lst,\
                   etc_lst]
 append_txts = [verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-              hononyms_txt, compounds_txt,\
+              hononyms_txt, compounds_txt, expressions_txt,\
               etc_txt]
 append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-              hononym_lst, compound_lst,\
+              hononym_lst, compound_lst, expression_lst,\
               etc_lst]
 
 if not os.path.exists(save_folder):
@@ -56,6 +58,7 @@ print('D: diff_kanjis.txt')
 print('J: hononym.txt')
 print('K: katakanas.txt')
 print('C: compound.txt')
+print('E: expression.txt')
 print('R: retry.txt')
 print('V: verbs.txt')
 first_input = input()
@@ -117,9 +120,11 @@ else:
         elif first_input[i].lower() == 'd':
             groups.append(os.path.join('classified','diff_kanjis.txt'))
         elif first_input[i].lower() == 'h':
-            groups.append(os.path.join('classified','hononym.txt'))
+            groups.append(os.path.join('classified','hononyms.txt'))
         elif first_input[i].lower() == 'c':
-            groups.append(os.path.join('classified','compound.txt'))
+            groups.append(os.path.join('classified','compounds.txt'))
+        elif first_input[i].lower() == 'e':
+            groups.append(os.path.join('classified','expressions.txt'))
         
 print()
     
@@ -195,7 +200,10 @@ while origins:
         classified_name = '(katakanas.txt)'
     elif origin in compound_lst:
         classified_lst = compound_lst
-        classified_name = '(compound.txt)'
+        classified_name = '(compounds.txt)'
+    elif origin in expression_lst:
+        classified_lst = expression_lst
+        classified_name = '(expressions.txt)'
     elif origin in verb_lst:
         classified_lst = verb_lst
         classified_name = '(verbs.txt)'
@@ -295,6 +303,17 @@ while origins:
             completed_words_lst.append(origin)
             del origins[rand_index]
             del answers[rand_index]
+        elif input_X.lower() == 'e':
+            try:
+                classified_lst.remove(origin)
+            except:
+                pass
+            
+            if not origin in expression_lst:
+                expression_lst.append(origin)
+            completed_words_lst.append(origin)
+            del origins[rand_index]
+            del answers[rand_index]
         elif input_X == '2' or input_X.lower() == 'o':
             try:
                 classified_lst.remove(origin)
@@ -342,10 +361,3 @@ if os.path.isfile(group_2_txt):
 
 if os.path.isfile(group_3_txt):
     func.sort(group_3_txt)
-
-# print(ord('ぁ'))
-# for i in range(0,86):
-#     print(chr(12353+i))
-# print(ord('ァ'))
-# for i in range(0,92):
-#     print(chr(12449+i))
