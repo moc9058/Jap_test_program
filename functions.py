@@ -43,11 +43,14 @@ def sort(txt):
         while lines:
             f.write(lines.pop(0))
 
-def create_txts(lst):
+def create_txt(txt):
+    if not os.path.isfile(txt):
+        with open(txt, 'w') as f:
+            pass
+
+def create_txt_combined(lst):
     for txt in lst:
-        if not os.path.isfile(txt):
-            with open(txt, 'w') as f:
-                pass
+        create_txt(txt)
 
 def is_katakana(string):
     for i in range(len(string)):

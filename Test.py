@@ -12,6 +12,8 @@ save_folder = os.path.join(cwd,'test_log')
 group_1_txt = os.path.join(cwd,'Group 1.txt')
 group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
+retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
+retry_completed_lst = []
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -48,9 +50,16 @@ append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
 
 if not os.path.exists(save_folder):
     os.mkdir(save_folder)
-func.create_txts(classified_txts)
+func.create_txt_combined(classified_txts)
+func.create_txt(retry_completed_txt)
 
 func.copy_txt2lst_combined(classified_lsts, classified_txts)
+func.copy_txt2lst(retry_completed_lst, retry_completed_txt)
+
+if len(retry_lst) == len(retry_completed_lst):
+    with open(retry_completed_txt, 'w', encoding='utf-8') as f:
+        pass
+    retry_completed_lst = []
 
 print('Do you want to test retry words? Default is \"NO\".')
 print('A: adverbs.txt')
@@ -110,7 +119,9 @@ else:
             func.update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
             break
         elif first_input[i].lower() == 'r':
-            groups.append(os.path.join('classified','retry.txt'))
+            groups = [os.path.join('classified','retry.txt')]
+            first_input = 'r'
+            break
         elif first_input[i].lower() == 'v':
             groups.append(os.path.join('classified','verbs.txt'))
         elif first_input[i].lower() == 'k':
@@ -140,7 +151,22 @@ if not input_retry:
             j = origins.index(word)
             del origins[j]
             del answers[j]
-
+elif first_input == 'r':
+    with open(retry_txt,'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            line = line.strip()
+            if not line in retry_completed_lst:
+                origins.append(line.strip())
+    
+    for i in range(len(origins)):
+        origin = origins[i]
+        try:
+            origin_index = origin_candidates.index(origin)
+            answers.append(answer_candidates[origin_index])
+        except:
+            raise Exception(f"{origin} is not included in Groups 1.txt, ...")
 else:
     for group in groups:
         filename = os.path.join(cwd, group)
@@ -328,6 +354,14 @@ while origins:
         else:
             if not origin in retry_lst:
                 retry_lst.append(origin)
+    elif first_input == 'r':
+        input_X = input()
+        if input_X.lower() == 'x':
+            break
+        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k','e']:
+            retry_completed_lst.append(origins[rand_index])
+            del origins[rand_index]
+            del answers[rand_index]
     else:
         input_X = input()
         if input_X.lower() == 'x':
@@ -344,6 +378,8 @@ if not input_retry:
         for word in completed_words_lst:
             if word in origin_candidates:
                 f.write(word+"\n")
+elif first_input == 'r':
+    func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()
 func.seperation(['人','日','名','存', '下', '大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
