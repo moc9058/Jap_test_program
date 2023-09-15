@@ -93,14 +93,6 @@ def print_word_duplicated(txt_name):
     else:
         return
     
-def word_count(txt_name):
-    count = 0
-    with open(txt_name, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            count += 1
-    return count
 
 def properly_included(member_txt_lst, group_txt):
     improper_words = []
@@ -138,16 +130,17 @@ def copy_txt2lst_combined(lsts, txts):
         copy_txt2lst(lsts[i],txts[i])
 
 def update_lst2txt(lst, txt, origin_candidates):
-    txt_lst = []
-    with open(txt, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            txt_lst.append(line.strip())
-    
-    for txt_word in txt_lst:
-        if not txt_word in lst:
-            lst.append(txt_word)
+    if os.path.basename(txt) == 'retry.txt':
+        txt_lst = []
+        with open(txt, 'r', encoding='utf-8') as f:
+            while True:
+                line = f.readline()
+                if not line: break
+                txt_lst.append(line.strip())
+        
+        for txt_word in txt_lst:
+            if not txt_word in lst:
+                lst.append(txt_word)
     
     lst.sort()
     tmp_lst = lst.copy()
@@ -169,6 +162,16 @@ def update_lst2txt_combined(lsts, txts, origin_candidates):
         return
     for i in range(len(lsts)):
         update_lst2txt(lsts[i], txts[i], origin_candidates)
+
+def word_count(txt_name):
+    count = 0
+    with open(txt_name, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            count += 1
+    return count
+
 
 def word_count_combined(txts):
     result = 0

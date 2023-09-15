@@ -61,16 +61,7 @@ if len(retry_lst) == len(retry_completed_lst):
         pass
     retry_completed_lst = []
 
-print('Do you want to test retry words? Default is \"NO\".')
-print('A: adverbs.txt')
-print('D: diff_kanjis.txt')
-print('J: hononym.txt')
-print('K: katakanas.txt')
-print('C: compound.txt')
-print('E: expression.txt')
-print('R: retry.txt')
-print('V: verbs.txt')
-first_input = input()
+
 answer_groups = ['Group 1.txt']
 origin_candidates = []
 answer_candidates = []
@@ -106,7 +97,40 @@ if len(date_files) > 0:
             if line in origin_candidates:
                 completed_words_lst.append(line)
 
+###########################################################################################
+tmp_completed_words = completed_words_lst.copy()
+tmp_duplicated_count = 0
+while tmp_completed_words:
+    tmp_word = tmp_completed_words.pop(0)
+    tmp_count = 0
+    tmp_first_txt = ""
+    for tmp_append_lst in append_lsts:
+        if tmp_word in tmp_append_lst:
+            tmp_count += 1
+            if tmp_count == 1:
+                tmp_first_txt = os.path.basename(append_txts[append_lsts.index(tmp_append_lst)])
+            if tmp_count == 2:
+                tmp_duplicated_count += 1
+                print(f"{tmp_word}: {tmp_first_txt} {os.path.basename(append_txts[append_lsts.index(tmp_append_lst)])}", end=' ')
+            if tmp_count > 2:
+                print(os.path.basename(append_txts[append_lsts.index(tmp_append_lst)]), end=' ')
+    
+    if tmp_count > 1:
+        print()
+if tmp_duplicated_count > 1:
+    print(tmp_duplicated_count)
+###########################################################################################
 
+print('Do you want to test retry words? Default is \"NO\".')
+print('A: adverbs.txt')
+print('D: diff_kanjis.txt')
+print('J: hononym.txt')
+print('K: katakanas.txt')
+print('C: compound.txt')
+print('E: expression.txt')
+print('R: retry.txt')
+print('V: verbs.txt')
+first_input = input()
 
 groups = []
 if len(first_input) == 0:
