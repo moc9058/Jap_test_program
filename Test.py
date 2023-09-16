@@ -120,7 +120,7 @@ while tmp_completed_words:
 if tmp_duplicated_count > 1:
     print(tmp_duplicated_count)
 ###########################################################################################
-
+func.update_lst2txt(retry_lst, retry_txt, origin_candidates)
 print('Do you want to test retry words? Default is \"NO\".')
 print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
@@ -214,7 +214,6 @@ else:
         
         
 
-# is_adverb = (first_input == 'a' or first_input == 'A')
 
 while origins:
     rand_index = random.randrange(len(origins))
@@ -228,14 +227,14 @@ while origins:
     if origin in retry_lst:
         try_again = "(retry)"
     katakana_reverse = func.is_katakana(origin)
-    is_adverb = False
+    print_reverse = False
 
     classified_name = ""
     classified_lst = []
     if origin in adverb_lst:
         classified_lst = adverb_lst
         classified_name = '(adverb.txt)'
-        is_adverb = True
+        print_reverse = True
     elif origin in diff_kanji_lst:
         classified_lst = diff_kanji_lst
         classified_name = '(diff_kanjis.txt)'
@@ -251,12 +250,15 @@ while origins:
     elif origin in compound_lst:
         classified_lst = compound_lst
         classified_name = '(compounds.txt)'
+        print_reverse = True
     elif origin in expression_lst:
         classified_lst = expression_lst
         classified_name = '(expressions.txt)'
+        print_reverse = True
     elif origin in verb_lst:
         classified_lst = verb_lst
         classified_name = '(verbs.txt)'
+        print_reverse = True
 
 
 
@@ -264,7 +266,7 @@ while origins:
         print(f"{answer}", end=" ")
         input_X = input()
         print(f"{classified_name}{try_again} {origin}", end=" ")
-    elif is_adverb:
+    elif print_reverse:
         if func.contains_kanji(origin):
             ans_split_index = answer.find(" ")
             print(f"{answer[:ans_split_index].strip()}", end=" ")
@@ -406,7 +408,7 @@ elif first_input == 'r':
     func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()
-func.seperation(['人','日','名','存', '下', '大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+func.seperation(['人','日','名','存', '大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 func.print_word_duplicated_combined(classified_txts)

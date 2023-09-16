@@ -66,6 +66,8 @@ def is_kanji(char):
         return True
     elif ord(char) >= 12541:
         return True
+    elif ord(char) == 65374:
+        return True
     else:
         return False
 
