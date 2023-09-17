@@ -132,7 +132,8 @@ def copy_txt2lst_combined(lsts, txts):
         copy_txt2lst(lsts[i],txts[i])
 
 def update_lst2txt(lst, txt, origin_candidates):
-    if os.path.basename(txt) == 'retry.txt':
+    tmp_lst = lst.copy()
+    if os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt':
         txt_lst = []
         with open(txt, 'r', encoding='utf-8') as f:
             while True:
@@ -142,17 +143,17 @@ def update_lst2txt(lst, txt, origin_candidates):
         
         for txt_word in txt_lst:
             if not txt_word in lst:
-                lst.append(txt_word)
+                tmp_lst.append(txt_word)
     
-    lst.sort()
-    tmp_lst = lst.copy()
-    for i in range(len(tmp_lst)-1):
-        if tmp_lst[i] == tmp_lst[i+1]:
-            lst.remove(tmp_lst[i])
+    tmp_lst.sort()
+    tmp_tmp_lst = tmp_lst.copy()
+    for i in range(len(tmp_tmp_lst)-1):
+        if tmp_tmp_lst[i] == tmp_tmp_lst[i+1]:
+            tmp_lst.remove(tmp_tmp_lst[i])
             
     with open(txt,'w',encoding='utf-8') as f:
-        while lst:
-            word = lst.pop(0).strip()
+        while tmp_lst:
+            word = tmp_lst.pop(0).strip()
             if word in origin_candidates:
                 f.write(word + '\n')
             else:
