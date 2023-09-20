@@ -33,7 +33,9 @@ append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
 func.copy_txt2lst_combined(append_lsts, append_txts)
 
 
-print(ord('が'))
+body = os.path.join(cwd,'body.txt')
+branch = os.path.join(cwd,'branch.txt')
+func.txt_merge(branch,body)
 # tmp_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
 #               hononym_lst, compound_lst, expression_lst]
 

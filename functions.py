@@ -1,5 +1,30 @@
 import os
 
+def txt_merge(branch_txt, body_txt):
+    body_lst = []
+    branch_lst = []
+    with open(body_txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            body_lst.append(line.strip())
+
+    with open(branch_txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            branch_lst.append(line.strip())
+    
+    while branch_lst:
+        branch_pop = branch_lst.pop(0)
+        if not branch_pop in body_lst:
+            body_lst.append(branch_pop)
+            
+    body_lst.sort()
+    with open(body_txt,'w',encoding='utf-8') as f:
+        while body_lst:
+            f.write(body_lst.pop(0)+'\n')
+
 def verb_extractor(original_txt, extracted_txt, mode = 0):
     # Assume 日本語/-/にほんご 일본어
     # mode = 0: retry
