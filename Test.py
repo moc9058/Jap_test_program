@@ -12,6 +12,16 @@ save_folder = os.path.join(cwd,'test_log')
 group_1_txt = os.path.join(cwd,'Group 1.txt')
 group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
+
+func.txt_sort(group_1_txt)
+
+if os.path.isfile(group_2_txt):
+    func.txt_sort(group_2_txt)
+
+if os.path.isfile(group_3_txt):
+    func.txt_sort(group_3_txt)
+
+
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
 
@@ -56,11 +66,21 @@ func.create_txt(retry_completed_txt)
 func.copy_txt2lst_combined(classified_lsts, classified_txts)
 func.copy_txt2lst(retry_completed_lst, retry_completed_txt)
 
+pronounciation_lst = []
+with open(group_1_txt, 'r', encoding='utf-8') as f:
+    while True:
+        line = f.readline()
+        if not line: break
+        origin = line.split('/-/')[0].strip()
+        answer = line.split('/-/')[1].strip()
+        pronounciation = func.extract_pronounciations(line)
+        pronounciation_lst.append(pronounciation)
+# print(pronounciation_lst)
+
 if len(retry_lst) == len(retry_completed_lst):
     with open(retry_completed_txt, 'w', encoding='utf-8') as f:
         pass
     retry_completed_lst = []
-
 
 answer_groups = ['Group 1.txt']
 origin_candidates = []
@@ -119,6 +139,7 @@ while tmp_completed_words:
         print()
 if tmp_duplicated_count > 1:
     print(tmp_duplicated_count)
+
 ###########################################################################################
 func.update_lst2txt(retry_lst, retry_txt, origin_candidates)
 print('Do you want to test retry words? Default is \"NO\".')
@@ -219,6 +240,10 @@ while origins:
     rand_index = random.randrange(len(origins))
     origin = origins[rand_index].strip()
     answer = answers[rand_index].strip()
+    if func.contains_kanji(origin):
+        pronounciation = answer.split()[0].strip()
+    else:
+        pronounciation = origin
     if not input_retry:
         print(f"(origin: {len(origins)}, completed: {len(completed_words_lst)}, total: {len(origins)+len(completed_words_lst)})", end=" ")
     else:
@@ -263,23 +288,23 @@ while origins:
 
 
     if katakana_reverse:
-        print(f"{answer}", end=" ")
-        input_X = input()
-        print(f"{classified_name}{try_again} {origin}", end=" ")
-    elif print_reverse:
-        if func.contains_kanji(origin):
-            ans_split_index = answer.find(" ")
-            print(f"{answer[:ans_split_index].strip()}", end=" ")
-            input_X = input()
-            print(f"{classified_name}{try_again} {origin} {answer[ans_split_index:].strip()}", end=" ")
-        else:
-            print(f"{origin}", end=" ")
-            input_X = input()
-            print(f"{classified_name}{try_again} {answer}", end=" ")
-    else:
-        print(f"{origin}", end=" ")
-        input_X = input()
         print(f"{classified_name}{try_again} {answer}", end=" ")
+        input_X = input()
+        print(f"{origin}", end=" ")
+    elif print_reverse:
+        if func.contains_kanji(origin) and not func.duplicate_in_lst(pronounciation,pronounciation_lst):
+            ans_split_index = answer.find(" ")
+            print(f"{classified_name}{try_again} {answer[:ans_split_index].strip()}", end=" ")
+            input_X = input()
+            print(f"{origin} {answer[ans_split_index:].strip()}", end=" ")
+        else:
+            print(f"{classified_name}{try_again} {origin}", end=" ")
+            input_X = input()
+            print(f"{answer}", end=" ")
+    else:
+        print(f"{classified_name}{try_again} {origin}", end=" ")
+        input_X = input()
+        print(f"{answer}", end=" ")
     if input_X.lower() == 'x':
         print()
         break
@@ -415,11 +440,3 @@ func.print_word_duplicated_combined(classified_txts)
 
 print(func.word_count_combined(append_txts), func.word_count(last_test))
 print(func.properly_included(append_txts,last_test))
-
-func.sort(group_1_txt)
-
-if os.path.isfile(group_2_txt):
-    func.sort(group_2_txt)
-
-if os.path.isfile(group_3_txt):
-    func.sort(group_3_txt)

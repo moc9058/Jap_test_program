@@ -1,5 +1,26 @@
 import os
 
+def duplicate_in_lst(element, lst):
+    try:
+        begin = lst.index(element)
+        for i in range(begin+1, len(lst)):
+            if element == lst[i]:
+                return True
+        return False
+    except:
+        return False
+
+
+def extract_pronounciations(string):
+    # Assume 日本語/-/にほんご 일본어 or にほんご/-/일본어
+    string = string.split('/-/')
+    front = string[0].strip()
+    back = string[1].strip()
+    if contains_kanji(front):
+        return back.split()[0].strip()
+    else:
+        return front
+
 def txt_merge(branch_txt, body_txt):
     body_lst = []
     branch_lst = []
@@ -56,7 +77,7 @@ def not_verb(string):
     # assume string has been stripped.
     return not string[-1] in ['う','る','つ','ぶ','ぬ','む','く','ぐ','す']
 
-def sort(txt):
+def txt_sort(txt):
     lines = []
     with open(txt, 'r', encoding='utf-8') as f:
         while True:
@@ -85,13 +106,16 @@ def is_katakana(string):
     return True
 
 def is_kanji(char):
+    # Assume char is either hiragana, katakana, and kanji
     if ord(char) < 12353:
         return True
     elif ord(char) >= 12439 and ord(char) < 12449:
         return True
-    elif ord(char) >= 12541:
+    elif ord(char) >= 12541 and ord(char) < 65288:
         return True
-    elif ord(char) == 65374:
+    elif ord(char) >= 65290 and ord(char) < 65374:
+        return True
+    elif ord(char) >= 65375:
         return True
     else:
         return False
