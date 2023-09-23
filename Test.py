@@ -292,7 +292,7 @@ while origins:
         input_X = input()
         print(f"{origin}", end=" ")
     elif print_reverse:
-        if func.contains_kanji(origin) and not func.duplicate_in_lst(pronounciation,pronounciation_lst):
+        if func.contains_kanji(origin) and func.count_in_lst(pronounciation,pronounciation_lst) > 2:
             ans_split_index = answer.find(" ")
             print(f"{classified_name}{try_again} {answer[:ans_split_index].strip()}", end=" ")
             input_X = input()

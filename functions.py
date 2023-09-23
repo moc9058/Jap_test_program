@@ -1,14 +1,15 @@
 import os
 
-def duplicate_in_lst(element, lst):
+def count_in_lst(element, lst):
     try:
         begin = lst.index(element)
+        count = 1
         for i in range(begin+1, len(lst)):
             if element == lst[i]:
-                return True
-        return False
+                count += 1
+        return count
     except:
-        return False
+        return 0
 
 
 def extract_pronounciations(string):
