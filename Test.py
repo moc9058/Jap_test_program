@@ -12,6 +12,7 @@ save_folder = os.path.join(cwd,'test_log')
 group_1_txt = os.path.join(cwd,'Group 1.txt')
 group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
+group_4_txt = os.path.join(cwd,'Group 4.txt')
 
 func.txt_sort(group_1_txt)
 
@@ -21,6 +22,8 @@ if os.path.isfile(group_2_txt):
 if os.path.isfile(group_3_txt):
     func.txt_sort(group_3_txt)
 
+if os.path.isfile(group_4_txt):
+    func.txt_sort(group_4_txt)
 
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
@@ -33,6 +36,8 @@ katakanas_txt = os.path.join(cwd,'classified','katakanas.txt')
 hononyms_txt = os.path.join(cwd,'classified','hononyms.txt')
 compounds_txt = os.path.join(cwd,'classified','compounds.txt')
 expressions_txt = os.path.join(cwd,'classified','expressions.txt')
+adjectives_txt = os.path.join(cwd,'classified','adjectives.txt')
+pure_kanjis_txt = os.path.join(cwd,'classified','pure_kanjis.txt')
 etc_txt = os.path.join(cwd,'classified','etc.txt')
 
 retry_lst = []
@@ -43,19 +48,21 @@ katakana_lst = []
 hononym_lst = []
 compound_lst = []
 expression_lst = []
+adjective_lst = []
+pure_kanji_lst = []
 etc_lst = []
 
 classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-                  hononyms_txt, compounds_txt, expressions_txt,\
+                  hononyms_txt, compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
                   etc_txt]
 classified_lsts = [retry_lst, verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-                  hononym_lst, compound_lst, expression_lst,\
+                  hononym_lst, compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
                   etc_lst]
 append_txts = [verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-              hononyms_txt, compounds_txt, expressions_txt,\
+              hononyms_txt, compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
               etc_txt]
 append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-              hononym_lst, compound_lst, expression_lst,\
+              hononym_lst, compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
               etc_lst]
 
 if not os.path.exists(save_folder):
@@ -147,8 +154,10 @@ print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
 print('J: hononym.txt')
 print('K: katakanas.txt')
-print('C: compound.txt')
-print('E: expression.txt')
+print('C: compounds.txt')
+print('E: expressions.txt')
+print('J: adjectives.txt')
+print('P: pure_kanjis.txt')
 print('R: retry.txt')
 print('V: verbs.txt')
 first_input = input()
@@ -181,7 +190,10 @@ else:
             groups.append(os.path.join('classified','compounds.txt'))
         elif first_input[i].lower() == 'e':
             groups.append(os.path.join('classified','expressions.txt'))
-        
+        elif first_input[i].lower() == 'j':
+            groups.append(os.path.join('classified','adjectives.txt'))
+        elif first_input[i].lower() == 'p':
+            groups.append(os.path.join('classified','pure_kanjis.txt'))
 print()
     
 
@@ -279,6 +291,14 @@ while origins:
     elif origin in expression_lst:
         classified_lst = expression_lst
         classified_name = '(expressions.txt)'
+        print_reverse = True
+    elif origin in adjective_lst:
+        classified_lst = adjective_lst
+        classified_name = '(adjectives.txt)'
+        print_reverse = True
+    elif origin in pure_kanji_lst:
+        classified_lst = pure_kanji_lst
+        classified_name = '(pure_kanjis.txt)'
         print_reverse = True
     elif origin in verb_lst:
         classified_lst = verb_lst
@@ -391,6 +411,28 @@ while origins:
             completed_words_lst.append(origin)
             del origins[rand_index]
             del answers[rand_index]
+        elif input_X.lower() == 'j':
+            try:
+                classified_lst.remove(origin)
+            except:
+                pass
+            
+            if not origin in adjective_lst:
+                adjective_lst.append(origin)
+            completed_words_lst.append(origin)
+            del origins[rand_index]
+            del answers[rand_index]
+        elif input_X.lower() == 'p':
+            try:
+                classified_lst.remove(origin)
+            except:
+                pass
+            
+            if not origin in pure_kanji_lst:
+                pure_kanji_lst.append(origin)
+            completed_words_lst.append(origin)
+            del origins[rand_index]
+            del answers[rand_index]
         elif input_X == '2' or input_X.lower() == 'o':
             try:
                 classified_lst.remove(origin)
@@ -409,7 +451,7 @@ while origins:
         input_X = input()
         if input_X.lower() == 'x':
             break
-        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k','e']:
+        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k','e','j','p']:
             retry_completed_lst.append(origins[rand_index])
             del origins[rand_index]
             del answers[rand_index]
@@ -417,7 +459,7 @@ while origins:
         input_X = input()
         if input_X.lower() == 'x':
             break
-        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k','e']:
+        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k','e','j','p']:
             del origins[rand_index]
             del answers[rand_index]
     print()
@@ -433,7 +475,7 @@ elif first_input == 'r':
     func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()
-func.seperation(['人','日','名','存', '大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+# func.seperation(['人','日','名','存'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 func.print_word_duplicated_combined(classified_txts)

@@ -1,8 +1,8 @@
 import os
-
-def automatic_dup_detect():
+groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
+    
+def automatic_dup_detect(groups):
     cwd = os.getcwd()
-    groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
     cumulative_lengths = []
     origins = []
     origin_index = 0
@@ -54,9 +54,8 @@ def duplicate(txt_name):
             lst.append(line.strip())
     return False
 
-def contains_word(word):
+def contains_word(word, groups):
     cwd = os.getcwd()
-    groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
     found = False
     for group_index in range(len(groups)):
         group = groups[group_index]
@@ -86,7 +85,7 @@ def contains_word(word):
                 
     if not found:
         print(f"Not found")
-def real_time_dup_detect():
+def real_time_dup_detect(groups):
     while True:
         word = input()
         if not word:
@@ -94,15 +93,15 @@ def real_time_dup_detect():
         elif word.lower() == 'x':
             break
         else:
-            contains_word(word)
+            contains_word(word, groups)
             print()
 print("Select mode")
 print("e: find duplication among existing txts.")
 print("r: find duplication for real time.")
 mode = input()
 if mode.lower() == 'e':
-    automatic_dup_detect()
+    automatic_dup_detect(groups)
 elif mode.lower() == 'r':
-    real_time_dup_detect()
+    real_time_dup_detect(groups)
 
 # print(duplicate(os.path.join('test_log','2023_09_01_18_43_53.txt')))

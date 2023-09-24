@@ -3,6 +3,8 @@ import functions as func
 
 cwd = os.getcwd()
 
+group_3_txt = os.path.join(cwd,'Group 3.txt')
+
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
 adverbs_txt = os.path.join(cwd,'classified','adverbs.txt')
@@ -11,6 +13,8 @@ katakanas_txt = os.path.join(cwd,'classified','katakanas.txt')
 hononyms_txt = os.path.join(cwd,'classified','hononyms.txt')
 compounds_txt = os.path.join(cwd,'classified','compounds.txt')
 expressions_txt = os.path.join(cwd,'classified','expressions.txt')
+adjectives_txt = os.path.join(cwd,'classified','adjectives.txt')
+pure_kanjis_txt = os.path.join(cwd,'classified','pure_kanjis.txt')
 etc_txt = os.path.join(cwd,'classified','etc.txt')
 
 retry_lst = []
@@ -21,14 +25,24 @@ katakana_lst = []
 hononym_lst = []
 compound_lst = []
 expression_lst = []
+adjective_lst = []
+pure_kanji_lst = []
 etc_lst = []
 
 classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-                  hononyms_txt, compounds_txt, expressions_txt,\
+                  hononyms_txt, compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
                   etc_txt]
 classified_lsts = [retry_lst, verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-                  hononym_lst, compound_lst, expression_lst,\
+                  hononym_lst, compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
                   etc_lst]
+append_txts = [verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
+              hononyms_txt, compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
+              etc_txt]
+append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
+              hononym_lst, compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
+              etc_lst]
+
+
 
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
@@ -36,15 +50,25 @@ retry_completed_lst = []
 func.copy_txt2lst_combined(classified_lsts, classified_txts)
 func.copy_txt2lst(retry_completed_lst, retry_completed_txt)
 
-for tmp in retry_completed_lst:
-    try:
-        retry_lst.remove(tmp)
-    except:
-        print(tmp)
-retry_lst.sort()
-with open(retry_txt,'w',encoding='utf-8') as f:
-    while retry_lst:
-        f.write(retry_lst.pop(0)+'\n')
+with open(pure_kanjis_txt, 'w', encoding='utf-8') as f:
+    for i in range(len(append_lsts)):
+        lst_copy = append_lsts[i].copy()
+        for j in range(len(lst_copy)):
+            word = lst_copy[j]
+            only_kanji = True
+            for k in range(len(word)):
+                if not func.is_kanji(word[k]):
+                    only_kanji = False
+                    break
+            if only_kanji:
+                append_lsts[i].remove(word)
+                f.write(word+'\n')
+
+
+        if os.path.basename(append_txts[i]) != "pure_kanjis.txt":
+            with open(append_txts[i], 'w', encoding='utf-8') as g:
+                while append_lsts[i]:
+                    g.write(append_lsts[i].pop(0)+'\n')
 
 
 # tmp_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
