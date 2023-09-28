@@ -149,6 +149,7 @@ if tmp_duplicated_count > 1:
 
 ###########################################################################################
 func.update_lst2txt(retry_lst, retry_txt, origin_candidates)
+todays_retry = []
 print('Do you want to test retry words? Default is \"NO\".')
 print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
@@ -278,6 +279,7 @@ while origins:
     elif origin in etc_lst:
         classified_lst = etc_lst
         classified_name = '(etc.txt)'
+        print_reverse = True
     elif origin in hononym_lst:
         classified_lst = hononym_lst
         classified_name = '(hononym.txt)'
@@ -299,7 +301,6 @@ while origins:
     elif origin in pure_kanji_lst:
         classified_lst = pure_kanji_lst
         classified_name = '(pure_kanjis.txt)'
-        print_reverse = True
     elif origin in verb_lst:
         classified_lst = verb_lst
         classified_name = '(verbs.txt)'
@@ -308,23 +309,23 @@ while origins:
 
 
     if katakana_reverse:
-        print(f"{classified_name}{try_again} {answer}", end=" ")
+        print(f"{answer}", end=" ")
         input_X = input()
-        print(f"{origin}", end=" ")
+        print(f"{origin} {classified_name}{try_again}", end=" ")
     elif print_reverse:
         if func.contains_kanji(origin) and func.count_in_lst(pronounciation,pronounciation_lst) > 2:
             ans_split_index = answer.find(" ")
-            print(f"{classified_name}{try_again} {answer[:ans_split_index].strip()}", end=" ")
+            print(f"{answer[:ans_split_index].strip()}", end=" ")
             input_X = input()
-            print(f"{origin} {answer[ans_split_index:].strip()}", end=" ")
+            print(f"{origin} {answer[ans_split_index:].strip()} {classified_name}{try_again}", end=" ")
         else:
-            print(f"{classified_name}{try_again} {origin}", end=" ")
+            print(f"{origin}", end=" ")
             input_X = input()
-            print(f"{answer}", end=" ")
+            print(f"{answer} {classified_name}{try_again}", end=" ")
     else:
-        print(f"{classified_name}{try_again} {origin}", end=" ")
+        print(f"{origin}", end=" ")
         input_X = input()
-        print(f"{answer}", end=" ")
+        print(f"{answer} {classified_name}{try_again}", end=" ")
     if input_X.lower() == 'x':
         print()
         break
@@ -341,10 +342,10 @@ while origins:
 
             if not origin in verb_lst:
                 verb_lst.append(origin)
-            
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'a':
             try:
                 classified_lst.remove(origin)
@@ -352,10 +353,11 @@ while origins:
                 pass
 
             if not origin in adverb_lst:
-                adverb_lst.append(origin)   
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+                adverb_lst.append(origin)
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'd':
             try:
                 classified_lst.remove(origin)
@@ -364,9 +366,10 @@ while origins:
             
             if not origin in diff_kanji_lst:
                 diff_kanji_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'k':
             try:
                 classified_lst.remove(origin)
@@ -375,9 +378,10 @@ while origins:
             
             if not origin in katakana_lst:
                 katakana_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'h':
             try:
                 classified_lst.remove(origin)
@@ -386,9 +390,10 @@ while origins:
             
             if not origin in hononym_lst:
                 hononym_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'c':
             try:
                 classified_lst.remove(origin)
@@ -397,9 +402,10 @@ while origins:
             
             if not origin in compound_lst:
                 compound_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'e':
             try:
                 classified_lst.remove(origin)
@@ -408,9 +414,10 @@ while origins:
             
             if not origin in expression_lst:
                 expression_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'j':
             try:
                 classified_lst.remove(origin)
@@ -419,9 +426,10 @@ while origins:
             
             if not origin in adjective_lst:
                 adjective_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X.lower() == 'p':
             try:
                 classified_lst.remove(origin)
@@ -430,9 +438,10 @@ while origins:
             
             if not origin in pure_kanji_lst:
                 pure_kanji_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         elif input_X == '2' or input_X.lower() == 'o':
             try:
                 classified_lst.remove(origin)
@@ -441,12 +450,15 @@ while origins:
             
             if not origin in etc_lst:
                 etc_lst.append(origin)
-            completed_words_lst.append(origin)
-            del origins[rand_index]
-            del answers[rand_index]
+            if not origin in todays_retry:
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
         else:
             if not origin in retry_lst:
                 retry_lst.append(origin)
+            if not origin in todays_retry:
+                todays_retry.append(origin)
     elif first_input == 'r':
         input_X = input()
         if input_X.lower() == 'x':
@@ -475,7 +487,7 @@ elif first_input == 'r':
     func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()
-# func.seperation(['人','日','名','存'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+# func.seperation(['人','日','名'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 func.print_word_duplicated_combined(classified_txts)

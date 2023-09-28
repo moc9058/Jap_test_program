@@ -50,25 +50,9 @@ retry_completed_lst = []
 func.copy_txt2lst_combined(classified_lsts, classified_txts)
 func.copy_txt2lst(retry_completed_lst, retry_completed_txt)
 
-with open(pure_kanjis_txt, 'w', encoding='utf-8') as f:
-    for i in range(len(append_lsts)):
-        lst_copy = append_lsts[i].copy()
-        for j in range(len(lst_copy)):
-            word = lst_copy[j]
-            only_kanji = True
-            for k in range(len(word)):
-                if not func.is_kanji(word[k]):
-                    only_kanji = False
-                    break
-            if only_kanji:
-                append_lsts[i].remove(word)
-                f.write(word+'\n')
-
-
-        if os.path.basename(append_txts[i]) != "pure_kanjis.txt":
-            with open(append_txts[i], 'w', encoding='utf-8') as g:
-                while append_lsts[i]:
-                    g.write(append_lsts[i].pop(0)+'\n')
+# print(func.is_kanji('～'))
+# print(func.is_kanji('～'))
+# print(ord('～'))
 
 
 # tmp_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
