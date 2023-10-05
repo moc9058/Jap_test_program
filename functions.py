@@ -1,5 +1,12 @@
 import os
 
+def is_kanji_word(string):
+    # Assume string is either hiragana, katakana, and kanji
+    for i in range(len(string)):
+        if not is_kanji(string[i]):
+            return False
+    return True
+
 def count_in_lst(element, lst):
     try:
         begin = lst.index(element)

@@ -1,4 +1,5 @@
 import os
+import functions as func
 groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
     
 def automatic_dup_detect(groups):
@@ -19,10 +20,11 @@ def automatic_dup_detect(groups):
             while True:
                 line = f.readline()
                 if not line:break
-                if len(line) < 2:
+                splitted_line = line.split('/-/')
+                if len(splitted_line) < 2:
                     print(line)
                     continue
-                origins.append(line.split('/-/')[0])
+                origins.append(splitted_line[0].strip())
                 num_lines += 1
             cumulative_lengths.append(len(origins))
 
@@ -36,7 +38,7 @@ def automatic_dup_detect(groups):
                             k -= 1
                         k += 1
                         print(groups[k], group)
-                        print(origins[i])
+                        print(origins[j], origins[i])
                         print()
                                 
             origin_index += num_lines
@@ -54,7 +56,17 @@ def duplicate(txt_name):
             lst.append(line.strip())
     return False
 
-def contains_word(word, groups):
+def contains_word(word, origin):
+    if len(word) > len(origin):
+        return False
+    W = len(word)
+    O = len(origin)
+    for i in range(O-W+1):
+        if origin[i:i + W] == word:
+            return True
+    return False
+
+def contains_word_groups(word, groups):
     cwd = os.getcwd()
     found = False
     for group_index in range(len(groups)):
@@ -69,19 +81,20 @@ def contains_word(word, groups):
             while True:
                 line = f.readline()
                 if not line:break
-                if len(line) < 2:
+                splitted_line = line.split('/-/')
+                if len(splitted_line) < 2:
                     print(line)
                     continue
-                origin = line.split('/-/')[0].strip()
-                if len(origin) < len(word):
-                    continue
-                else:
-                    for i in range(len(origin)-len(word)+1):
-                        if origin[i:i+len(word)] == word:
-                            print(f"{group}: {origin}")
-                            group_index = len(groups) + 1
-                            found = True
-                            break
+                origin = splitted_line[0].strip()
+                answer = splitted_line[1].strip()
+                if contains_word(word, origin):
+                    print(f"({group}) {origin}: {answer}")
+                    found = True
+                elif not func.contains_kanji(word):
+                    # if not func.is_kanji_word(origin):
+                    if contains_word(word, func.extract_pronounciations(line)):
+                        print(f"({group}) {origin}: {answer}")
+                        found = True
                 
     if not found:
         print(f"Not found")
@@ -93,7 +106,7 @@ def real_time_dup_detect(groups):
         elif word.lower() == 'x':
             break
         else:
-            contains_word(word, groups)
+            contains_word_groups(word, groups)
             print()
 print("Select mode")
 print("e: find duplication among existing txts.")

@@ -13,6 +13,7 @@ group_1_txt = os.path.join(cwd,'Group 1.txt')
 group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
 group_4_txt = os.path.join(cwd,'Group 4.txt')
+group_txt_lst = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt']
 
 func.txt_sort(group_1_txt)
 
@@ -73,26 +74,29 @@ func.create_txt(retry_completed_txt)
 func.copy_txt2lst_combined(classified_lsts, classified_txts)
 func.copy_txt2lst(retry_completed_lst, retry_completed_txt)
 
+# Extract pronounciations
 pronounciation_lst = []
-with open(group_1_txt, 'r', encoding='utf-8') as f:
-    while True:
-        line = f.readline()
-        if not line: break
-        origin = line.split('/-/')[0].strip()
-        answer = line.split('/-/')[1].strip()
-        pronounciation = func.extract_pronounciations(line)
-        pronounciation_lst.append(pronounciation)
-# print(pronounciation_lst)
+for group in group_txt_lst:
+    group_txt = os.path.join(cwd, group)
+    with open(group_txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            origin = line.split('/-/')[0].strip()
+            answer = line.split('/-/')[1].strip()
+            pronounciation = func.extract_pronounciations(line)
+            pronounciation_lst.append(pronounciation)
 
+# Iniatiate retry_completed_lst
 if len(retry_lst) == len(retry_completed_lst):
     with open(retry_completed_txt, 'w', encoding='utf-8') as f:
         pass
     retry_completed_lst = []
 
-answer_groups = ['Group 1.txt']
+# Extract origins, answers
 origin_candidates = []
 answer_candidates = []
-for answer_group in answer_groups:
+for answer_group in group_txt_lst:
     filename = os.path.join(cwd,answer_group)
 
     if not os.path.isfile(filename):
@@ -112,6 +116,7 @@ for answer_group in answer_groups:
 date_files = sorted(glob.glob(os.path.join(save_folder,"*.txt")))
 katakana_reverse = False
 
+# Extract completed_words_lst
 completed_words_lst = []
 if len(date_files) > 0:
     last_test = date_files[-1]
@@ -121,10 +126,10 @@ if len(date_files) > 0:
             if not line: break
             line = line.strip()
             # print(line)
-            if line in origin_candidates:
+            if line in origin_candidates and not line in completed_words_lst:
                 completed_words_lst.append(line)
 
-###########################################################################################
+# Check and extract duplicated words
 tmp_completed_words = completed_words_lst.copy()
 tmp_duplicated_count = 0
 while tmp_completed_words:
@@ -147,13 +152,12 @@ while tmp_completed_words:
 if tmp_duplicated_count > 1:
     print(tmp_duplicated_count)
 
-###########################################################################################
+# Initiate program!
 func.update_lst2txt(retry_lst, retry_txt, origin_candidates)
 todays_retry = []
 print('Do you want to test retry words? Default is \"NO\".')
 print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
-print('J: hononym.txt')
 print('K: katakanas.txt')
 print('C: compounds.txt')
 print('E: expressions.txt')
@@ -166,7 +170,7 @@ first_input = input()
 groups = []
 if len(first_input) == 0:
     input_retry = False 
-    groups = answer_groups
+    groups = group_txt_lst
 else:
     input_retry = True
     for i in range(len(first_input)):
@@ -481,13 +485,15 @@ if not input_retry:
     currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
     with open(currtime_txt, 'wt', encoding='utf-8') as f:
         for word in completed_words_lst:
-            if word in origin_candidates:
-                f.write(word+"\n")
+            for append_lst in append_lsts:
+                if word in append_lst and word in origin_candidates:
+                    f.write(word+"\n")
+                    break
 elif first_input == 'r':
     func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()
-# func.seperation(['人','日','名'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+func.seperation(['人','大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 func.print_word_duplicated_combined(classified_txts)
