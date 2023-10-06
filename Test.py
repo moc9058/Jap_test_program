@@ -13,7 +13,6 @@ group_1_txt = os.path.join(cwd,'Group 1.txt')
 group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
 group_4_txt = os.path.join(cwd,'Group 4.txt')
-group_txt_lst = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt']
 
 func.txt_sort(group_1_txt)
 
@@ -26,8 +25,43 @@ if os.path.isfile(group_3_txt):
 if os.path.isfile(group_4_txt):
     func.txt_sort(group_4_txt)
 
+# Extract origins, answers
+group_txt_lst = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt']
+group_1_origin = []
+group_1_answer = [] 
+group_2_origin = []
+group_2_answer = [] 
+group_3_origin = []
+group_3_answer = [] 
+group_origin_lsts = [group_1_origin, group_2_origin, group_3_origin]
+group_answer_lsts = [group_1_answer, group_2_answer, group_3_answer]
+origin_candidates = []
+answer_candidates = []
+for i in range(len(group_txt_lst)):
+    answer_group = group_txt_lst[i]
+    filename = os.path.join(cwd,answer_group)
+
+    if not os.path.isfile(filename):
+        continue
+
+    with open(filename,'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            line = line.split('/-/')
+            if len(line) < 2:
+                print(f"Format error in {answer_group}: {line}")
+                continue
+            origin_candidates.append(line[0].strip())
+            answer_candidates.append(line[1].strip())
+    # origin_candidates.extend(group_origin_lsts[i])
+    # answer_candidates.extend(group_answer_lsts[i])
+
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
+classified_words_txt = os.path.join(cwd,'classified_words.txt')
+classified_words_lst = []
+unclassified_words_lst = []
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -71,8 +105,19 @@ if not os.path.exists(save_folder):
 func.create_txt_combined(classified_txts)
 func.create_txt(retry_completed_txt)
 
-func.copy_txt2lst_combined(classified_lsts, classified_txts)
-func.copy_txt2lst(retry_completed_lst, retry_completed_txt)
+func.copy_txt2lst_combined(classified_lsts, classified_txts, origin_candidates)
+func.copy_txt2lst(retry_completed_lst, retry_completed_txt, origin_candidates)
+for append_lst in append_lsts:
+    classified_words_lst.extend(append_lst)
+for word in origin_candidates:
+    if not word in classified_words_lst:
+        unclassified_words_lst.append(word)
+
+# Iniatiate retry_completed_lst
+if len(retry_lst) <= len(retry_completed_lst):
+    with open(retry_completed_txt, 'w', encoding='utf-8') as f:
+        pass
+    retry_completed_lst = []
 
 # Extract pronounciations
 pronounciation_lst = []
@@ -87,34 +132,9 @@ for group in group_txt_lst:
             pronounciation = func.extract_pronounciations(line)
             pronounciation_lst.append(pronounciation)
 
-# Iniatiate retry_completed_lst
-if len(retry_lst) == len(retry_completed_lst):
-    with open(retry_completed_txt, 'w', encoding='utf-8') as f:
-        pass
-    retry_completed_lst = []
-
-# Extract origins, answers
-origin_candidates = []
-answer_candidates = []
-for answer_group in group_txt_lst:
-    filename = os.path.join(cwd,answer_group)
-
-    if not os.path.isfile(filename):
-        continue
-
-    with open(filename,'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            line = line.split('/-/')
-            if len(line) < 2:
-                print(f"Format error in {answer_group}: {line}")
-                continue
-            origin_candidates.append(line[0].strip())
-            answer_candidates.append(line[1].strip())
 
 date_files = sorted(glob.glob(os.path.join(save_folder,"*.txt")))
-katakana_reverse = False
+is_katakana = False
 
 # Extract completed_words_lst
 completed_words_lst = []
@@ -129,7 +149,7 @@ if len(date_files) > 0:
             if line in origin_candidates and not line in completed_words_lst:
                 completed_words_lst.append(line)
 
-# Check and extract duplicated words
+# Check and extract duplicated words of completed_words_lst in classified folder.
 tmp_completed_words = completed_words_lst.copy()
 tmp_duplicated_count = 0
 while tmp_completed_words:
@@ -150,12 +170,21 @@ while tmp_completed_words:
     if tmp_count > 1:
         print()
 if tmp_duplicated_count > 1:
-    print(tmp_duplicated_count)
+    print(f"Total number of duplicated words is {tmp_duplicated_count}.")
+
+
+
+# Trace the number of classified words
+num_classified = 0
+num_candidates = len(origin_candidates)
+for append_lst in append_lsts:
+    num_classified += len(append_lst)
+
 
 # Initiate program!
 func.update_lst2txt(retry_lst, retry_txt, origin_candidates)
 todays_retry = []
-print('Do you want to test retry words? Default is \"NO\".')
+print('Do you want to test retry words? Default is \"NO\" and applying 1:1 mode.')
 print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
 print('K: katakanas.txt')
@@ -168,8 +197,13 @@ print('V: verbs.txt')
 first_input = input()
 
 groups = []
+one_to_one_mode = False
 if len(first_input) == 0:
     input_retry = False 
+    groups = group_txt_lst
+    one_to_one_mode = True
+elif not first_input[0].lower() in ['a','d','k','c','e','j','p','r','v','h'] and first_input[0].lower() != 'x':
+    input_retry = False
     groups = group_txt_lst
 else:
     input_retry = True
@@ -252,67 +286,76 @@ else:
         
         
 
-
+one_to_one_indicator = 0
 while origins:
-    rand_index = random.randrange(len(origins))
-    origin = origins[rand_index].strip()
-    answer = answers[rand_index].strip()
-    if func.contains_kanji(origin):
-        pronounciation = answer.split()[0].strip()
-    else:
-        pronounciation = origin
     if not input_retry:
         print(f"(origin: {len(origins)}, completed: {len(completed_words_lst)}, total: {len(origins)+len(completed_words_lst)})", end=" ")
     else:
         print(f"({len(origins)} left)", end=" ")
+    rand_index = random.randrange(len(origins))
+    origin = origins[rand_index].strip()
+    answer = answers[rand_index].strip()
+    is_katakana = func.is_katakana(origin)
+    classified_name = ""
+
     try_again = ""
     if origin in retry_lst:
         try_again = "(retry)"
-    katakana_reverse = func.is_katakana(origin)
     print_reverse = False
+        
+    if one_to_one_mode and one_to_one_indicator %2 == 1 and len(unclassified_words_lst) > 0:
+        tmp_rand_index = random.randrange(len(unclassified_words_lst))
+        rand_index = origins.index(unclassified_words_lst[tmp_rand_index])
+        origin = origins[rand_index].strip()
+        answer = answers[rand_index].strip()
+        is_katakana = func.is_katakana(origin)
+    else:
+        classified_lst = []
+        if origin in adverb_lst:
+            classified_lst = adverb_lst
+            classified_name = '(adverb.txt)'
+            print_reverse = True
+        elif origin in diff_kanji_lst:
+            classified_lst = diff_kanji_lst
+            classified_name = '(diff_kanjis.txt)'
+        elif origin in etc_lst:
+            classified_lst = etc_lst
+            classified_name = '(etc.txt)'
+            print_reverse = True
+        elif origin in hononym_lst:
+            classified_lst = hononym_lst
+            classified_name = '(hononym.txt)'
+        elif origin in katakana_lst:
+            classified_lst = katakana_lst
+            classified_name = '(katakanas.txt)'
+        elif origin in compound_lst:
+            classified_lst = compound_lst
+            classified_name = '(compounds.txt)'
+            print_reverse = True
+        elif origin in expression_lst:
+            classified_lst = expression_lst
+            classified_name = '(expressions.txt)'
+            print_reverse = True
+        elif origin in adjective_lst:
+            classified_lst = adjective_lst
+            classified_name = '(adjectives.txt)'
+            print_reverse = True
+        elif origin in pure_kanji_lst:
+            classified_lst = pure_kanji_lst
+            classified_name = '(pure_kanjis.txt)'
+        elif origin in verb_lst:
+            classified_lst = verb_lst
+            classified_name = '(verbs.txt)'
+            print_reverse = True
 
-    classified_name = ""
-    classified_lst = []
-    if origin in adverb_lst:
-        classified_lst = adverb_lst
-        classified_name = '(adverb.txt)'
-        print_reverse = True
-    elif origin in diff_kanji_lst:
-        classified_lst = diff_kanji_lst
-        classified_name = '(diff_kanjis.txt)'
-    elif origin in etc_lst:
-        classified_lst = etc_lst
-        classified_name = '(etc.txt)'
-        print_reverse = True
-    elif origin in hononym_lst:
-        classified_lst = hononym_lst
-        classified_name = '(hononym.txt)'
-    elif origin in katakana_lst:
-        classified_lst = katakana_lst
-        classified_name = '(katakanas.txt)'
-    elif origin in compound_lst:
-        classified_lst = compound_lst
-        classified_name = '(compounds.txt)'
-        print_reverse = True
-    elif origin in expression_lst:
-        classified_lst = expression_lst
-        classified_name = '(expressions.txt)'
-        print_reverse = True
-    elif origin in adjective_lst:
-        classified_lst = adjective_lst
-        classified_name = '(adjectives.txt)'
-        print_reverse = True
-    elif origin in pure_kanji_lst:
-        classified_lst = pure_kanji_lst
-        classified_name = '(pure_kanjis.txt)'
-    elif origin in verb_lst:
-        classified_lst = verb_lst
-        classified_name = '(verbs.txt)'
-        print_reverse = True
 
+    one_to_one_indicator = (one_to_one_indicator+1)%2
+    if func.contains_kanji(origin):
+        pronounciation = answer.split()[0].strip()
+    else:
+        pronounciation = origin
 
-
-    if katakana_reverse:
+    if is_katakana:
         print(f"{answer}", end=" ")
         input_X = input()
         print(f"{origin} {classified_name}{try_again}", end=" ")
@@ -346,6 +389,12 @@ while origins:
 
             if not origin in verb_lst:
                 verb_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -358,6 +407,12 @@ while origins:
 
             if not origin in adverb_lst:
                 adverb_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -370,6 +425,12 @@ while origins:
             
             if not origin in diff_kanji_lst:
                 diff_kanji_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -382,6 +443,12 @@ while origins:
             
             if not origin in katakana_lst:
                 katakana_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -394,6 +461,12 @@ while origins:
             
             if not origin in hononym_lst:
                 hononym_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -406,6 +479,12 @@ while origins:
             
             if not origin in compound_lst:
                 compound_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -418,6 +497,12 @@ while origins:
             
             if not origin in expression_lst:
                 expression_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -430,6 +515,12 @@ while origins:
             
             if not origin in adjective_lst:
                 adjective_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -442,6 +533,12 @@ while origins:
             
             if not origin in pure_kanji_lst:
                 pure_kanji_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
@@ -454,15 +551,22 @@ while origins:
             
             if not origin in etc_lst:
                 etc_lst.append(origin)
+                try:
+                    unclassified_words_lst.remove(origin)
+                except:
+                    pass
+                classified_words_lst.append(origin)
+
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
                 del answers[rand_index]
         else:
-            if not origin in retry_lst:
-                retry_lst.append(origin)
-            if not origin in todays_retry:
-                todays_retry.append(origin)
+            if not is_katakana:
+                if not origin in retry_lst:
+                    retry_lst.append(origin)
+                if not origin in todays_retry:
+                    todays_retry.append(origin)
     elif first_input == 'r':
         input_X = input()
         if input_X.lower() == 'x':
@@ -481,7 +585,7 @@ while origins:
     print()
 
 if not input_retry:
-    func.update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
+    func.update_lst2txt_combined(classified_lsts, classified_txts, origin_candidates)
     currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
     with open(currtime_txt, 'wt', encoding='utf-8') as f:
         for word in completed_words_lst:
@@ -500,3 +604,6 @@ func.print_word_duplicated_combined(classified_txts)
 
 print(func.word_count_combined(append_txts), func.word_count(last_test))
 print(func.properly_included(append_txts,last_test))
+
+print(f"Classified words: {len(classified_words_lst)}")
+print(f"Unlassified words: {len(unclassified_words_lst)}")

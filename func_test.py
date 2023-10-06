@@ -3,7 +3,28 @@ import functions as func
 
 cwd = os.getcwd()
 
+group_txt_lst = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt']
+group_1_txt = os.path.join(cwd,'Group 1.txt')
+group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
+origin_candidates = []
+answer_candidates = []
+for answer_group in group_txt_lst:
+    filename = os.path.join(cwd,answer_group)
+
+    if not os.path.isfile(filename):
+        continue
+
+    with open(filename,'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            line = line.split('/-/')
+            if len(line) < 2:
+                print(f"Format error in {answer_group}: {line}")
+                continue
+            origin_candidates.append(line[0].strip())
+            answer_candidates.append(line[1].strip())
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -47,9 +68,10 @@ append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
 
-func.copy_txt2lst_combined(classified_lsts, classified_txts)
-func.copy_txt2lst(retry_completed_lst, retry_completed_txt)
+func.copy_txt2lst_combined(classified_lsts, classified_txts, origin_candidates)
+func.copy_txt2lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
+func.merge_txts([group_2_txt,group_3_txt],group_2_txt)
 # print(func.is_kanji('～'))
 # print(func.is_kanji('～'))
 # print(ord('～'))

@@ -1,5 +1,19 @@
 import os
 
+def merge_txts(txts_lst, new_txt):
+    if not os.path.isfile(new_txt):
+        create_txt(new_txt)
+    lst = []
+    for txt in txts_lst:
+        with open(txt,'r',encoding='utf-8') as f:
+            while True:
+                line = f.readline()
+                if not line: break
+                lst.append(line.strip())
+    lst.sort()
+    with open(new_txt,'w',encoding='utf-8') as f:
+        while lst:
+            f.write(lst.pop(0)+'\n')
 def is_kanji_word(string):
     # Assume string is either hiragana, katakana, and kanji
     for i in range(len(string)):
@@ -172,21 +186,23 @@ def properly_included(member_txt_lst, group_txt):
                     group_words.remove(line)
     return group_words
 
-def copy_txt2lst(lst,txt):
+def copy_txt2lst(lst,txt, candidate_lst):
     with open(txt,'r',encoding='utf-8') as f:
         while True:
             line = f.readline()
             if not line: break
-            lst.append(line.strip())
+            line = line.strip()
+            if line in candidate_lst:
+                lst.append(line.strip())
 
-def copy_txt2lst_combined(lsts, txts):
+def copy_txt2lst_combined(lsts, txts, candidate_lst):
     if len(lsts) != len(txts):
         print("Lengths are different.")
         return
     for i in range(len(lsts)):
-        copy_txt2lst(lsts[i],txts[i])
+        copy_txt2lst(lsts[i],txts[i], candidate_lst)
 
-def update_lst2txt(lst, txt, origin_candidates):
+def update_lst2txt(lst, txt, candidate_lst):
     tmp_lst = lst.copy()
     if os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt':
         txt_lst = []
@@ -209,17 +225,17 @@ def update_lst2txt(lst, txt, origin_candidates):
     with open(txt,'w',encoding='utf-8') as f:
         while tmp_lst:
             word = tmp_lst.pop(0).strip()
-            if word in origin_candidates:
+            if word in candidate_lst:
                 f.write(word + '\n')
             else:
-                print(f"{word} is not included in the Group.")
+                print(f"({os.path.basename(txt)}){word} is not included in the Group.")
 
-def update_lst2txt_combined(lsts, txts, origin_candidates):
+def update_lst2txt_combined(lsts, txts, candidate_lst):
     if len(lsts) != len(txts):
         print("Lengths are different.")
         return
     for i in range(len(lsts)):
-        update_lst2txt(lsts[i], txts[i], origin_candidates)
+        update_lst2txt(lsts[i], txts[i], candidate_lst)
 
 def word_count(txt_name):
     count = 0
