@@ -59,7 +59,6 @@ for i in range(len(group_txt_lst)):
 
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
-classified_words_txt = os.path.join(cwd,'classified_words.txt')
 classified_words_lst = []
 unclassified_words_lst = []
 
@@ -123,6 +122,8 @@ if len(retry_lst) <= len(retry_completed_lst):
 pronounciation_lst = []
 for group in group_txt_lst:
     group_txt = os.path.join(cwd, group)
+    if not os.path.isfile(group_txt):
+        continue
     with open(group_txt, 'r', encoding='utf-8') as f:
         while True:
             line = f.readline()
@@ -202,7 +203,7 @@ if len(first_input) == 0:
     input_retry = False 
     groups = group_txt_lst
     one_to_one_mode = True
-elif not first_input[0].lower() in ['a','d','k','c','e','j','p','r','v','h'] and first_input[0].lower() != 'x':
+elif not first_input[0].lower() in ['a','d','k','c','e','j','p','r','v','h','x']:
     input_retry = False
     groups = group_txt_lst
 else:
@@ -262,7 +263,7 @@ elif first_input == 'r':
             origin_index = origin_candidates.index(origin)
             answers.append(answer_candidates[origin_index])
         except:
-            raise Exception(f"{origin} is not included in Groups 1.txt, ...")
+            raise Exception(f"{origin} is not included in groups, ...")
 else:
     for group in groups:
         filename = os.path.join(cwd, group)
@@ -297,12 +298,8 @@ while origins:
     answer = answers[rand_index].strip()
     is_katakana = func.is_katakana(origin)
     classified_name = ""
-
-    try_again = ""
-    if origin in retry_lst:
-        try_again = "(retry)"
     print_reverse = False
-        
+    
     if one_to_one_mode and one_to_one_indicator %2 == 1 and len(unclassified_words_lst) > 0:
         tmp_rand_index = random.randrange(len(unclassified_words_lst))
         rand_index = origins.index(unclassified_words_lst[tmp_rand_index])
@@ -349,6 +346,10 @@ while origins:
             print_reverse = True
 
 
+    try_again = ""
+    if origin in retry_lst:
+        try_again = " - (retry)"
+    
     one_to_one_indicator = (one_to_one_indicator+1)%2
     if func.contains_kanji(origin):
         pronounciation = answer.split()[0].strip()
@@ -356,23 +357,25 @@ while origins:
         pronounciation = origin
 
     if is_katakana:
-        print(f"{answer}", end=" ")
+        print(f"{answer}{try_again}", end=" ")
         input_X = input()
-        print(f"{origin} {classified_name}{try_again}", end=" ")
+        print(f"{origin} {classified_name}", end=" ")
     elif print_reverse:
-        if func.contains_kanji(origin) and func.count_in_lst(pronounciation,pronounciation_lst) > 2:
+        if func.contains_kanji(origin) and func.count_in_lst(pronounciation,pronounciation_lst) <= 2:
             ans_split_index = answer.find(" ")
-            print(f"{answer[:ans_split_index].strip()}", end=" ")
+            print(f"{answer[:ans_split_index].strip()}{try_again}", end=" ")
             input_X = input()
-            print(f"{origin} {answer[ans_split_index:].strip()} {classified_name}{try_again}", end=" ")
+            print(f"{origin} {answer[ans_split_index:].strip()} {classified_name}", end=" ")
         else:
-            print(f"{origin}", end=" ")
+            print(f"{origin}{try_again}", end=" ")
             input_X = input()
-            print(f"{answer} {classified_name}{try_again}", end=" ")
+            print(f"{answer} {classified_name}", end=" ")
     else:
-        print(f"{origin}", end=" ")
+        print(f"{origin}{try_again}", end=" ")
         input_X = input()
-        print(f"{answer} {classified_name}{try_again}", end=" ")
+        print(f"{answer} {classified_name}", end=" ")
+
+
     if input_X.lower() == 'x':
         print()
         break
@@ -393,7 +396,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -411,7 +415,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -429,7 +434,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -447,7 +453,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -465,7 +472,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -483,7 +491,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -501,7 +510,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -519,7 +529,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -537,7 +548,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
@@ -555,7 +567,8 @@ while origins:
                     unclassified_words_lst.remove(origin)
                 except:
                     pass
-                classified_words_lst.append(origin)
+                if not origin in classified_words_lst:
+                    classified_words_lst.append(origin)
 
             if not origin in todays_retry:
                 completed_words_lst.append(origin)
