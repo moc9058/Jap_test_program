@@ -1,7 +1,17 @@
 import os
 import functions as func
+
+cwd = os.getcwd()
 groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
-    
+retry_txt = os.path.join(cwd,'classified','retry.txt')
+retry_lst = []
+with open(retry_txt, 'r', encoding='utf-8') as f:
+    while True:
+        line = f.readline()
+        if not line: break
+        line = line.strip()
+        retry_lst.append(line)
+
 def automatic_dup_detect(groups):
     cwd = os.getcwd()
     cumulative_lengths = []
@@ -87,13 +97,16 @@ def contains_word_groups(word, groups):
                     continue
                 origin = splitted_line[0].strip()
                 answer = splitted_line[1].strip()
+                retry_string = ""
+                if origin in retry_lst:
+                    retry_string = " - (retry)"
                 if contains_word(word, origin):
-                    print(f"({group}) {origin}: {answer}")
+                    print(f"({group}) {origin}: {answer}{retry_string}")
                     found = True
                 elif not func.contains_kanji(word):
                     # if not func.is_kanji_word(origin):
                     if contains_word(word, func.extract_pronounciations(line)):
-                        print(f"({group}) {origin}: {answer}")
+                        print(f"({group}) {origin}: {answer}{retry_string}")
                         found = True
                 
     if not found:

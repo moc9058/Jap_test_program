@@ -298,7 +298,7 @@ while origins:
     answer = answers[rand_index].strip()
     is_katakana = func.is_katakana(origin)
     classified_name = ""
-    print_reverse = False
+    print_reverse = not func.is_kanji_word(origin)
     
     if one_to_one_mode and one_to_one_indicator %2 == 1 and len(unclassified_words_lst) > 0:
         tmp_rand_index = random.randrange(len(unclassified_words_lst))
@@ -306,6 +306,7 @@ while origins:
         origin = origins[rand_index].strip()
         answer = answers[rand_index].strip()
         is_katakana = func.is_katakana(origin)
+        print_reverse = not func.is_kanji_word(origin)
     else:
         classified_lst = []
         if origin in adverb_lst:
@@ -344,6 +345,7 @@ while origins:
             classified_lst = verb_lst
             classified_name = '(verbs.txt)'
             print_reverse = True
+
 
 
     try_again = ""
@@ -574,7 +576,7 @@ while origins:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
                 del answers[rand_index]
-        else:
+        elif not input_X.lower() == 'n':
             if not is_katakana:
                 if not origin in retry_lst:
                     retry_lst.append(origin)
