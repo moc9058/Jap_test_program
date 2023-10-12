@@ -17,7 +17,7 @@ def merge_txts(txts_lst, new_txt):
 def is_kanji_word(string):
     # Assume string is either hiragana, katakana, and kanji
     for i in range(len(string)):
-        if not is_kanji(string[i]):
+        if not is_kanji(string[i]) and string[i] != '～':
             return False
     return True
 
@@ -135,7 +135,9 @@ def is_kanji(char):
         return True
     elif ord(char) >= 12541 and ord(char) < 65288:
         return True
-    elif ord(char) >= 65290:
+    elif ord(char) >= 65290 and ord(char) < 65374:
+        return True
+    elif ord(char) >= 65375:
         return True
     else:
         return False
@@ -202,9 +204,9 @@ def copy_txt2lst_combined(lsts, txts, candidate_lst):
     for i in range(len(lsts)):
         copy_txt2lst(lsts[i],txts[i], candidate_lst)
 
-def update_lst2txt(lst, txt, candidate_lst):
+def update_lst2txt(lst, txt, candidate_lst, mode = 0):
     tmp_lst = lst.copy()
-    if os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt':
+    if (os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt') and mode == 0:
         txt_lst = []
         with open(txt, 'r', encoding='utf-8') as f:
             while True:
@@ -221,7 +223,7 @@ def update_lst2txt(lst, txt, candidate_lst):
     for i in range(len(tmp_tmp_lst)-1):
         if tmp_tmp_lst[i] == tmp_tmp_lst[i+1]:
             tmp_lst.remove(tmp_tmp_lst[i])
-            
+    
     with open(txt,'w',encoding='utf-8') as f:
         while tmp_lst:
             word = tmp_lst.pop(0).strip()

@@ -71,7 +71,8 @@ retry_completed_lst = []
 func.copy_txt2lst_combined(classified_lsts, classified_txts, origin_candidates)
 func.copy_txt2lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
-
+print(func.contains_kanji('～より'))
+print(ord('～'))
 # with open(os.path.join(cwd,'remote.ipynb'), 'w') as f:
 #     f.write("{\n")
 #     f.write(" \"cells\": [\n")

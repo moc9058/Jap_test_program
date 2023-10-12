@@ -376,14 +376,19 @@ while origins:
         print(f"{origin}{try_again}", end=" ")
         input_X = input()
         print(f"{answer} {classified_name}", end=" ")
-
-
+    
+    if len(input_X) > 1:
+        input_X = input_X[0]
     if input_X.lower() == 'x':
         print()
         break
     time.sleep(0.5)
     if not input_retry:
         input_X = input()
+        input_Y = ""
+        if len(input_X) > 1:
+            input_Y = input_X[1]
+            input_X = input_X[0]
         if input_X.lower() == 'x':
             break
         elif input_X.lower() == 'v':
@@ -582,14 +587,23 @@ while origins:
                     retry_lst.append(origin)
                 if not origin in todays_retry:
                     todays_retry.append(origin)
+
+        if input_Y:
+            break
     elif first_input == 'r':
         input_X = input()
         if input_X.lower() == 'x':
             break
-        elif input_X == '2' or input_X.lower() in ['o','a','v','d','h','c','d','k','e','j','p']:
+        elif input_X.lower() in ['o','a','v','d','h','c','d','k','e','j','p']:
             retry_completed_lst.append(origins[rand_index])
             del origins[rand_index]
             del answers[rand_index]
+        elif input_X.lower() == '2':
+            retry_lst.remove('藁')
+            retry_completed_lst.append(origins[rand_index])
+            del origins[rand_index]
+            del answers[rand_index]
+
     else:
         input_X = input()
         if input_X.lower() == 'x':
@@ -609,6 +623,8 @@ if not input_retry:
                     f.write(word+"\n")
                     break
 elif first_input == 'r':
+    func.update_lst2txt(retry_lst, retry_txt, origin_candidates, mode=1)
+    print('藁' in retry_lst)
     func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()

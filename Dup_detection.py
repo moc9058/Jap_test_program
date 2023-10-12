@@ -116,7 +116,8 @@ def real_time_dup_detect(groups):
         word = input()
         if not word:
             break
-        elif word.lower() == 'x':
+        word = word.strip()
+        if word.lower() == 'x':
             break
         else:
             contains_word_groups(word, groups)
