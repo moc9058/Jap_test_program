@@ -60,7 +60,8 @@ for i in range(len(group_txt_lst)):
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
 classified_words_lst = []
-unclassified_words_lst = []
+probably_not_verb_lst = []
+probably_verb_lst = []
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -110,7 +111,15 @@ for append_lst in append_lsts:
     classified_words_lst.extend(append_lst)
 for word in origin_candidates:
     if not word in classified_words_lst:
-        unclassified_words_lst.append(word)
+        if not func.not_verb(word):
+            probably_verb_lst.append(word)
+        else:
+            probably_not_verb_lst.append(word)
+
+random.shuffle(probably_verb_lst)
+random.shuffle(probably_not_verb_lst)
+
+unclassified_words_lst = probably_verb_lst
 
 # Iniatiate retry_completed_lst
 if len(retry_lst) <= len(retry_completed_lst):
@@ -289,6 +298,9 @@ else:
 
 one_to_one_indicator = 0
 while origins:
+    if len(probably_not_verb_lst) != 0 and len(unclassified_words_lst) == 0:
+        unclassified_words_lst = probably_not_verb_lst
+
     if not input_retry:
         print(f"(origin: {len(origins)}, completed: {len(completed_words_lst)}, total: {len(origins)+len(completed_words_lst)})", end=" ")
     else:
@@ -300,7 +312,7 @@ while origins:
     classified_name = ""
     print_reverse = not func.is_kanji_word(origin)
     
-    if one_to_one_mode and one_to_one_indicator %2 == 1 and len(unclassified_words_lst) > 0:
+    if one_to_one_mode and one_to_one_indicator %2 == 1 and len(probably_not_verb_lst) > 0 and not input_retry:
         tmp_rand_index = random.randrange(len(unclassified_words_lst))
         rand_index = origins.index(unclassified_words_lst[tmp_rand_index])
         origin = origins[rand_index].strip()
@@ -347,6 +359,11 @@ while origins:
             print_reverse = True
 
 
+    try:
+        origin_to_print = origin[:origin.index('（')]
+    except:
+        origin_to_print = origin
+
 
     try_again = ""
     if origin in retry_lst:
@@ -361,19 +378,19 @@ while origins:
     if is_katakana:
         print(f"{answer}{try_again}", end=" ")
         input_X = input()
-        print(f"{origin} {classified_name}", end=" ")
+        print(f"{origin_to_print} {classified_name}", end=" ")
     elif print_reverse:
         if func.contains_kanji(origin) and func.count_in_lst(pronounciation,pronounciation_lst) <= 2:
             ans_split_index = answer.find(" ")
             print(f"{answer[:ans_split_index].strip()}{try_again}", end=" ")
             input_X = input()
-            print(f"{origin} {answer[ans_split_index:].strip()} {classified_name}", end=" ")
+            print(f"{origin_to_print} {answer[ans_split_index:].strip()} {classified_name}", end=" ")
         else:
-            print(f"{origin}{try_again}", end=" ")
+            print(f"{origin_to_print}{try_again}", end=" ")
             input_X = input()
             print(f"{answer} {classified_name}", end=" ")
     else:
-        print(f"{origin}{try_again}", end=" ")
+        print(f"{origin_to_print}{try_again}", end=" ")
         input_X = input()
         print(f"{answer} {classified_name}", end=" ")
     
@@ -599,7 +616,7 @@ while origins:
             del origins[rand_index]
             del answers[rand_index]
         elif input_X.lower() == '2':
-            retry_lst.remove('藁')
+            retry_lst.remove(origin)
             retry_completed_lst.append(origins[rand_index])
             del origins[rand_index]
             del answers[rand_index]
@@ -624,7 +641,6 @@ if not input_retry:
                     break
 elif first_input == 'r':
     func.update_lst2txt(retry_lst, retry_txt, origin_candidates, mode=1)
-    print('藁' in retry_lst)
     func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()
@@ -637,4 +653,4 @@ print(func.word_count_combined(append_txts), func.word_count(last_test))
 print(func.properly_included(append_txts,last_test))
 
 print(f"Classified words: {len(classified_words_lst)}")
-print(f"Unlassified words: {len(unclassified_words_lst)}")
+print(f"Unlassified words: {len(probably_verb_lst) + len(probably_not_verb_lst)}")
