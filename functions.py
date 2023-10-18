@@ -129,7 +129,9 @@ def is_katakana(string):
 
 def is_kanji(char):
     # Assume char is either hiragana, katakana, and kanji
-    if ord(char) < 12353:
+    if ord(char) < 12289:
+        return True
+    elif ord(char) >= 12290 and ord(char) < 12353:
         return True
     elif ord(char) >= 12439 and ord(char) < 12449:
         return True

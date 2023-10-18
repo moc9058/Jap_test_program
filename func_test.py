@@ -1,4 +1,5 @@
 import os
+import glob
 import functions as func
 
 cwd = os.getcwd()
@@ -71,15 +72,12 @@ retry_completed_lst = []
 func.copy_txt2lst_combined(classified_lsts, classified_txts, origin_candidates)
 func.copy_txt2lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
-for i in range(len(origin_candidates)):
-    origin = origin_candidates[i]
-    answer = answer_candidates[i]
-    if func.contains_kanji(origin):
-        pronounciation = answer.split()[0].strip()
-    else:
-        pronounciation = origin
-    if '、' in pronounciation:
-        print(origin)
+
+save_folder = os.path.join(cwd,'test_log')
+date_files = sorted(glob.glob(os.path.join(save_folder,"*.txt")))
+# Extract completed_words_lst
+completed_words_lst = []
+print(func.is_kanji_word('富豪'))
 # with open(os.path.join(cwd,'remote.ipynb'), 'w') as f:
 #     f.write("{\n")
 #     f.write(" \"cells\": [\n")
