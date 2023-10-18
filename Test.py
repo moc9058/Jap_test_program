@@ -615,12 +615,17 @@ while origins:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
                 del answers[rand_index]
-        elif not input_X.lower() == 'n':
+        elif not input_X.lower() == 'r':
             if not (origin in pure_kanji_lst or origin in diff_kanji_lst):
                 if not origin in retry_lst:
                     retry_lst.append(origin)
                 if not origin in todays_retry:
                     todays_retry.append(origin)
+        else:
+            if not origin in retry_lst:
+                retry_lst.append(origin)
+            if not origin in todays_retry:
+                todays_retry.append(origin)
 
         if input_Y:
             break
@@ -661,7 +666,7 @@ elif first_input == 'r':
     func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 print()
-func.seperation(['人','大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
+# func.seperation(['人','大'], hononyms_txt,[adverbs_txt, diff_kanjis_txt, etc_txt])
 
 last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
 func.print_word_duplicated_combined(classified_txts)
@@ -671,3 +676,4 @@ print(func.properly_included(append_txts,last_test))
 
 print(f"Classified words: {len(classified_words_lst)}")
 print(f"Unlassified words: {len(probably_verb_lst) + len(probably_not_verb_lst)}")
+print(f"Total: {len(classified_words_lst) + len(probably_verb_lst) + len(probably_not_verb_lst)}")
