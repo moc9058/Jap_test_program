@@ -203,7 +203,6 @@ if len(date_files) > 0:
 
 # Initiate program!
 func.update_lst2txt(retry_lst, retry_txt, origin_candidates)
-todays_retry = []
 print('Do you want to test retry words? Default is \"NO\" and applying 1:1 mode.')
 print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
@@ -453,10 +452,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X.lower() == 'a':
                 try:
                     classified_lst.remove(origin)
@@ -472,10 +470,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X.lower() == 'd':
                 try:
                     classified_lst.remove(origin)
@@ -491,12 +488,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    if not origin in retry_lst:
-                        del origins[rand_index]
-                        del answers[rand_index]
-
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X.lower() == 'k':
                 try:
                     classified_lst.remove(origin)
@@ -512,10 +506,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X.lower() == 'c':
                 try:
                     classified_lst.remove(origin)
@@ -531,10 +524,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X.lower() == 'e':
                 try:
                     classified_lst.remove(origin)
@@ -550,10 +542,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X.lower() == 'j':
                 try:
                     classified_lst.remove(origin)
@@ -569,10 +560,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X.lower() == 'p':
                 try:
                     classified_lst.remove(origin)
@@ -588,11 +578,9 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    if not origin in retry_lst:
-                        del origins[rand_index]
-                        del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif input_X == '2' or input_X.lower() == 'o':
                 try:
                     classified_lst.remove(origin)
@@ -608,21 +596,16 @@ try:
                     if not origin in classified_words_lst:
                         classified_words_lst.append(origin)
 
-                if not origin in todays_retry:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+                completed_words_lst.append(origin)
+                del origins[rand_index]
+                del answers[rand_index]
             elif not input_X.lower() == 'r':
                 if not (origin in pure_kanji_lst or origin in diff_kanji_lst):
                     if not origin in retry_lst:
                         retry_lst.append(origin)
-                    if not origin in todays_retry:
-                        todays_retry.append(origin)
             else:
                 if not origin in retry_lst:
                     retry_lst.append(origin)
-                if not origin in todays_retry:
-                    todays_retry.append(origin)
 
             if input_Y:
                 break
