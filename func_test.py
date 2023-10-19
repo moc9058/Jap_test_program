@@ -8,6 +8,19 @@ group_txt_lst = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt']
 group_1_txt = os.path.join(cwd,'Group 1.txt')
 group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
+group_4_txt = os.path.join(cwd,'Group 4.txt')
+
+func.txt_sort(group_1_txt)
+
+if os.path.isfile(group_2_txt):
+    func.txt_sort(group_2_txt)
+
+if os.path.isfile(group_3_txt):
+    func.txt_sort(group_3_txt)
+
+if os.path.isfile(group_4_txt):
+    func.txt_sort(group_4_txt)
+    
 origin_candidates = []
 answer_candidates = []
 for answer_group in group_txt_lst:
@@ -32,7 +45,6 @@ verbs_txt = os.path.join(cwd,'classified','verbs.txt')
 adverbs_txt = os.path.join(cwd,'classified','adverbs.txt')
 diff_kanjis_txt = os.path.join(cwd,'classified','diff_kanjis.txt')
 katakanas_txt = os.path.join(cwd,'classified','katakanas.txt')
-hononyms_txt = os.path.join(cwd,'classified','hononyms.txt')
 compounds_txt = os.path.join(cwd,'classified','compounds.txt')
 expressions_txt = os.path.join(cwd,'classified','expressions.txt')
 adjectives_txt = os.path.join(cwd,'classified','adjectives.txt')
@@ -44,7 +56,6 @@ verb_lst = []
 adverb_lst = []
 diff_kanji_lst = []
 katakana_lst = []
-hononym_lst = []
 compound_lst = []
 expression_lst = []
 adjective_lst = []
@@ -52,16 +63,16 @@ pure_kanji_lst = []
 etc_lst = []
 
 classified_txts = [retry_txt, verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-                  hononyms_txt, compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
+                  compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
                   etc_txt]
 classified_lsts = [retry_lst, verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-                  hononym_lst, compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
+                  compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
                   etc_lst]
 append_txts = [verbs_txt, adverbs_txt, diff_kanjis_txt, katakanas_txt,\
-              hononyms_txt, compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
+              compounds_txt, expressions_txt, adjectives_txt, pure_kanjis_txt,\
               etc_txt]
 append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-              hononym_lst, compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
+              compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
               etc_lst]
 
 
@@ -77,7 +88,7 @@ save_folder = os.path.join(cwd,'test_log')
 date_files = sorted(glob.glob(os.path.join(save_folder,"*.txt")))
 # Extract completed_words_lst
 completed_words_lst = []
-print(func.is_kanji_word('富豪'))
+print(ord('〜'))
 # with open(os.path.join(cwd,'remote.ipynb'), 'w') as f:
 #     f.write("{\n")
 #     f.write(" \"cells\": [\n")
@@ -90,7 +101,7 @@ print(func.is_kanji_word('富豪'))
 
 
 # tmp_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
-#               hononym_lst, compound_lst, expression_lst]
+#               compound_lst, expression_lst]
 
 # etc_lst.sort()
 # with open(etc_txt, 'w', encoding='utf-8') as f:

@@ -1,24 +1,54 @@
 import os
 
-cwd = os.path.join(os.getcwd(),"OneDrive","바탕 화면","test_program")
-groups = ['Group 1.txt','Group 2.txt','Group 3.txt']
-group_1 = os.path.join(cwd,'Group 1.txt')
-new_group = os.path.join(cwd,'tmp.txt')
-with open(new_group,'w',encoding='utf-8') as f1:
-    for group in groups:
-        if not os.path.isfile(os.path.join(cwd,group)):
-            continue
-        with open(os.path.join(cwd,group),'r',encoding='utf-8') as f2:
+cwd = os.getcwd()
+group_1_txt = os.path.join(cwd,'Group 1.txt')
+group_2_txt = os.path.join(cwd,'Group 2.txt')
+group_3_txt = os.path.join(cwd,'Group 3.txt')
+
+tmp = []
+with open(group_1_txt,'r',encoding='utf-8') as f1:
+    with open(group_2_txt,'r',encoding='utf-8') as f2:
+        group_1_finished = False
+        group_2_finished = False
+        line_1 = f1.readline()
+        if not line_1:
+            group_1_finished = True
+        line_2 = f2.readline()
+        if not line_2:
+            group_2_finished = True
+        
+        while not (group_1_finished or group_2_finished):
+            if line_1 < line_2:
+                tmp.append(line_1)
+                line_1 = f1.readline()
+            else:
+                tmp.append(line_2)
+                line_2 = f2.readline()
+            if not line_1:
+                group_1_finished = True
+                break
+            if not line_2:
+                group_2_finished = True
+                break
+        
+        if group_1_finished:
+            tmp.append(line_2)
             while True:
-                line = f2.readline()
-                if not line: break
-                f1.write(line)
+                line_2 = f2.readline()
+                if not line_2: break
+                tmp.append(line_2)
+        else: #group_2_finished
+            tmp.append(line_1)
+            while True:
+                line_1 = f1.readline()
+                if not line_1: break
+                tmp.append(line_1)
 
-with open(group_1, 'w', encoding='utf-8') as f1:
-    with open(new_group, 'r', encoding='utf-8') as f2:
-        while True:
-            line = f2.readline()
-            if not line: break
-            f1.write(line)
 
 
+            
+
+
+with open(group_1_txt, 'w', encoding='utf-8') as f:
+    while tmp:
+        f.write(tmp.pop(0))

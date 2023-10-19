@@ -208,7 +208,7 @@ def copy_txt2lst_combined(lsts, txts, candidate_lst):
 
 def update_lst2txt(lst, txt, candidate_lst, mode = 0):
     tmp_lst = lst.copy()
-    if (os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt') and mode == 0:
+    if mode == 0 and (os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt'):
         txt_lst = []
         with open(txt, 'r', encoding='utf-8') as f:
             while True:
