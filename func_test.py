@@ -2,7 +2,7 @@ import os
 import glob
 import functions as func
 
-cwd = os.getcwd()
+cwd = os.path.join(os.getcwd(),'Jap_test_program')
 
 group_txt_lst = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt']
 group_1_txt = os.path.join(cwd,'Group 1.txt')
