@@ -17,36 +17,79 @@ group_2_txt = os.path.join(cwd,'Group 2.txt')
 
 # Extract origins, answers
 group_txt_lst = ['Group 1.txt', 'Group 2.txt']
-group_1_origin = []
-group_1_answer = [] 
-group_2_origin = []
-group_2_answer = [] 
-group_origin_lsts = [group_1_origin, group_2_origin]
-group_answer_lsts = [group_1_answer, group_2_answer]
 origin_candidates = []
 answer_candidates = []
 
-group_1_sorted = False
-group_2_sorted = False
-for i in range(len(group_txt_lst)):
-    answer_group = group_txt_lst[i]
-    filename = os.path.join(cwd,answer_group)
+group_1_finished = False
+group_2_finished = False
+with open(os.path.join(cwd,group_txt_lst[0]), 'r', encoding='utf-8') as f1:
+    with open(os.path.join(cwd,group_txt_lst[1]), 'r', encoding='utf-8') as f2:
+        line_1 = f1.readline()
+        if not line_1:
+            group_1_finished = True
+        line_2 = f2.readline()
+        if not line_2:
+            group_2_finished = True
+        while not (group_1_finished or group_2_finished):
+            if line_1 < line_2:
+                line_1_splitted = line_1.split('/-/')
+                if len(line_1_splitted) >= 2:
+                    origin_candidates.append(line_1_splitted[0].strip())
+                    answer_candidates.append(line_1_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 1.txt: {line_1}")
+                line_1 = f1.readline()
+                if not line_1:
+                    group_1_finished = True
+            else:
+                line_2_splitted = line_2.split('/-/')
+                if len(line_2_splitted) >= 2:
+                    origin_candidates.append(line_2_splitted[0].strip())
+                    answer_candidates.append(line_2_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 2.txt: {line_2}")
+                line_2 = f2.readline()
+                if not line_2:
+                    group_2_finished = True
 
-    if not os.path.isfile(filename):
-        continue
-
-    with open(filename,'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            line = line.split('/-/')
-            if len(line) < 2:
-                print(f"Format error in {answer_group}: {line}")
-                continue
-            origin_candidates.append(line[0].strip())
-            answer_candidates.append(line[1].strip())
-    # origin_candidates.extend(group_origin_lsts[i])
-    # answer_candidates.extend(group_answer_lsts[i])
+        if group_1_finished and group_2_finished:
+            pass
+        elif group_1_finished and not group_2_finished:
+            line_2_splitted = line_2.split('/-/')
+            if len(line_2_splitted) >= 2:
+                origin_candidates.append(line_2_splitted[0].strip())
+                answer_candidates.append(line_2_splitted[1].strip())
+            else:
+                print(f"Format error in Group 1.txt: {line_2}")
+            while line_2:
+                line_2 = f2.readline()
+                if not line_2: break
+                line_2_splitted = line_2.split('/-/')
+                if len(line_2_splitted) >= 2:
+                    origin_candidates.append(line_2_splitted[0].strip())
+                    answer_candidates.append(line_2_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 2.txt: {line_2}")
+        elif not group_1_finished and group_2_finished:
+            line_1_splitted = line_1.split('/-/')
+            if len(line_1_splitted) >= 2:
+                origin_candidates.append(line_1_splitted[0].strip())
+                answer_candidates.append(line_1_splitted[1].strip())
+            else:
+                print(f"Format error in Group 1.txt: {line_1}")
+            while line_1:
+                line_1 = f1.readline()
+                if not line_1: break
+                line_1_splitted = line_1.split('/-/')
+                if len(line_1_splitted) >= 2:
+                    origin_candidates.append(line_1_splitted[0].strip())
+                    answer_candidates.append(line_1_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 1.txt: {line_1}")
+for i in range(len(origin_candidates)-1):
+    if origin_candidates[i] > origin_candidates[i+1]:
+        print("Wrong")
+print("Correct")
 
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
@@ -178,18 +221,14 @@ if len(first_input) == 0:
     input_retry = False 
     groups = group_txt_lst
     one_to_one_mode = True
-elif not first_input[0].lower() in ['a','d','k','c','e','j','p','r','v','h','x']:
-    input_retry = False
-    groups = group_txt_lst
+elif first_input[0].lower() == 'r':
+    groups = [os.path.join('classified','retry.txt')]
+    first_input = 'r'
 else:
     input_retry = True
     for i in range(len(first_input)):
         if first_input[i].lower() == 'x':
             func.update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
-            break
-        elif first_input[i].lower() == 'r':
-            groups = [os.path.join('classified','retry.txt')]
-            first_input = 'r'
             break
         elif first_input[i].lower() == 'v':
             groups.append(os.path.join('classified','verbs.txt'))

@@ -6,6 +6,7 @@ group_2_txt = os.path.join(cwd,'Group 2.txt')
 group_3_txt = os.path.join(cwd,'Group 3.txt')
 
 tmp = []
+# Assume group 1 and group 2 are not empty
 with open(group_1_txt,'r',encoding='utf-8') as f1:
     with open(group_2_txt,'r',encoding='utf-8') as f2:
         group_1_finished = False

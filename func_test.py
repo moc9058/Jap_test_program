@@ -20,7 +20,7 @@ if os.path.isfile(group_3_txt):
 
 if os.path.isfile(group_4_txt):
     func.txt_sort(group_4_txt)
-    
+
 origin_candidates = []
 answer_candidates = []
 for answer_group in group_txt_lst:
@@ -120,3 +120,31 @@ print(ord('〜'))
 # print(ord('ァ'))
 # for i in range(0,92):
 #     print(chr(12449+i))
+
+
+
+code = input()
+correct = False
+for a in range(0,10):
+    if correct: 
+        break
+    for b in range(0,10):
+        if correct: 
+            break
+        for c in range(0,10):
+            if correct: 
+                break
+            for d in range(0,10):
+                if correct: 
+                    break
+                a = str(a)
+                b = str(b)
+                c = str(c)
+                d = str(d)
+                test = a+b+c+d
+                if test == code:
+                    print("비밀번호가 맞았습니다.")
+                    correct = True
+                else:
+                    print("비밀번호가 틀렸습니다.")
+

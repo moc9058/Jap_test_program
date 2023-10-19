@@ -1,5 +1,36 @@
 import os
 
+def merge_sorted_lsts(lsts_lst):
+    def get_min_index(lst):
+        ans = 0
+        for i in range(len(lst)):
+            if lst[i] < lst[ans]:
+                ans = i
+        return ans
+    def only_one_False(bool_elem_lst):
+        ans = False
+        for bool_elem in bool_elem_lst:
+            if not bool_elem and not ans:
+                ans = True
+            elif not bool_elem and ans:
+                return False
+        return ans
+    N = len(lsts_lst)
+    indices_lst = [0]*N
+    finished_lst = []
+    for i in range(N):
+        finished_lst.append(len(lsts_lst[i]) == 0)
+    popped_elem_lst = []
+    for i in range(N):
+        if not finished_lst[i]:
+            popped_elem_lst.append(lsts_lst[i][indices_lst[i]])
+        else:
+            popped_elem_lst.append(None)
+
+    while not only_one_False(finished_lst):
+        min_index = get_min_index(popped_elem_lst)
+        
+
 def merge_txts(txts_lst, new_txt):
     if not os.path.isfile(new_txt):
         create_txt(new_txt)
@@ -21,16 +52,6 @@ def is_kanji_word(string):
             return False
     return True
 
-def count_in_lst(element, lst):
-    try:
-        begin = lst.index(element)
-        count = 1
-        for i in range(begin+1, len(lst)):
-            if element == lst[i]:
-                count += 1
-        return count
-    except:
-        return 0
 
 
 def extract_pronounciations(string):
