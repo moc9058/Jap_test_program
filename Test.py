@@ -10,7 +10,7 @@ import functions as func
 # Assume retry_txt is not sorted
 # Assume origins_candidates is sorted
             
-cwd = os.path.join(os.getcwd(),'Jap_test_program')
+cwd = os.path.join(os.getcwd())
 save_folder = os.path.join(cwd,'test_log')
 group_1_txt = os.path.join(cwd,'Group 1.txt')
 group_2_txt = os.path.join(cwd,'Group 2.txt')
