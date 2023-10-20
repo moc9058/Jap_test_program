@@ -1,45 +1,97 @@
 import os
-import glob
+import time
 import functions as func
 
 cwd = os.path.join(os.getcwd())
 save_folder = os.path.join(cwd,'test_log')
+if not os.path.exists(save_folder):
+    os.mkdir(save_folder)
 
-group_txt_lst = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt']
+# Group 1.txt is always sorted.
 group_1_txt = os.path.join(cwd,'Group 1.txt')
+# Group 2.txt always needs to be sorted.
 group_2_txt = os.path.join(cwd,'Group 2.txt')
-group_3_txt = os.path.join(cwd,'Group 3.txt')
-group_4_txt = os.path.join(cwd,'Group 4.txt')
+func.txt_sort(group_2_txt)
 
-func.txt_sort(group_1_txt)
-
-if os.path.isfile(group_2_txt):
-    func.txt_sort(group_2_txt)
-
-if os.path.isfile(group_3_txt):
-    func.txt_sort(group_3_txt)
-
-if os.path.isfile(group_4_txt):
-    func.txt_sort(group_4_txt)
-
+# Extract origins, answers
+group_txt_lst = ['Group 1.txt', 'Group 2.txt']
 origin_candidates = []
 answer_candidates = []
-for answer_group in group_txt_lst:
-    filename = os.path.join(cwd,answer_group)
 
-    if not os.path.isfile(filename):
-        continue
+group_1_finished = False
+group_2_finished = False
+with open(os.path.join(cwd,group_txt_lst[0]), 'r', encoding='utf-8') as f1:
+    with open(os.path.join(cwd,group_txt_lst[1]), 'r', encoding='utf-8') as f2:
+        line_1 = f1.readline()
+        if not line_1:
+            group_1_finished = True
+        line_2 = f2.readline()
+        if not line_2:
+            group_2_finished = True
+        while not (group_1_finished or group_2_finished):
+            if line_1 < line_2:
+                line_1_splitted = line_1.split('/-/')
+                if len(line_1_splitted) >= 2:
+                    origin_candidates.append(line_1_splitted[0].strip())
+                    answer_candidates.append(line_1_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 1.txt: {line_1}")
+                line_1 = f1.readline()
+                if not line_1:
+                    group_1_finished = True
+            else:
+                line_2_splitted = line_2.split('/-/')
+                if len(line_2_splitted) >= 2:
+                    origin_candidates.append(line_2_splitted[0].strip())
+                    answer_candidates.append(line_2_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 2.txt: {line_2}")
+                line_2 = f2.readline()
+                if not line_2:
+                    group_2_finished = True
 
-    with open(filename,'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            line = line.split('/-/')
-            if len(line) < 2:
-                print(f"Format error in {answer_group}: {line}")
-                continue
-            origin_candidates.append(line[0].strip())
-            answer_candidates.append(line[1].strip())
+        if group_1_finished and group_2_finished:
+            pass
+        elif group_1_finished and not group_2_finished:
+            line_2_splitted = line_2.split('/-/')
+            if len(line_2_splitted) >= 2:
+                origin_candidates.append(line_2_splitted[0].strip())
+                answer_candidates.append(line_2_splitted[1].strip())
+            else:
+                print(f"Format error in Group 1.txt: {line_2}")
+            while line_2:
+                line_2 = f2.readline()
+                if not line_2: break
+                line_2_splitted = line_2.split('/-/')
+                if len(line_2_splitted) >= 2:
+                    origin_candidates.append(line_2_splitted[0].strip())
+                    answer_candidates.append(line_2_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 2.txt: {line_2}")
+        elif not group_1_finished and group_2_finished:
+            line_1_splitted = line_1.split('/-/')
+            if len(line_1_splitted) >= 2:
+                origin_candidates.append(line_1_splitted[0].strip())
+                answer_candidates.append(line_1_splitted[1].strip())
+            else:
+                print(f"Format error in Group 1.txt: {line_1}")
+            while line_1:
+                line_1 = f1.readline()
+                if not line_1: break
+                line_1_splitted = line_1.split('/-/')
+                if len(line_1_splitted) >= 2:
+                    origin_candidates.append(line_1_splitted[0].strip())
+                    answer_candidates.append(line_1_splitted[1].strip())
+                else:
+                    print(f"Format error in Group 1.txt: {line_1}")
+for i in range(len(origin_candidates)-1):
+    if origin_candidates[i] >= origin_candidates[i+1]:
+        print("Something wrong with origin_candidates!")
+        print(f"{origin_candidates[i]}, {origin_candidates[i+1]}")
+
+
+retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
+retry_completed_lst = []
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -76,37 +128,79 @@ append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
               compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
               etc_lst]
 
-
-
-retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
-retry_completed_lst = []
+func.create_txt_combined(classified_txts)
+func.create_txt(retry_completed_txt)
 
 func.copy_txt2sorted_lst_combined(classified_lsts, classified_txts, origin_candidates)
 func.copy_txt2sorted_lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 
-date_files = sorted(glob.glob(os.path.join(save_folder,"*.txt")))
-is_katakana = False
+count = 10
 
-# Extract completed_words_lst
-completed_words_lst = []
-if len(date_files) > 0:
-    last_test = date_files[-1]
-    with open(last_test, 'r', encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            line = line.strip()
-            if line in origin_candidates and not line in completed_words_lst:
-                completed_words_lst.append(line)
-for i in range(len(completed_words_lst)):
-    if not completed_words_lst[i] in origin_candidates:
-        print(completed_words_lst[i])
-# completed_words_lst.sort()
-# with open(last_test, 'w', encoding='utf-8') as f:
-#     while completed_words_lst:
-#         f.write(completed_words_lst.pop(0)+'\n')
+#################################アピールポイント１#################################
+print("（アピールポイント１）")
+start_time = time.time()
+for i in range(count):
+    classified_words_lst_1 = []
+    for append_lst in append_lsts:
+        classified_words_lst_1.extend(append_lst)
+    classified_words_lst_1.sort()
+end_time = time.time()
+print(f"Basic: {(end_time - start_time)*1000/count}ms.")
 
+start_time = time.time()
+for i in range(count):
+    classified_words_lst_2 = []
+    classified_words_lst_2 = func.merge_sorted_lsts(append_lsts)
+end_time = time.time()
+print(f"Advanced: {(end_time - start_time)*1000/count}ms.")
+print()
+
+for i in range(len(classified_words_lst_1)):
+    if classified_words_lst_1[i] != classified_words_lst_2[i]:
+        print(f"{classified_words_lst_1[i]}, {classified_words_lst_2[i]}")
+
+
+
+#################################アピールポイント２#################################
+print("（アピールポイント２）")
+start_time = time.time()
+for i in range(count):
+    unclassified_words_lst = []
+    for word in origin_candidates:
+        if not word in classified_words_lst_1:
+            unclassified_words_lst.append(word)
+    unclassified_words_lst.sort()
+end_time = time.time()
+print(f"Basic: {(end_time - start_time)*1000/count}ms.")
+
+start_time = time.time()
+for i in range(count):
+    unclassified_words_lst = []
+    i = j = 0
+    while j < len(classified_words_lst_2):
+        while origin_candidates[i] == classified_words_lst_2[j]:
+            i += 1
+            j += 1
+            if j >= len(classified_words_lst_2):
+                break
+        if j >= len(classified_words_lst_2):
+            break
+        while origin_candidates[i] < classified_words_lst_2[j]:
+            unclassified_words_lst.append(origin_candidates[i])
+            i += 1
+    while i < len(classified_words_lst_2):
+        unclassified_words_lst.append(origin_candidates[i])
+        i += 1
+end_time = time.time()
+print(f"Advanced: {(end_time - start_time)*1000/count}ms.")
+
+
+
+
+
+
+    
 # print(ord('ぁ'))
 # for i in range(0,86):
 #     print(chr(12353+i))

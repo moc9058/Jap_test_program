@@ -165,7 +165,7 @@ if not classified_words_lst[i] in origin_candidates:
 #     if not word in classified_words_lst:
 #         unclassified_words_lst.append(word)
 # unclassified_words_lst.sort()
-# print(len(unclassified_words_lst))
+
 unclassified_words_lst = []
 i = j = 0
 while j < len(classified_words_lst):
@@ -706,25 +706,26 @@ elif first_input == 'r':
     func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, mode=1)
     func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
+# アピールポイント３
 # Update Group 1.txt, Group 2.txt
-# with open(group_1_txt, 'w', encoding='utf-8') as f1:
-#     with open(group_2_txt, 'w', encoding='utf-8') as f2:
-#         i = j = 0
-#         while j < len(completed_words_lst):
-#             while origin_candidates[i] == completed_words_lst[j]:
-#                 f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
-#                 i += 1
-#                 j += 1
-#                 if j >= len(completed_words_lst):
-#                     break
-#             if j >= len(completed_words_lst):
-#                     break
-#             while origin_candidates[i] < completed_words_lst[j]:
-#                 f2.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
-#                 i += 1
-#         while i < len(origin_candidates):
-#             f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
-#             i += 1
+with open(group_1_txt, 'w', encoding='utf-8') as f1:
+    with open(group_2_txt, 'w', encoding='utf-8') as f2:
+        i = j = 0
+        while j < len(classified_words_lst):
+            while origin_candidates[i] == classified_words_lst[j]:
+                f1.write(f"{origin_candidates[i]}/-/{answer_candidates[i]}\n")
+                i += 1
+                j += 1
+                if j >= len(classified_words_lst):
+                    break
+            if j >= len(classified_words_lst):
+                    break
+            while origin_candidates[i] < classified_words_lst[j]:
+                f2.write(f"{origin_candidates[i]}/-/{answer_candidates[i]}\n")
+                i += 1
+        while i < len(origin_candidates):
+            f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
+            i += 1
 
     
 
