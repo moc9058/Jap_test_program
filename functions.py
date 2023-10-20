@@ -1,9 +1,14 @@
 import os
 
 def merge_sorted_lsts(lsts_lst):
+    # Assume there exists at least one element
     def get_min_index(lst):
         ans = 0
-        for i in range(len(lst)):
+        while not lst[ans]:
+            ans += 1
+        for i in range(ans+1, len(lst)):
+            if not lst[i]:
+                continue
             if lst[i] < lst[ans]:
                 ans = i
         return ans
@@ -15,21 +20,36 @@ def merge_sorted_lsts(lsts_lst):
             elif not bool_elem and ans:
                 return False
         return ans
+    result_lst = []
     N = len(lsts_lst)
     indices_lst = [0]*N
-    finished_lst = []
-    for i in range(N):
-        finished_lst.append(len(lsts_lst[i]) == 0)
     popped_elem_lst = []
+    be_finished_lst = [False]*N
     for i in range(N):
-        if not finished_lst[i]:
+        try:
             popped_elem_lst.append(lsts_lst[i][indices_lst[i]])
-        else:
+        except:
             popped_elem_lst.append(None)
+            be_finished_lst[i] = True
 
-    while not only_one_False(finished_lst):
+    while not only_one_False(be_finished_lst):
         min_index = get_min_index(popped_elem_lst)
-        
+        result_lst.append(popped_elem_lst[min_index])
+        indices_lst[min_index] += 1
+        try:
+            popped_elem_lst[min_index] = lsts_lst[min_index][indices_lst[min_index]]
+        except:
+            popped_elem_lst[min_index] = None
+            be_finished_lst[min_index] = True
+
+    not_finished_lst_index = 0
+    for i in range(N):
+        if not be_finished_lst[i]:
+            not_finished_lst_index = i
+            break
+    result_lst.extend(lsts_lst[not_finished_lst_index][indices_lst[not_finished_lst_index]:])
+    return result_lst
+
 
 def merge_txts(txts_lst, new_txt):
     if not os.path.isfile(new_txt):
@@ -45,6 +65,7 @@ def merge_txts(txts_lst, new_txt):
     with open(new_txt,'w',encoding='utf-8') as f:
         while lst:
             f.write(lst.pop(0)+'\n')
+
 def is_kanji_word(string):
     # Assume string is either hiragana, katakana, and kanji
     for i in range(len(string)):
@@ -211,7 +232,7 @@ def properly_included(member_txt_lst, group_txt):
                     group_words.remove(line)
     return group_words
 
-def copy_txt2lst(lst,txt, candidate_lst):
+def copy_txt2sorted_lst(lst,txt, candidate_lst):
     with open(txt,'r',encoding='utf-8') as f:
         while True:
             line = f.readline()
@@ -219,15 +240,16 @@ def copy_txt2lst(lst,txt, candidate_lst):
             line = line.strip()
             if line in candidate_lst:
                 lst.append(line.strip())
+    lst.sort()
 
-def copy_txt2lst_combined(lsts, txts, candidate_lst):
+def copy_txt2sorted_lst_combined(lsts, txts, candidate_lst):
     if len(lsts) != len(txts):
         print("Lengths are different.")
         return
     for i in range(len(lsts)):
-        copy_txt2lst(lsts[i],txts[i], candidate_lst)
+        copy_txt2sorted_lst(lsts[i],txts[i], candidate_lst)
 
-def update_lst2txt(lst, txt, candidate_lst, mode = 0):
+def update_lst2sorted_txt(lst, txt, candidate_lst, mode = 0):
     tmp_lst = lst.copy()
     if mode == 0 and (os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt'):
         txt_lst = []
@@ -255,12 +277,12 @@ def update_lst2txt(lst, txt, candidate_lst, mode = 0):
             else:
                 print(f"({os.path.basename(txt)}){word} is not included in the Group.")
 
-def update_lst2txt_combined(lsts, txts, candidate_lst):
+def update_lst2sorted_txt_combined(lsts, txts, candidate_lst):
     if len(lsts) != len(txts):
         print("Lengths are different.")
         return
     for i in range(len(lsts)):
-        update_lst2txt(lsts[i], txts[i], candidate_lst)
+        update_lst2sorted_txt(lsts[i], txts[i], candidate_lst)
 
 def word_count(txt_name):
     count = 0

@@ -12,8 +12,14 @@ import functions as func
             
 cwd = os.path.join(os.getcwd())
 save_folder = os.path.join(cwd,'test_log')
+if not os.path.exists(save_folder):
+    os.mkdir(save_folder)
+
+# Group 1.txt is always sorted.
 group_1_txt = os.path.join(cwd,'Group 1.txt')
+# Group 2.txt always needs to be sorted.
 group_2_txt = os.path.join(cwd,'Group 2.txt')
+func.txt_sort(group_2_txt)
 
 # Extract origins, answers
 group_txt_lst = ['Group 1.txt', 'Group 2.txt']
@@ -87,15 +93,13 @@ with open(os.path.join(cwd,group_txt_lst[0]), 'r', encoding='utf-8') as f1:
                 else:
                     print(f"Format error in Group 1.txt: {line_1}")
 for i in range(len(origin_candidates)-1):
-    if origin_candidates[i] > origin_candidates[i+1]:
-        print("Wrong")
-print("Correct")
+    if origin_candidates[i] >= origin_candidates[i+1]:
+        print("Something wrong with origin_candidates!")
+        print(f"{origin_candidates[i]}, {origin_candidates[i+1]}")
+
 
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
-classified_words_lst = []
-probably_not_verb_lst = []
-probably_verb_lst = []
 
 retry_txt = os.path.join(cwd,'classified','retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
@@ -132,25 +136,58 @@ append_lsts = [verb_lst, adverb_lst, diff_kanji_lst, katakana_lst,\
               compound_lst, expression_lst, adjective_lst, pure_kanji_lst,\
               etc_lst]
 
-if not os.path.exists(save_folder):
-    os.mkdir(save_folder)
 func.create_txt_combined(classified_txts)
 func.create_txt(retry_completed_txt)
 
-func.copy_txt2lst_combined(classified_lsts, classified_txts, origin_candidates)
-func.copy_txt2lst(retry_completed_lst, retry_completed_txt, origin_candidates)
+func.copy_txt2sorted_lst_combined(classified_lsts, classified_txts, origin_candidates)
+func.copy_txt2sorted_lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
-# In progress
-for append_lst in append_lsts:
-    classified_words_lst.extend(append_lst)
-for word in origin_candidates:
-    if not word in classified_words_lst:
-        if not func.not_verb(word):
-            probably_verb_lst.append(word)
-        else:
-            probably_not_verb_lst.append(word)
+#################################アピールポイント１#################################
+# 単純にリストをイックステンドしてから整列するのより私の整列アルゴリズムの効率がもっと高い！
+# classified_words_lst = []
+# for append_lst in append_lsts:
+#     classified_words_lst.extend(append_lst)
+# classified_words_lst.sort()
+classified_words_lst = func.merge_sorted_lsts(append_lsts)
+for i in range(len(classified_words_lst)-1):
+    if not classified_words_lst[i] in origin_candidates:
+        print(classified_words_lst[i])
+    if classified_words_lst[i] >= classified_words_lst[i+1]:
+        print("Something wrong with classified_words_lst!")
+        print(f"{classified_words_lst[i]}, {classified_words_lst[i+1]}")
+if not classified_words_lst[i] in origin_candidates:
+    print(classified_words_lst[i])
 
-unclassified_words_lst = probably_verb_lst
+#################################アピールポイント２#################################
+# ただ各単語の分類有無を一々確認するより自分が考案したアルゴリズムが速やか！
+# unclassified_words_lst = []
+# for word in origin_candidates:
+#     if not word in classified_words_lst:
+#         unclassified_words_lst.append(word)
+# unclassified_words_lst.sort()
+# print(len(unclassified_words_lst))
+unclassified_words_lst = []
+i = j = 0
+while j < len(classified_words_lst):
+    while origin_candidates[i] == classified_words_lst[j]:
+        i += 1
+        j += 1
+        if j >= len(classified_words_lst):
+            break
+    if j >= len(classified_words_lst):
+        break
+    while origin_candidates[i] < classified_words_lst[j]:
+        unclassified_words_lst.append(origin_candidates[i])
+        i += 1
+while i < len(classified_words_lst):
+    unclassified_words_lst.append(origin_candidates[i])
+    i += 1
+
+for i in range(len(unclassified_words_lst)-1):
+    if unclassified_words_lst[i] >= unclassified_words_lst[i+1]:
+        print("Something wrong with unclassified_words_lst!")
+        print(f"{unclassified_words_lst[i]}, {unclassified_words_lst[i+1]}")
+
 
 # Iniatiate retry_completed_lst
 if len(retry_lst) <= len(retry_completed_lst):
@@ -172,10 +209,12 @@ if len(date_files) > 0:
             line = f.readline()
             if not line: break
             line = line.strip()
-            # print(line)
-            if line in origin_candidates and not line in completed_words_lst:
-                completed_words_lst.append(line)
+            completed_words_lst.append(line)
 
+for i in range(len(completed_words_lst)-1):
+    if completed_words_lst[i] >= completed_words_lst[i+1]:
+        print("Something wrong with completed_words_lst!")
+        print(f"{completed_words_lst[i]}, {completed_words_lst[i+1]}")
 # Check and extract duplicated words of completed_words_lst in classified folder.
 # ex)諮る in words and compound
 # tmp_completed_words = completed_words_lst.copy()
@@ -202,7 +241,7 @@ if len(date_files) > 0:
 
 
 # Initiate program!
-func.update_lst2txt(retry_lst, retry_txt, origin_candidates)
+# func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates)
 print('Do you want to test retry words? Default is \"NO\" and applying 1:1 mode.')
 print('A: adverbs.txt')
 print('D: diff_kanjis.txt')
@@ -229,7 +268,7 @@ else:
     input_retry = True
     for i in range(len(first_input)):
         if first_input[i].lower() == 'x':
-            func.update_lst2txt_combined(classified_lsts,classified_txts, origin_candidates)
+            func.update_lst2sorted_txt_combined(classified_lsts,classified_txts, origin_candidates)
             break
         elif first_input[i].lower() == 'v':
             groups.append(os.path.join('classified','verbs.txt'))
@@ -253,14 +292,42 @@ print()
 origins = []
 answers = []
 if not input_retry:
-    origins = origin_candidates.copy()
-    answers = answer_candidates.copy()
-    for i in range(len(completed_words_lst)):
-        word = completed_words_lst[i]
-        if word in origins:
-            j = origins.index(word)
-            del origins[j]
-            del answers[j]
+    origins = []
+    answers = []
+    i = j = 0
+    while j < len(completed_words_lst):
+        while origin_candidates[i] == completed_words_lst[j]:
+            i += 1
+            j += 1
+            if j >= len(completed_words_lst):
+                break
+        if j >= len(completed_words_lst):
+                break
+        while origin_candidates[i] < completed_words_lst[j]:
+            origins.append(origin_candidates[i])
+            answers.append(answer_candidates[i])
+            i += 1
+    while i < len(origin_candidates):
+        origins.append(origin_candidates[i])
+        answers.append(answer_candidates[i])
+        i += 1
+    for i in range(len(origins)-1):
+        if origins[i] >= origins[i+1]:
+            print("Something wrong with origins!")
+            print(f"{origins[i]}, {origins[i+1]}")
+        
+    # origins_1 = origin_candidates.copy()
+    # answers_1 = answer_candidates.copy()
+    # for i in range(len(completed_words_lst)):
+    #     word = completed_words_lst[i]
+    #     if word in origins_1:
+    #         j = origins_1.index(word)
+    #         del origins_1[j]
+    #         del answers_1[j]
+    # for i in range(len(origins)):
+    #     print(f"{origins[i]}/-/{answers[i]}")
+    
+    # raise Exception("Hi")
 elif first_input == 'r':
     with open(retry_txt,'r', encoding='utf-8') as f:
         while True:
@@ -300,26 +367,15 @@ else:
     
 
 one_to_one_indicator = 0
-unclassified_indicator = 0
+one_to_one_lst = unclassified_words_lst
 try:
     while origins:
-        # len(probably_not_verb_lst) == 0
-        if len(unclassified_words_lst) == 0 and unclassified_indicator == 0:
-            unclassified_words_lst = probably_not_verb_lst
-            unclassified_indicator = 1
-        elif len(unclassified_words_lst) == 0 and unclassified_indicator == 1:
+        if len(one_to_one_lst) == 0:
             print("All words are classified!!")
-            unclassified_words_lst = retry_lst.copy()
-            for i in range(len(adjective_lst)):
-                if not adjective_lst[i] in unclassified_words_lst:
-                    unclassified_words_lst.append(adjective_lst[i])
-            for i in range(len(adverb_lst)):
-                if not adverb_lst[i] in unclassified_words_lst:
-                    unclassified_words_lst.append(adverb_lst[i])
-            unclassified_indicator = 2
+            one_to_one_lst = func.merge_sorted_lsts([adjective_lst,adverb_lst])
 
         if not input_retry:
-            print(f"(total: {len(origins)}, unclassified: {len(probably_verb_lst) + len(probably_not_verb_lst)})", end=" ")
+            print(f"(total: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
         else:
             print(f"({len(origins)} left)", end=" ")
         rand_index = random.randrange(len(origins))
@@ -637,28 +693,43 @@ try:
         print()
 except Exception as e:
     print(e)
+
 if not input_retry:
-    func.update_lst2txt_combined(classified_lsts, classified_txts, origin_candidates)
+    func.update_lst2sorted_txt_combined(classified_lsts, classified_txts, origin_candidates)
     currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
+    completed_words_lst.sort()
     with open(currtime_txt, 'wt', encoding='utf-8') as f:
         for word in completed_words_lst:
-            for append_lst in append_lsts:
-                if word in append_lst and word in origin_candidates:
-                    f.write(word+"\n")
-                    break
+            f.write(word+"\n")
 elif first_input == 'r':
-    func.update_lst2txt(completed_words_lst, last_test, origin_candidates, mode=1)
-    func.update_lst2txt(retry_lst, retry_txt, origin_candidates, mode=1)
-    func.update_lst2txt(retry_completed_lst, retry_completed_txt, origin_candidates)
+    func.update_lst2sorted_txt(completed_words_lst, last_test, origin_candidates, mode=1)
+    func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, mode=1)
+    func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, origin_candidates)
+
+# Update Group 1.txt, Group 2.txt
+# with open(group_1_txt, 'w', encoding='utf-8') as f1:
+#     with open(group_2_txt, 'w', encoding='utf-8') as f2:
+#         i = j = 0
+#         while j < len(completed_words_lst):
+#             while origin_candidates[i] == completed_words_lst[j]:
+#                 f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
+#                 i += 1
+#                 j += 1
+#                 if j >= len(completed_words_lst):
+#                     break
+#             if j >= len(completed_words_lst):
+#                     break
+#             while origin_candidates[i] < completed_words_lst[j]:
+#                 f2.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
+#                 i += 1
+#         while i < len(origin_candidates):
+#             f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
+#             i += 1
+
+    
 
 print()
 
-last_test = sorted(glob.glob(os.path.join(save_folder,"*.txt")))[-1]
-func.print_word_duplicated_combined(classified_txts)
-
-print(func.word_count_combined(append_txts), func.word_count(last_test))
-print(func.properly_included(append_txts,last_test))
-
 print(f"Classified words: {len(classified_words_lst)}")
-print(f"Unlassified words: {len(probably_verb_lst) + len(probably_not_verb_lst)}")
-print(f"Total: {len(classified_words_lst) + len(probably_verb_lst) + len(probably_not_verb_lst)}")
+print(f"Unlassified words: {len(unclassified_words_lst)}")
+print(f"Total: {len(classified_words_lst) + len(unclassified_words_lst)}")
