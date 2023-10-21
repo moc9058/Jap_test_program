@@ -708,6 +708,7 @@ elif first_input == 'r':
 
 # アピールポイント３
 # Update Group 1.txt, Group 2.txt
+classified_words_lst.sort()
 with open(group_1_txt, 'w', encoding='utf-8') as f1:
     with open(group_2_txt, 'w', encoding='utf-8') as f2:
         i = j = 0
