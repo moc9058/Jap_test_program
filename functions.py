@@ -1,4 +1,26 @@
 import os
+import openai
+from threading import Thread
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def generate_example_sentence(word, lst, classified_name):
+    # Requires lst in order to pass a data to the main thead.
+    if classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']:
+        if word[0] == '（':
+            word = word[word.find('）')+1:]
+        elif word[0] == '～':
+            word = word[1:]
+        try:
+            response = openai.ChatCompletion.create(
+                model = "gpt-4",
+                messages=[
+                {"role": "user", "content": f"Compose a sentence using \"{word}\" without any additional explanation."}
+            ]
+            )
+            lst.append(f"（例文）\n{response['choices'][0]['message']['content']}")
+        except Exception as e:
+            print(e)
 
 def merge_sorted_lsts(lsts_lst):
     # Assume there exists at least one element

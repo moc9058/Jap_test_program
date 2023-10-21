@@ -3,8 +3,10 @@ import glob
 from datetime import datetime
 import time
 import random
+from threading import Thread
 
 import functions as func
+
 
 # Assume groups, classified units are always sorted
 # Assume retry_txt is not sorted
@@ -368,6 +370,7 @@ else:
 
 one_to_one_indicator = 0
 one_to_one_lst = unclassified_words_lst
+example_sentences_lst = []
 try:
     while origins:
         if len(one_to_one_lst) == 0:
@@ -384,7 +387,6 @@ try:
         is_katakana = func.is_katakana(origin)
         is_kanji = False
         classified_name = ""
-        print_reverse = True
         
         if one_to_one_mode and one_to_one_indicator %2 == 1 and len(unclassified_words_lst) > 0 and not input_retry:
             tmp_rand_index = random.randrange(len(unclassified_words_lst))
@@ -392,7 +394,6 @@ try:
             origin = origins[rand_index].strip()
             answer = answers[rand_index].strip()
             is_katakana = func.is_katakana(origin)
-            # print_reverse = not func.is_kanji_word(origin)
         else:
             classified_lst = []
             if origin in adverb_lst:
@@ -401,7 +402,6 @@ try:
             elif origin in diff_kanji_lst:
                 classified_lst = diff_kanji_lst
                 classified_name = '(diff_kanjis.txt)'
-                # print_reverse = False
                 is_kanji = True
             elif origin in etc_lst:
                 classified_lst = etc_lst
@@ -421,7 +421,6 @@ try:
             elif origin in pure_kanji_lst:
                 classified_lst = pure_kanji_lst
                 classified_name = '(pure_kanjis.txt)'
-                # print_reverse = False
                 is_kanji = True
             elif origin in verb_lst:
                 classified_lst = verb_lst
@@ -449,36 +448,64 @@ try:
             pronounciation = origin
 
 
-        if (is_kanji or (origin in unclassified_words_lst and func.is_kanji_word(origin))) and pronounciation_mode:
-            for i in range(len(origins)):
-                tmp_origin = origins[i]
-                tmp_answer = answers[i]
-                if i != rand_index and tmp_answer.split()[0].strip() == pronounciation:
+        # hononyms
+        answer_hononyms = ""
+        origin_count = 0
+        if is_kanji or (origin in unclassified_words_lst and func.is_kanji_word(origin)):
+            for i in range(len(origin_candidates)):
+                tmp_origin = origin_candidates[i]
+                tmp_answer = answer_candidates[i]
+                if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:    
                     if func.is_kanji_word(tmp_origin):
-                        answer = f"{answer}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+                        origin_count += 1
+                        if origin_count == 1:
+                            answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+                        else:
+                            answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+        else:
+            for i in range(len(origins)):
+                tmp_origin = origin_candidates[i]
+                tmp_answer = answer_candidates[i]
+                if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:    
+                    if tmp_origin in classified_lst:
+                        origin_count += 1
+                        if origin_count == 1:
+                            answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+                        else:
+                            answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+
+
 
         
 
-
+        thread = Thread(target=func.generate_example_sentence, args=(origin_to_print, example_sentences_lst, classified_name))
+        thread.start()
         if is_katakana:
             print(f"{origin_to_print}{try_again}", end=" ")
             input_X = input()
-            print(f"{answer} {classified_name}", end=" ")
-        elif print_reverse:
+            print(f"（正解）\n{answer} {classified_name}{answer_hononyms}")
+        elif pronounciation_mode:
             if func.contains_kanji(origin):
                 ans_split_index = answer.find(" ")
                 print(f"{answer[:ans_split_index].strip()}{try_again}", end=" ")
                 input_X = input()
-                print(f"{origin_to_print} {answer[ans_split_index:].strip()} {classified_name}", end=" ")
+                print(f"（正解）\n{origin_to_print} {answer[ans_split_index:].strip()} {classified_name}{answer_hononyms}")
             else:
                 print(f"{origin_to_print}{try_again}", end=" ")
                 input_X = input()
-                print(f"{answer} {classified_name}", end=" ")
+                print(f"（正解）\n{answer} {classified_name}{answer_hononyms}")
         else:
             print(f"{origin_to_print}{try_again}", end=" ")
             input_X = input()
-            print(f"{answer} {classified_name}", end=" ")
+            print(f"（正解）\n{answer} {classified_name}{answer_hononyms}")
         
+        
+        #################################アピールポイント３#################################
+        thread.join()
+        if example_sentences_lst:
+            print(example_sentences_lst.pop(0))
+
+
         if len(input_X) > 1:
             input_X = input_X[0]
         if input_X.lower() == 'x':
@@ -655,13 +682,10 @@ try:
                 completed_words_lst.append(origin)
                 del origins[rand_index]
                 del answers[rand_index]
-            elif not input_X.lower() == 'r':
+            elif not input_X.lower() == 'n':
                 if not (origin in pure_kanji_lst or origin in diff_kanji_lst):
                     if not origin in retry_lst:
                         retry_lst.append(origin)
-            else:
-                if not origin in retry_lst:
-                    retry_lst.append(origin)
 
             if input_Y:
                 break
@@ -706,7 +730,7 @@ elif first_input == 'r':
     func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, mode=1)
     func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, origin_candidates)
 
-# アピールポイント３
+# アピールポイント４
 # Update Group 1.txt, Group 2.txt
 classified_words_lst.sort()
 with open(group_1_txt, 'w', encoding='utf-8') as f1:
