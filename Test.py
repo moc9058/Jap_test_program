@@ -3,11 +3,15 @@ import glob
 from datetime import datetime
 import time
 import random
+import signal
 from threading import Thread
 
 import functions as func
 
 
+
+one_to_one_mode = False
+pronounciation_mode = False
 # Assume groups, classified units are always sorted
 # Assume retry_txt is not sorted
 # Assume origins_candidates is sorted
@@ -244,21 +248,21 @@ for i in range(len(completed_words_lst)-1):
 
 # Initiate program!
 # func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates)
-print('Do you want to test retry words? Default is \"NO\" and applying 1:1 mode.')
+print('Default is \"NO\" and applying 1:1 mode.')
+print('(Classified Mode)')
 print('A: adverbs.txt')
-print('D: diff_kanjis.txt')
-print('K: katakanas.txt')
 print('C: compounds.txt')
+print('D: diff_kanjis.txt')
 print('E: expressions.txt')
 print('J: adjectives.txt')
+print('K: katakanas.txt')
 print('P: pure_kanjis.txt')
-print('R: retry.txt')
 print('V: verbs.txt')
+print('(Retry Mode)')
+print('R: retry.txt')
 first_input = input()
 
 groups = []
-one_to_one_mode = False
-pronounciation_mode = True
 if len(first_input) == 0:
     input_retry = False 
     groups = group_txt_lst
@@ -369,7 +373,7 @@ else:
     
 
 one_to_one_indicator = 0
-one_to_one_lst = unclassified_words_lst
+one_to_one_lst = verb_lst
 example_sentences_lst = []
 try:
     while origins:
@@ -378,7 +382,7 @@ try:
             one_to_one_lst = func.merge_sorted_lsts([adjective_lst,adverb_lst])
 
         if not input_retry:
-            print(f"(total: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
+            print(f"(left: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
         else:
             print(f"({len(origins)} left)", end=" ")
         rand_index = random.randrange(len(origins))
@@ -388,9 +392,9 @@ try:
         is_kanji = False
         classified_name = ""
         
-        if one_to_one_mode and one_to_one_indicator %2 == 1 and len(unclassified_words_lst) > 0 and not input_retry:
-            tmp_rand_index = random.randrange(len(unclassified_words_lst))
-            rand_index = origins.index(unclassified_words_lst[tmp_rand_index])
+        if one_to_one_mode and one_to_one_indicator %2 == 1 and not input_retry:
+            tmp_rand_index = random.randrange(len(one_to_one_lst))
+            rand_index = origins.index(one_to_one_lst[tmp_rand_index])
             origin = origins[rand_index].strip()
             answer = answers[rand_index].strip()
             is_katakana = func.is_katakana(origin)
@@ -477,8 +481,8 @@ try:
 
 
         
-
-        thread = Thread(target=func.generate_example_sentence, args=(origin_to_print, example_sentences_lst, classified_name))
+        case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
+        thread = Thread(target=func.generate_example_sentence, args=(origin_to_print, example_sentences_lst, case_for_GPT))
         thread.start()
         if is_katakana:
             print(f"{origin_to_print}{try_again}", end=" ")
@@ -498,13 +502,27 @@ try:
             print(f"{origin_to_print}{try_again}", end=" ")
             input_X = input()
             print(f"（正解）\n{answer} {classified_name}{answer_hononyms}")
-        
+
         
         #################################アピールポイント３#################################
+        GPT_time_count = 0
+        try:
+            if case_for_GPT:
+                while GPT_time_count < 30:
+                    if not example_sentences_lst:
+                        time.sleep(0.1)
+                        GPT_time_count += 1
+                    else:
+                        GPT_time_count = 30
+                if not example_sentences_lst:
+                    signal.raise_signal(signal.SIGINT)
+        except KeyboardInterrupt:
+            print('（例文）\nThe connection is bad.')
+            pass
+        
         thread.join()
         if example_sentences_lst:
             print(example_sentences_lst.pop(0))
-
 
         if len(input_X) > 1:
             input_X = input_X[0]
