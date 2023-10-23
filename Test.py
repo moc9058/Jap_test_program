@@ -5,7 +5,7 @@ import time
 import random
 import signal
 import openai
-from multiprocessing import Process, Array
+from multiprocessing import Process, Value, Array
 from threading import Thread
 
 import functions as func
@@ -15,20 +15,20 @@ import functions as func
 one_to_one_mode = False
 pronounciation_mode = False
 example_sentence_array = Array('i',200)
-def generate_example_sentence(word, array, boolean = True):
-    if boolean:
-        if word[0] == '（':
-            word = word[word.find('）')+1:]
-        response = openai.ChatCompletion.create(
-            model = "gpt-4",
-            messages=[
-            {"role": "user", "content": f"Compose a Japanese sentence using \"{word}\" without any additional explanation."}
-        ]
-        )
-        content = response['choices'][0]['message']['content']
-        
-        for i in range(min(len(content),len(array))):
-            array[i] = ord(content[i])
+example_generating_pid = Value('i')
+def generate_example_sentence(word, example_sentence_array, pid_pointer):
+    pid_pointer.value = os.getpid()
+    if word[0] == '（':
+        word = word[word.find('）')+1:]
+    response = openai.ChatCompletion.create(
+        model = "gpt-4",
+        messages=[
+        {"role": "user", "content": f"Compose a Japanese sentence using \"{word}\" without any additional explanation."}
+    ]
+    )
+    content = response['choices'][0]['message']['content']
+    for i in range(min(len(content),len(example_sentence_array))):
+        example_sentence_array[i] = ord(content[i])
 
 # Assume groups, classified units are always sorted
 # Assume retry_txt is not sorted
@@ -461,6 +461,15 @@ if __name__ == '__main__':
             except:
                 origin_to_print = origin
 
+            # Multiprocessing begins
+            case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
+            case_for_GPT = True
+            if case_for_GPT:
+                example_sentence_array[0] = 0
+                process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid))
+                process.start()
+            
+
 
             try_again = ""
             if origin in retry_lst:
@@ -501,14 +510,6 @@ if __name__ == '__main__':
                                 answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
 
 
-
-            
-            case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
-            case_for_GPT = True
-            example_sentence_array[0] = 0
-            process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, case_for_GPT))
-            process.start()
-
             if is_katakana:
                 print(f"{origin_to_print}{try_again}", end=" ")
                 input_X = input()
@@ -527,16 +528,29 @@ if __name__ == '__main__':
                 print(f"{origin_to_print}{try_again}", end=" ")
                 input_X = input()
                 print(f"（正解）\n{answer} {classified_name}{answer_hononyms}")
-
             
             #################################アピールポイント３#################################
-            process.join()
-            if example_sentence_array[0] > 0:
-                example_sentence = ""
-                for i in range(len(example_sentence_array)):
-                    example_sentence += chr(example_sentence_array[i])
-                print(f"（例文）\n{example_sentence}")
+            # Wait for at most 3~4 seconds.
+            if case_for_GPT:
+                GPT_time_count = 0
+                while GPT_time_count < 6:
+                    time.sleep(0.5)
+                    GPT_time_count += 1
+                    if example_sentence_array[0]:
+                        GPT_time_count = 6
 
+                if example_sentence_array[0] > 0:
+                    example_sentence = ""
+                    for i in range(len(example_sentence_array)):
+                        example_sentence += chr(example_sentence_array[i])
+                    print(f"（例文）\n{example_sentence}")
+                try:
+                    os.kill(example_generating_pid.value, signal.SIGTERM)
+                    print("（例文）\nThere\'s a problem with GPT connection.")
+                except:
+                    pass
+                process.join()
+            
             if len(input_X) > 1:
                 input_X = input_X[0]
             if input_X.lower() == 'x':
