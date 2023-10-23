@@ -6,14 +6,13 @@ import random
 import signal
 import openai
 from multiprocessing import Process, Value, Array
-from threading import Thread
 
 import functions as func
 
 
 
-one_to_one_mode = False
-pronounciation_mode = False
+one_to_one_mode = True
+pronounciation_mode = True
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
 def generate_example_sentence(word, example_sentence_array, pid_pointer):
@@ -168,19 +167,19 @@ if __name__ == '__main__':
 
     #################################アピールポイント１#################################
     # 単純にリストをイックステンドしてから整列するのより私の整列アルゴリズムの効率がもっと高い！
-    # classified_words_lst = []
-    # for append_lst in append_lsts:
-    #     classified_words_lst.extend(append_lst)
-    # classified_words_lst.sort()
-    classified_words_lst = func.merge_sorted_lsts(append_lsts)
-    for i in range(len(classified_words_lst)-1):
-        if not classified_words_lst[i] in origin_candidates:
-            print(classified_words_lst[i])
-        if classified_words_lst[i] >= classified_words_lst[i+1]:
-            print("Something wrong with classified_words_lst!")
-            print(f"{classified_words_lst[i]}, {classified_words_lst[i+1]}")
-    if not classified_words_lst[i] in origin_candidates:
-        print(classified_words_lst[i])
+    classified_words_lst = []
+    for append_lst in append_lsts:
+        classified_words_lst.extend(append_lst)
+    classified_words_lst.sort()
+    # classified_words_lst = func.merge_sorted_lsts(append_lsts)
+    # for i in range(len(classified_words_lst)-1):
+    #     if not classified_words_lst[i] in origin_candidates:
+    #         print(classified_words_lst[i])
+    #     if classified_words_lst[i] >= classified_words_lst[i+1]:
+    #         print("Something wrong with classified_words_lst!")
+    #         print(f"{classified_words_lst[i]}, {classified_words_lst[i+1]}")
+    # if not classified_words_lst[i] in origin_candidates:
+    #     print(classified_words_lst[i])
 
     #################################アピールポイント２#################################
     # ただ各単語の分類有無を一々確認するより自分が考案したアルゴリズムが速やか！
@@ -391,7 +390,7 @@ if __name__ == '__main__':
         
 
     one_to_one_indicator = 0
-    one_to_one_lst = verb_lst
+    one_to_one_lst = retry_lst
     try:
         while origins:
             if len(one_to_one_lst) == 0:
@@ -451,7 +450,7 @@ if __name__ == '__main__':
                 elif origin in verb_lst:
                     classified_lst = verb_lst
                     classified_name = '(verbs.txt)'
-
+            one_to_one_indicator = (one_to_one_indicator+1)%2
 
             try:
                 if origin.index('（') == 0:
@@ -461,21 +460,20 @@ if __name__ == '__main__':
             except:
                 origin_to_print = origin
 
-            # Multiprocessing begins
-            case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
-            case_for_GPT = True
-            if case_for_GPT:
-                example_sentence_array[0] = 0
-                process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid))
-                process.start()
-            
 
+            # # Multiprocessing begins
+            # case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
+            # case_for_GPT = try_again == " - (retry)" and origin_count > 0
+            # if case_for_GPT:
+            #     for i in range(len(example_sentence_array)):
+            #         example_sentence_array[i] = 0
+            #     process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid))
+            #     process.start()
 
             try_again = ""
             if origin in retry_lst:
                 try_again = " - (retry)"
-            
-            one_to_one_indicator = (one_to_one_indicator+1)%2
+
             
             if func.contains_kanji(origin):
                 pronounciation = answer.split()[0].strip()
@@ -498,7 +496,7 @@ if __name__ == '__main__':
                             else:
                                 answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
             else:
-                for i in range(len(origins)):
+                for i in range(len(origin_candidates)):
                     tmp_origin = origin_candidates[i]
                     tmp_answer = answer_candidates[i]
                     if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:    
@@ -508,6 +506,14 @@ if __name__ == '__main__':
                                 answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
                             else:
                                 answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+
+            # Multiprocessing begins
+            case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
+            if case_for_GPT:
+                for i in range(len(example_sentence_array)):
+                    example_sentence_array[i] = 0
+                process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid))
+                process.start()
 
 
             if is_katakana:
@@ -539,16 +545,18 @@ if __name__ == '__main__':
                     if example_sentence_array[0]:
                         GPT_time_count = 6
 
+                try:
+                    os.kill(example_generating_pid.value, signal.SIGTERM)
+                except:
+                    pass
+                
                 if example_sentence_array[0] > 0:
                     example_sentence = ""
                     for i in range(len(example_sentence_array)):
                         example_sentence += chr(example_sentence_array[i])
                     print(f"（例文）\n{example_sentence}")
-                try:
-                    os.kill(example_generating_pid.value, signal.SIGTERM)
+                else:
                     print("（例文）\nThere\'s a problem with GPT connection.")
-                except:
-                    pass
                 process.join()
             
             if len(input_X) > 1:
@@ -736,10 +744,13 @@ if __name__ == '__main__':
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
-                elif not input_X.lower() == 'n':
+                elif not (input_X.lower() == 'n' or input_X.lower() == 'r'):
                     if not (origin in pure_kanji_lst or origin in diff_kanji_lst):
                         if not origin in retry_lst:
                             retry_lst.append(origin)
+                elif input_X.lower() == 'r':
+                    if not origin in retry_lst:
+                        retry_lst.append(origin)
 
                 if input_Y:
                     break
@@ -771,6 +782,8 @@ if __name__ == '__main__':
             print()
     except Exception as e:
         print(e)
+    except KeyboardInterrupt as i:
+        print(i)
 
     if not input_retry:
         func.update_lst2sorted_txt_combined(classified_lsts, classified_txts, origin_candidates)

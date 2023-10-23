@@ -135,7 +135,7 @@ func.copy_txt2sorted_lst_combined(classified_lsts, classified_txts, origin_candi
 func.copy_txt2sorted_lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 
-count = 10
+count = 100
 
 #################################アピールポイント１#################################
 print("（アピールポイント１）")
@@ -164,16 +164,18 @@ for i in range(len(classified_words_lst_1)):
 
 #################################アピールポイント２#################################
 print("（アピールポイント２）")
+classified_words_lst = classified_words_lst_1
 start_time = time.time()
 for i in range(count):
     unclassified_words_lst = []
     for word in origin_candidates:
-        if not word in classified_words_lst_1:
+        if not word in classified_words_lst:
             unclassified_words_lst.append(word)
     unclassified_words_lst.sort()
 end_time = time.time()
 print(f"Basic: {(end_time - start_time)*1000/count}ms.")
 
+classified_words_lst = classified_words_lst_2
 start_time = time.time()
 for i in range(count):
     unclassified_words_lst = []
