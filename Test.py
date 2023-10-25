@@ -278,7 +278,7 @@ if __name__ == '__main__':
     print('(Retry Mode)')
     print('R: retry.txt')
     first_input = input()
-
+    input_retry = True
     groups = []
     if len(first_input) == 0:
         input_retry = False 
@@ -288,7 +288,14 @@ if __name__ == '__main__':
         groups = [os.path.join('classified','retry.txt')]
         first_input = 'r'
     else:
-        input_retry = True
+        first_input_alphabets = []
+        for i in range(len(first_input)):
+            if not first_input[i] in first_input_alphabets:
+                first_input_alphabets.append(first_input[i])
+        first_input = ""
+        for i in range(len(first_input_alphabets)):
+            first_input = first_input + first_input_alphabets[i]
+        
         for i in range(len(first_input)):
             if first_input[i].lower() == 'x':
                 func.update_lst2sorted_txt_combined(classified_lsts,classified_txts, origin_candidates)
@@ -390,7 +397,7 @@ if __name__ == '__main__':
         
 
     one_to_one_indicator = 0
-    one_to_one_lst = retry_lst
+    one_to_one_lst = unclassified_words_lst
     try:
         while origins:
             if len(one_to_one_lst) == 0:
