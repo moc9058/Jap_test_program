@@ -758,8 +758,35 @@ if __name__ == '__main__':
                 elif input_X.lower() == 'r':
                     if not origin in retry_lst:
                         retry_lst.append(origin)
-
-                if input_Y:
+                elif input_X.lower() == 'n' and input_Y.lower() == 'd':
+                    try:
+                        classified_lst.remove(origin)
+                    except:
+                        pass
+                    
+                    if not origin in diff_kanji_lst:
+                        diff_kanji_lst.append(origin)
+                        try:
+                            unclassified_words_lst.remove(origin)
+                        except:
+                            pass
+                        if not origin in classified_words_lst:
+                            classified_words_lst.append(origin)
+                elif input_X.lower() == 'n' and input_Y.lower() == 'p':
+                    try:
+                        classified_lst.remove(origin)
+                    except:
+                        pass
+                    
+                    if not origin in pure_kanji_lst:
+                        pure_kanji_lst.append(origin)
+                        try:
+                            unclassified_words_lst.remove(origin)
+                        except:
+                            pass
+                        if not origin in classified_words_lst:
+                            classified_words_lst.append(origin)
+                if input_X == input_Y:
                     break
             elif first_input == 'r':
                 input_X = input()
