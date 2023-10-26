@@ -402,7 +402,7 @@ if __name__ == '__main__':
         while origins:
             if len(one_to_one_lst) == 0:
                 print("All words are classified!!")
-                one_to_one_lst = func.merge_sorted_lsts([adjective_lst,adverb_lst])
+                one_to_one_lst = func.merge_sorted_lsts([adjective_lst,adverb_lst,expression_lst])
 
             if not input_retry:
                 print(f"(left: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
@@ -468,15 +468,6 @@ if __name__ == '__main__':
                 origin_to_print = origin
 
 
-            # # Multiprocessing begins
-            # case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
-            # case_for_GPT = try_again == " - (retry)" and origin_count > 0
-            # if case_for_GPT:
-            #     for i in range(len(example_sentence_array)):
-            #         example_sentence_array[i] = 0
-            #     process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid))
-            #     process.start()
-
             try_again = ""
             if origin in retry_lst:
                 try_again = " - (retry)"
@@ -515,7 +506,9 @@ if __name__ == '__main__':
                                 answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
 
             # Multiprocessing begins
-            case_for_GPT = classified_name in ['(compounds.txt))', '(verbs.txt))', '(adverb.txt))']
+            case_for_GPT = classified_name in ['(compounds.txt)', '(verbs.txt)', '(adverb.txt)', '(adjectives.txt)']
+            # case_for_GPT = True
+
             if case_for_GPT:
                 for i in range(len(example_sentence_array)):
                     example_sentence_array[i] = 0
@@ -786,8 +779,9 @@ if __name__ == '__main__':
                             pass
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
-                if input_X == input_Y:
-                    break
+                if input_X:
+                    if input_X == input_Y:
+                        break
             elif first_input == 'r':
                 input_X = input()
                 if input_X.lower() == 'x':
