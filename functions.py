@@ -4,6 +4,7 @@ import openai
 
 def merge_sorted_lsts(lsts_lst):
     # Assume there exists at least one element
+    # Assume all the elements are diffent. If duplication exists, it raises an error.
     def get_min_index(lst):
         ans = 0
         while not lst[ans]:
@@ -13,6 +14,8 @@ def merge_sorted_lsts(lsts_lst):
                 continue
             if lst[i] < lst[ans]:
                 ans = i
+            elif lst[i] == lst[ans]:
+                raise Exception(f"Duplication exists: {lst[i]}")
         return ans
     def only_one_False(bool_elem_lst):
         ans = False
