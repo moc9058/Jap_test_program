@@ -139,8 +139,9 @@ count = 100
 
 #################################アピールポイント１#################################
 print("（アピールポイント１）")
+
 start_time = time.time()
-for i in range(count):
+for i in range(1):
     classified_words_lst_1 = []
     for append_lst in append_lsts:
         classified_words_lst_1.extend(append_lst)
@@ -149,7 +150,7 @@ end_time = time.time()
 print(f"Basic: {(end_time - start_time)*1000/count}ms.")
 
 start_time = time.time()
-for i in range(count):
+for i in range(1):
     classified_words_lst_2 = []
     classified_words_lst_2 = func.merge_sorted_lsts(append_lsts)
 end_time = time.time()
@@ -164,6 +165,7 @@ for i in range(len(classified_words_lst_1)):
 
 #################################アピールポイント２#################################
 print("（アピールポイント２）")
+
 classified_words_lst = classified_words_lst_1
 start_time = time.time()
 for i in range(count):
@@ -171,7 +173,7 @@ for i in range(count):
     for word in origin_candidates:
         if not word in classified_words_lst:
             unclassified_words_lst.append(word)
-    unclassified_words_lst.sort()
+    # unclassified_words_lst.sort()
 end_time = time.time()
 print(f"Basic: {(end_time - start_time)*1000/count}ms.")
 

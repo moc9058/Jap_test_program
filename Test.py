@@ -403,6 +403,13 @@ if __name__ == '__main__':
             if len(one_to_one_lst) == 0:
                 print("All words are classified!!")
                 one_to_one_lst = func.merge_sorted_lsts([adjective_lst,adverb_lst,expression_lst])
+                for one_to_one_word in retry_lst:
+                    if not one_to_one_word in one_to_one_lst:
+                        one_to_one_lst.append(one_to_one_word)
+                one_to_one_lst.sort()
+                for i in range(len(one_to_one_lst)-1):
+                    if one_to_one_lst[i] == one_to_one_lst[i+1]:
+                        print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
 
             if not input_retry:
                 print(f"(left: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
@@ -573,7 +580,12 @@ if __name__ == '__main__':
                     input_X = input_X[0]
                 if input_X.lower() == 'x':
                     break
-                elif input_X.lower() == 'v':
+                save2completed_words_lst = True
+                if input_X.lower() == 'n' and input_Y.lower() in ['v','a','d','k','c','e','j','p','2','o']:
+                    save2completed_words_lst = False
+                    input_X = input_Y.lower()
+                    input_Y = ""
+                if input_X.lower() == 'v':
                     try:
                         classified_lst.remove(origin)
                     except:
@@ -588,7 +600,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -607,7 +619,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -626,7 +638,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -645,7 +657,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -664,7 +676,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -683,7 +695,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -702,7 +714,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -721,7 +733,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -740,7 +752,7 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                    if rand_index != -1:
+                    if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
                         del answers[rand_index]
@@ -751,34 +763,7 @@ if __name__ == '__main__':
                 elif input_X.lower() == 'r':
                     if not origin in retry_lst:
                         retry_lst.append(origin)
-                elif input_X.lower() == 'n' and input_Y.lower() == 'd':
-                    try:
-                        classified_lst.remove(origin)
-                    except:
-                        pass
-                    
-                    if not origin in diff_kanji_lst:
-                        diff_kanji_lst.append(origin)
-                        try:
-                            unclassified_words_lst.remove(origin)
-                        except:
-                            pass
-                        if not origin in classified_words_lst:
-                            classified_words_lst.append(origin)
-                elif input_X.lower() == 'n' and input_Y.lower() == 'p':
-                    try:
-                        classified_lst.remove(origin)
-                    except:
-                        pass
-                    
-                    if not origin in pure_kanji_lst:
-                        pure_kanji_lst.append(origin)
-                        try:
-                            unclassified_words_lst.remove(origin)
-                        except:
-                            pass
-                        if not origin in classified_words_lst:
-                            classified_words_lst.append(origin)
+
                 if input_X:
                     if input_X == input_Y:
                         break
