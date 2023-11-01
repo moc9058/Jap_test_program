@@ -402,7 +402,10 @@ if __name__ == '__main__':
         while origins:
             if len(one_to_one_lst) == 0:
                 print("All words are classified!!")
-                one_to_one_lst = func.merge_sorted_lsts([adjective_lst,adverb_lst,expression_lst])
+                one_to_one_lst = []
+                one_to_one_lst.extend(adjective_lst)
+                one_to_one_lst.extend(adverb_lst)
+                one_to_one_lst.extend(expression_lst)
                 for one_to_one_word in retry_lst:
                     if not one_to_one_word in one_to_one_lst:
                         one_to_one_lst.append(one_to_one_word)
@@ -412,7 +415,11 @@ if __name__ == '__main__':
                         print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
 
             if not input_retry:
-                print(f"(left: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
+                if len(unclassified_words_lst) > 0:
+                    print(f"(left: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
+                else:
+                    print(f"(left: {len(origins)})", end=" ")
+
             else:
                 print(f"({len(origins)} left)", end=" ")
             rand_index = random.randrange(len(origins))
@@ -433,37 +440,37 @@ if __name__ == '__main__':
                     origin = one_to_one_lst[tmp_rand_index]
                     answer = answer_candidates[origin_candidates.index(origin)]
                 is_katakana = func.is_katakana(origin)
-            else:
-                classified_lst = []
-                if origin in adverb_lst:
-                    classified_lst = adverb_lst
-                    classified_name = '(adverb.txt)'
-                elif origin in diff_kanji_lst:
-                    classified_lst = diff_kanji_lst
-                    classified_name = '(diff_kanjis.txt)'
-                    is_kanji = True
-                elif origin in etc_lst:
-                    classified_lst = etc_lst
-                    classified_name = '(etc.txt)'
-                elif origin in katakana_lst:
-                    classified_lst = katakana_lst
-                    classified_name = '(katakanas.txt)'
-                elif origin in compound_lst:
-                    classified_lst = compound_lst
-                    classified_name = '(compounds.txt)'
-                elif origin in expression_lst:
-                    classified_lst = expression_lst
-                    classified_name = '(expressions.txt)'
-                elif origin in adjective_lst:
-                    classified_lst = adjective_lst
-                    classified_name = '(adjectives.txt)'
-                elif origin in pure_kanji_lst:
-                    classified_lst = pure_kanji_lst
-                    classified_name = '(pure_kanjis.txt)'
-                    is_kanji = True
-                elif origin in verb_lst:
-                    classified_lst = verb_lst
-                    classified_name = '(verbs.txt)'
+            
+            classified_lst = []
+            if origin in adverb_lst:
+                classified_lst = adverb_lst
+                classified_name = '(adverb.txt)'
+            elif origin in diff_kanji_lst:
+                classified_lst = diff_kanji_lst
+                classified_name = '(diff_kanjis.txt)'
+                is_kanji = True
+            elif origin in etc_lst:
+                classified_lst = etc_lst
+                classified_name = '(etc.txt)'
+            elif origin in katakana_lst:
+                classified_lst = katakana_lst
+                classified_name = '(katakanas.txt)'
+            elif origin in compound_lst:
+                classified_lst = compound_lst
+                classified_name = '(compounds.txt)'
+            elif origin in expression_lst:
+                classified_lst = expression_lst
+                classified_name = '(expressions.txt)'
+            elif origin in adjective_lst:
+                classified_lst = adjective_lst
+                classified_name = '(adjectives.txt)'
+            elif origin in pure_kanji_lst:
+                classified_lst = pure_kanji_lst
+                classified_name = '(pure_kanjis.txt)'
+                is_kanji = True
+            elif origin in verb_lst:
+                classified_lst = verb_lst
+                classified_name = '(verbs.txt)'
             one_to_one_indicator = (one_to_one_indicator+1)%2
 
             try:
@@ -808,7 +815,7 @@ if __name__ == '__main__':
     elif first_input == 'r':
         func.update_lst2sorted_txt(completed_words_lst, last_test, origin_candidates, mode=1)
         func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, mode=1)
-        func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, origin_candidates)
+        func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, retry_lst)
 
     # アピールポイント４
     # Update Group 1.txt, Group 2.txt
