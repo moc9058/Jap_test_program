@@ -6,13 +6,13 @@ from multiprocessing import Process, Value, Array
 from threading import Thread
 
 import functions as func
-purpose = "志望動機"
+purpose = "自己PR"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 response = openai.ChatCompletion.create(
     model = "gpt-4",
     messages=[
     {"role": "user", "content": f"私は{purpose}を書いています。次の文から文法的またはニュアンス的に間違う部分を修正してください。"},
-    {"role": "user", "content": f"貴社での業務を通して、人々の生活に役立つサービスを開発したいと考えています。これまで、コンピューター工学、数学、そして統計学を積極的に学んできました。また、インターンシップで画像分類AIを扱った経験があり、データアノテーションプロセスの改善作業を行ったことがあります。私は持っている知識とプログラミングスキルを活かし、新しい技術を学び、新しいサービスを開発し、最終的には人々の生活を豊かにすることが、私が目指しているキャリアパスです。貴社が膨大なデータと先進的な通信インフラを有しているため、私の能力を最大限に活かし、自身のキャリアパスを進める理想的な場所だと感じています。それが、私が貴社を志望する理由です。"}
+    {"role": "user", "content": f"C, C++を用いて、コンピューター構造やシステム関連授業で課題を解決しました。また、Pythonを利用して画像分類AIに関するプロジェクトも行いました。"}
   ]
 )
 
