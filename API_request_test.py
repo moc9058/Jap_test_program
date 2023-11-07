@@ -6,13 +6,13 @@ from multiprocessing import Process, Value, Array
 from threading import Thread
 
 import functions as func
-purpose = "自己PR"
+purpose = "団体紹介"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 response = openai.ChatCompletion.create(
     model = "gpt-4",
     messages=[
     {"role": "user", "content": f"私は{purpose}を書いています。次の文から文法的またはニュアンス的に間違う部分を修正してください。"},
-    {"role": "user", "content": f"C, C++を用いて、コンピューター構造やシステム関連授業で課題を解決しました。また、Pythonを利用して画像分類AIに関するプロジェクトも行いました。"}
+    {"role": "user", "content": f"日韓青年パートナーシップはソウル所在大学の大学生から成り立つ学生団体であり、日韓青年の相互理解を深めるように様々なイベントを開催しております。この度、ソウルで合宿型討論会を開催します。"}
   ]
 )
 

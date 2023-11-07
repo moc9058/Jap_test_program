@@ -500,24 +500,30 @@ if __name__ == '__main__':
                 for i in range(len(origin_candidates)):
                     tmp_origin = origin_candidates[i]
                     tmp_answer = answer_candidates[i]
-                    if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:    
+                    tmp_is_completed = ""
+                    if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:
+                        if tmp_origin in completed_words_lst:
+                            tmp_is_completed = "(completed)"
                         if func.is_kanji_word(tmp_origin):
                             origin_count += 1
                             if origin_count == 1:
-                                answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+                                answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
                             else:
-                                answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+                                answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
             else:
                 for i in range(len(origin_candidates)):
                     tmp_origin = origin_candidates[i]
                     tmp_answer = answer_candidates[i]
-                    if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:    
+                    tmp_is_completed = ""
+                    if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:
+                        if tmp_origin in completed_words_lst:
+                            tmp_is_completed = "(completed)"
                         if tmp_origin in classified_lst:
                             origin_count += 1
                             if origin_count == 1:
-                                answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+                                answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
                             else:
-                                answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}"
+                                answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
 
             # Multiprocessing begins
             case_for_GPT = classified_name in ['(compounds.txt)', '(verbs.txt)', '(adverb.txt)', '(adjectives.txt)']
