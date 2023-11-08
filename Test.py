@@ -12,7 +12,7 @@ import functions as func
 
 
 one_to_one_mode = True
-one_to_one_mode_extend_num = 4
+one_to_one_mode_extend_num = 5
 pronounciation_mode = True
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
@@ -241,9 +241,9 @@ if __name__ == '__main__':
                 line = f.readline()
                 if not line: break
                 line = line.strip()
-                # if line in origin_candidates:
-                #     completed_words_lst.append(line)
-                completed_words_lst.append(line)
+                if line in origin_candidates:
+                    completed_words_lst.append(line)
+                # completed_words_lst.append(line)
 
     for i in range(len(completed_words_lst)-1):
         if completed_words_lst[i] >= completed_words_lst[i+1]:
@@ -440,7 +440,8 @@ if __name__ == '__main__':
             is_kanji = False
             classified_name = ""
             
-            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 1 and not input_retry:
+            # verb, compound, expressions
+            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [1,4] and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -451,6 +452,7 @@ if __name__ == '__main__':
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
+            # adverbs
             elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 2 and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
@@ -462,6 +464,7 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
+            # grammers in adverbs
             elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 3 and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):
@@ -601,10 +604,12 @@ if __name__ == '__main__':
             
             #################################アピールポイント３#################################
             # Wait for at most 3~4 seconds.
-            if case_for_GPT and example_generating_server_access.value == 1:
+            if case_for_GPT:
                 GPT_time_count = 0
                 while GPT_time_count < 6:
-                    time.sleep(0.5)
+                    if example_generating_server_access.value == 0:
+                        break
+                        time.sleep(0.5)
                     GPT_time_count += 1
                     if example_sentence_array[0]:
                         GPT_time_count = 6
@@ -613,14 +618,16 @@ if __name__ == '__main__':
                     os.kill(example_generating_pid.value, signal.SIGTERM)
                 except Exception as e:
                     pass
-                
-                if example_sentence_array[0] > 0:
-                    example_sentence = ""
-                    for i in range(len(example_sentence_array)):
-                        example_sentence += chr(example_sentence_array[i])
-                    print(f"（例文）\n{example_sentence}")
-                else:
-                    print("（例文）\nThere\'s a problem with GPT connection.")
+
+                # the value of example_generating_server_access can be changed
+                if example_generating_server_access.value == 1:
+                    if example_sentence_array[0] > 0:
+                        example_sentence = ""
+                        for i in range(len(example_sentence_array)):
+                            example_sentence += chr(example_sentence_array[i])
+                        print(f"（例文）\n{example_sentence}")
+                    else:
+                        print("（例文）\nThere\'s a problem with GPT connection.")
 
             try:
                 process.join()
