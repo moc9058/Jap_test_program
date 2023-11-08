@@ -40,6 +40,7 @@ if __name__ == '__main__':
 
     # Group 1.txt is always sorted.
     group_1_txt = os.path.join(cwd,'Group 1.txt')
+    func.txt_sort(group_1_txt)
     # Group 2.txt always needs to be sorted.
     group_2_txt = os.path.join(cwd,'Group 2.txt')
     func.txt_sort(group_2_txt)
@@ -232,8 +233,9 @@ if __name__ == '__main__':
                 line = f.readline()
                 if not line: break
                 line = line.strip()
-                # if line in origin_candidates:
-                completed_words_lst.append(line)
+                if line in origin_candidates:
+                    completed_words_lst.append(line)
+                # completed_words_lst.append(line)
 
     for i in range(len(completed_words_lst)-1):
         if completed_words_lst[i] >= completed_words_lst[i+1]:
@@ -405,7 +407,6 @@ if __name__ == '__main__':
                 print("All words are classified!!")
                 one_to_one_lst = []
                 one_to_one_lst.extend(verb_lst)
-                one_to_one_lst.extend(adverb_lst)
                 one_to_one_lst.extend(compound_lst)
                 for one_to_one_word in retry_lst:
                     if not one_to_one_word in one_to_one_lst:
@@ -430,7 +431,7 @@ if __name__ == '__main__':
             is_kanji = False
             classified_name = ""
             
-            if one_to_one_mode and one_to_one_indicator %2 == 1 and not input_retry:
+            if one_to_one_mode and one_to_one_indicator % 3 == 1 and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -438,8 +439,19 @@ if __name__ == '__main__':
                     answer = answers[rand_index].strip()
                 except:
                     rand_index = -1
-                    origin = one_to_one_lst[tmp_rand_index]
-                    answer = answer_candidates[origin_candidates.index(origin)]
+                    origin = one_to_one_lst[tmp_rand_index].strip()
+                    answer = answer_candidates[origin_candidates.index(origin)].strip()
+                is_katakana = func.is_katakana(origin)
+            elif one_to_one_mode and one_to_one_indicator % 3 == 2 and not input_retry:
+                tmp_rand_index = random.randrange(len(adverb_lst))
+                try:
+                    rand_index = origins.index(adverb_lst[tmp_rand_index])
+                    origin = origins[rand_index].strip()
+                    answer = answers[rand_index].strip()
+                except:
+                    rand_index = -1
+                    origin = adverb_lst[tmp_rand_index].strip()
+                    answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
             
             classified_lst = []
@@ -472,7 +484,7 @@ if __name__ == '__main__':
             elif origin in verb_lst:
                 classified_lst = verb_lst
                 classified_name = '(verbs.txt)'
-            one_to_one_indicator = (one_to_one_indicator+1)%2
+            one_to_one_indicator = (one_to_one_indicator+1)%3
 
             try:
                 if origin.index('（') == 0:
