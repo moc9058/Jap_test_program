@@ -232,6 +232,7 @@ if __name__ == '__main__':
                 line = f.readline()
                 if not line: break
                 line = line.strip()
+                # if line in origin_candidates:
                 completed_words_lst.append(line)
 
     for i in range(len(completed_words_lst)-1):
@@ -317,7 +318,7 @@ if __name__ == '__main__':
             elif first_input[i].lower() == 'p':
                 groups.append(os.path.join('classified','pure_kanjis.txt'))
     print()
-        
+    
 
     origins = []
     answers = []
@@ -403,9 +404,9 @@ if __name__ == '__main__':
             if len(one_to_one_lst) == 0:
                 print("All words are classified!!")
                 one_to_one_lst = []
-                one_to_one_lst.extend(adjective_lst)
+                one_to_one_lst.extend(verb_lst)
                 one_to_one_lst.extend(adverb_lst)
-                one_to_one_lst.extend(expression_lst)
+                one_to_one_lst.extend(compound_lst)
                 for one_to_one_word in retry_lst:
                     if not one_to_one_word in one_to_one_lst:
                         one_to_one_lst.append(one_to_one_word)
