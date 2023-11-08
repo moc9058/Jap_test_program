@@ -12,22 +12,30 @@ import functions as func
 
 
 one_to_one_mode = True
+one_to_one_mode_extend_num = 4
 pronounciation_mode = True
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
-def generate_example_sentence(word, example_sentence_array, pid_pointer):
+example_generating_server_access = Value('i')
+def generate_example_sentence(word, example_sentence_array, pid_pointer, example_generating_server_access):
     pid_pointer.value = os.getpid()
     if word[0] == '（':
         word = word[word.find('）')+1:]
-    response = openai.ChatCompletion.create(
-        model = "gpt-4",
-        messages=[
-        {"role": "user", "content": f"Compose a Japanese sentence using \"{word}\" without any additional explanation."}
-    ]
-    )
-    content = response['choices'][0]['message']['content']
-    for i in range(min(len(content),len(example_sentence_array))):
-        example_sentence_array[i] = ord(content[i])
+    try:
+        response = openai.ChatCompletion.create(
+            model = "gpt-4",
+            messages=[
+            {"role": "user", "content": f"Compose a Japanese sentence using \"{word}\" without any additional explanation."}
+        ]
+        )
+        content = response['choices'][0]['message']['content']
+        for i in range(min(len(content),len(example_sentence_array))):
+            example_sentence_array[i] = ord(content[i])
+    except Exception as e:
+        example_generating_server_access.value = 0
+        print()
+        print("Cannot access openai server.")
+        pass
 
 # Assume groups, classified units are always sorted
 # Assume retry_txt is not sorted
@@ -233,9 +241,9 @@ if __name__ == '__main__':
                 line = f.readline()
                 if not line: break
                 line = line.strip()
-                if line in origin_candidates:
-                    completed_words_lst.append(line)
-                # completed_words_lst.append(line)
+                # if line in origin_candidates:
+                #     completed_words_lst.append(line)
+                completed_words_lst.append(line)
 
     for i in range(len(completed_words_lst)-1):
         if completed_words_lst[i] >= completed_words_lst[i+1]:
@@ -408,6 +416,7 @@ if __name__ == '__main__':
                 one_to_one_lst = []
                 one_to_one_lst.extend(verb_lst)
                 one_to_one_lst.extend(compound_lst)
+                one_to_one_lst.extend(expression_lst)
                 for one_to_one_word in retry_lst:
                     if not one_to_one_word in one_to_one_lst:
                         one_to_one_lst.append(one_to_one_word)
@@ -431,7 +440,7 @@ if __name__ == '__main__':
             is_kanji = False
             classified_name = ""
             
-            if one_to_one_mode and one_to_one_indicator % 3 == 1 and not input_retry:
+            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 1 and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -442,7 +451,7 @@ if __name__ == '__main__':
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            elif one_to_one_mode and one_to_one_indicator % 3 == 2 and not input_retry:
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 2 and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
                     rand_index = origins.index(adverb_lst[tmp_rand_index])
@@ -453,7 +462,25 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 3 and not input_retry:
+                tmp_rand_index = 0
+                for i in range(len(adverb_lst)):
+                    # Grammar part
+                    if adverb_lst[i][0] == '（' or adverb_lst[i][0] == '～':
+                        tmp_rand_index = i
+                        break
+                tmp_rand_index = random.randrange(tmp_rand_index, len(adverb_lst))
+                try:
+                    rand_index = origins.index(adverb_lst[tmp_rand_index])
+                    origin = origins[rand_index].strip()
+                    answer = answers[rand_index].strip()
+                except:
+                    rand_index = -1
+                    origin = adverb_lst[tmp_rand_index].strip()
+                    answer = answer_candidates[origin_candidates.index(origin)].strip()
+                is_katakana = func.is_katakana(origin)
+            one_to_one_indicator = (one_to_one_indicator+1) % one_to_one_mode_extend_num
+
             classified_lst = []
             if origin in adverb_lst:
                 classified_lst = adverb_lst
@@ -484,7 +511,6 @@ if __name__ == '__main__':
             elif origin in verb_lst:
                 classified_lst = verb_lst
                 classified_name = '(verbs.txt)'
-            one_to_one_indicator = (one_to_one_indicator+1)%3
 
             try:
                 if origin.index('（') == 0:
@@ -531,24 +557,29 @@ if __name__ == '__main__':
                     if tmp_origin != origin and tmp_answer.split()[0].strip() == pronounciation:
                         if tmp_origin in completed_words_lst:
                             tmp_is_completed = "(completed)"
-                        if tmp_origin in classified_lst:
-                            origin_count += 1
-                            if origin_count == 1:
-                                answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
-                            else:
-                                answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
+                        # if tmp_origin in classified_lst:
+                        origin_count += 1
+                        if origin_count == 1:
+                            answer_hononyms = f"\n（同音異義語）\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
+                        else:
+                            answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
 
             # Multiprocessing begins
             case_for_GPT = classified_name in ['(compounds.txt)', '(verbs.txt)', '(adverb.txt)', '(adjectives.txt)']
+            
             # case_for_GPT = True
 
             if case_for_GPT:
                 for i in range(len(example_sentence_array)):
                     example_sentence_array[i] = 0
-                process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid))
-                process.start()
-
-
+                example_generating_server_access.value = 1
+                process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid, example_generating_server_access))
+                try:
+                    if example_generating_server_access.value == 1:
+                        process.start()
+                except Exception as e:
+                    print(e)
+                
             if is_katakana:
                 print(f"{origin_to_print}{try_again}", end=" ")
                 input_X = input()
@@ -570,7 +601,7 @@ if __name__ == '__main__':
             
             #################################アピールポイント３#################################
             # Wait for at most 3~4 seconds.
-            if case_for_GPT:
+            if case_for_GPT and example_generating_server_access.value == 1:
                 GPT_time_count = 0
                 while GPT_time_count < 6:
                     time.sleep(0.5)
@@ -580,7 +611,7 @@ if __name__ == '__main__':
 
                 try:
                     os.kill(example_generating_pid.value, signal.SIGTERM)
-                except:
+                except Exception as e:
                     pass
                 
                 if example_sentence_array[0] > 0:
@@ -590,7 +621,17 @@ if __name__ == '__main__':
                     print(f"（例文）\n{example_sentence}")
                 else:
                     print("（例文）\nThere\'s a problem with GPT connection.")
+
+            try:
                 process.join()
+            except Exception as e:
+                # print(e)
+                pass
+
+            # try:
+            #     os.kill(example_generating_pid.value, signal.SIGTERM)
+            # except Exception as e:
+            #     print(e)
             
             if len(input_X) > 1:
                 input_X = input_X[0]
@@ -821,8 +862,8 @@ if __name__ == '__main__':
             print()
     except Exception as e:
         print(e)
-    except KeyboardInterrupt as i:
-        print(i)
+    except KeyboardInterrupt as keyboard_interrupt:
+        print(keyboard_interrupt)
 
     if not input_retry:
         func.update_lst2sorted_txt_combined(classified_lsts, classified_txts, origin_candidates)
