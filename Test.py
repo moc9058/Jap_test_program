@@ -441,7 +441,7 @@ if __name__ == '__main__':
             classified_name = ""
             
             # verb, compound, expressions
-            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [1,4] and not input_retry:
+            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [4] and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -465,7 +465,7 @@ if __name__ == '__main__':
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
             # grammers in adverbs
-            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 3 and not input_retry:
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [1,3] and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):
                     # Grammar part
