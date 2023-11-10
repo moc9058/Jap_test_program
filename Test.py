@@ -815,10 +815,13 @@ if __name__ == '__main__':
                         if not origin in classified_words_lst:
                             classified_words_lst.append(origin)
 
-                if rand_index != -1 and save2completed_words_lst:
-                    completed_words_lst.append(origin)
-                    del origins[rand_index]
-                    del answers[rand_index]
+
+                if input_X.lower() in ['v','a','d','k','c','e','j','p','2','o'] or try_again == "":
+                    if rand_index != -1 and save2completed_words_lst:
+                        completed_words_lst.append(origin)
+                        del origins[rand_index]
+                        del answers[rand_index]
+
                 if save2retry_lst:
                     retry_lst.append(origin)
                     try:
@@ -828,7 +831,7 @@ if __name__ == '__main__':
 
 
                 if input_X:
-                    if input_X == input_Y:
+                    if input_X.lower() == input_Y.lower():
                         break
             elif first_input == 'r':
                 input_X = input()
@@ -863,6 +866,8 @@ if __name__ == '__main__':
 
     if not input_retry:
         func.update_lst2sorted_txt_combined(append_lsts, append_txts, origin_candidates)
+        # if retry_banned_lst:
+        #     print(retry_banned_lst)
         func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, banned_lst=retry_banned_lst)
         currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
         completed_words_lst.sort()
