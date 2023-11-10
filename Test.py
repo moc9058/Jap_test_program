@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     # Group 1.txt is always sorted.
     group_1_txt = os.path.join(cwd,'Group 1.txt')
-    func.txt_sort(group_1_txt)
+    # func.txt_sort(group_1_txt)
     # Group 2.txt always needs to be sorted.
     group_2_txt = os.path.join(cwd,'Group 2.txt')
     func.txt_sort(group_2_txt)
@@ -409,6 +409,7 @@ if __name__ == '__main__':
 
     one_to_one_indicator = 0
     one_to_one_lst = unclassified_words_lst
+    retry_banned_lst = []
     try:
         while origins:
             if len(one_to_one_lst) == 0:
@@ -655,6 +656,17 @@ if __name__ == '__main__':
                 if input_X.lower() == 'x':
                     break
                 save2completed_words_lst = True
+                # retry_lst and classified
+                if try_again != "" and classified_name != "":
+                    print("retry and classified")
+                    # At first, it gets removed from retry_lst. If you want to keep it in retry_lst, just press enter or 'r'.
+                    try:
+                        retry_lst.remove(origin)
+                    except Exception as e:
+                        print(e)
+                    retry_banned_lst.append(origin)
+                    print(retry_banned_lst)
+                    save2completed_words_lst = False
                 if input_X.lower() == 'n' and input_Y.lower() in ['v','a','d','k','c','e','j','p','2','o']:
                     save2completed_words_lst = False
                     input_X = input_Y.lower()
@@ -832,11 +844,18 @@ if __name__ == '__main__':
                         del answers[rand_index]
                 elif not (input_X.lower() == 'n' or input_X.lower() == 'r'):
                     if not (origin in pure_kanji_lst or origin in diff_kanji_lst):
-                        if not origin in retry_lst:
-                            retry_lst.append(origin)
-                elif input_X.lower() == 'r':
-                    if not origin in retry_lst:
                         retry_lst.append(origin)
+                        try:
+                            retry_banned_lst.remove(origin)
+                        except:
+                            pass
+
+                elif input_X.lower() == 'r':
+                    retry_lst.append(origin)
+                    try:
+                        retry_banned_lst.remove(origin)
+                    except:
+                        pass
 
                 if input_X:
                     if input_X == input_Y:
@@ -873,7 +892,8 @@ if __name__ == '__main__':
         print(keyboard_interrupt)
 
     if not input_retry:
-        func.update_lst2sorted_txt_combined(classified_lsts, classified_txts, origin_candidates)
+        func.update_lst2sorted_txt_combined(append_lsts, append_txts, origin_candidates)
+        func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, banned_lst=retry_banned_lst)
         currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
         completed_words_lst.sort()
         with open(currtime_txt, 'wt', encoding='utf-8') as f:

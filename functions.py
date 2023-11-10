@@ -254,7 +254,7 @@ def copy_txt2sorted_lst_combined(lsts, txts, candidate_lst):
     for i in range(len(lsts)):
         copy_txt2sorted_lst(lsts[i],txts[i], candidate_lst)
 
-def update_lst2sorted_txt(lst, txt, candidate_lst, mode = 0):
+def update_lst2sorted_txt(lst, txt, candidate_lst, mode = 0, banned_lst = []):
     tmp_lst = lst.copy()
     if mode == 0 and (os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt'):
         txt_lst = []
@@ -273,7 +273,11 @@ def update_lst2sorted_txt(lst, txt, candidate_lst, mode = 0):
     for i in range(len(tmp_tmp_lst)-1):
         if tmp_tmp_lst[i] == tmp_tmp_lst[i+1]:
             tmp_lst.remove(tmp_tmp_lst[i])
-    
+    for i in range(len(banned_lst)):
+        try:
+            tmp_lst.remove(banned_lst[i])
+        except:
+            pass
     with open(txt,'w',encoding='utf-8') as f:
         while tmp_lst:
             word = tmp_lst.pop(0).strip()
