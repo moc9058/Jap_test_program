@@ -813,7 +813,7 @@ if __name__ == '__main__':
                             classified_words_lst.append(origin)
 
 
-                if (input_X.lower() in ['v','a','d','k','c','e','j','p','2','o'] or try_again == "") and  len(classified_lst) > 0:
+                if (input_X.lower() in ['v','a','d','k','c','e','j','p','2','o'] or try_again == "") and len(classified_lst) > 0:
                     if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
