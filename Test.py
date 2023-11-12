@@ -4,12 +4,10 @@ from datetime import datetime
 import time
 import random
 import signal
-import openai
+from openai import OpenAI
 from multiprocessing import Process, Value, Array
 
 import functions as func
-
-
 
 one_to_one_mode = True
 one_to_one_mode_extend_num = 5
@@ -17,25 +15,26 @@ pronounciation_mode = True
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
 example_generating_server_access = Value('i')
+
 def generate_example_sentence(word, example_sentence_array, pid_pointer, example_generating_server_access):
     pid_pointer.value = os.getpid()
     if word[0] == '（':
         word = word[word.find('）')+1:]
     try:
-        response = openai.ChatCompletion.create(
-            model = "gpt-4",
+        client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+        completion = client.chat.completions.create(
             messages=[
             {"role": "user", "content": f"Compose a Japanese sentence using \"{word}\" without any additional explanation."}
-        ]
+            ],
+            model="gpt-4"
         )
-        content = response['choices'][0]['message']['content']
+        content = completion.choices[0].message.content
         for i in range(min(len(content),len(example_sentence_array))):
             example_sentence_array[i] = ord(content[i])
     except Exception as e:
+        print(e)
         example_generating_server_access.value = 0
-        print()
-        print("Cannot access openai server.")
-        pass
+        
 
 # Assume groups, classified units are always sorted
 # Assume retry_txt is not sorted
@@ -569,9 +568,8 @@ if __name__ == '__main__':
                             answer_hononyms = f"{answer_hononyms}\n{tmp_origin} {tmp_answer[tmp_answer.find(' ')+1:].strip()}{tmp_is_completed}"
 
             # Multiprocessing begins
-            case_for_GPT = classified_name in ['(compounds.txt)', '(verbs.txt)', '(adverb.txt)', '(adjectives.txt)']
-            
-            # case_for_GPT = True
+            # case_for_GPT = classified_name in ['(compounds.txt)', '(verbs.txt)', '(adverb.txt)', '(adjectives.txt)']
+            case_for_GPT = not classified_name in ['(diff_kanjis.txt)', '(pure_kanjis.txt)']
 
             if case_for_GPT:
                 for i in range(len(example_sentence_array)):
@@ -579,8 +577,7 @@ if __name__ == '__main__':
                 example_generating_server_access.value = 1
                 process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid, example_generating_server_access))
                 try:
-                    if example_generating_server_access.value == 1:
-                        process.start()
+                    process.start()
                 except Exception as e:
                     print(e)
                 
@@ -816,7 +813,7 @@ if __name__ == '__main__':
                             classified_words_lst.append(origin)
 
 
-                if input_X.lower() in ['v','a','d','k','c','e','j','p','2','o'] or try_again == "":
+                if (input_X.lower() in ['v','a','d','k','c','e','j','p','2','o'] or try_again == "") and  len(classified_lst) > 0:
                     if rand_index != -1 and save2completed_words_lst:
                         completed_words_lst.append(origin)
                         del origins[rand_index]
