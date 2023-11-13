@@ -452,8 +452,8 @@ if __name__ == '__main__':
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # adverbs : 20%
-            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [2] and not input_retry:
+            # adverbs : 40%
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [2,3] and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
                     rand_index = origins.index(adverb_lst[tmp_rand_index])
@@ -464,10 +464,10 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # grammers in adverbs : 20%
+            # grammers in adverbs : 0%
             elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [3] and not input_retry:
                 tmp_rand_index = 0
-                for i in range(len(adverb_lst)):
+                for i in range(len(adverb_lst)):    
                     # Grammar part
                     if adverb_lst[i][0] == '（' or adverb_lst[i][0] == '～':
                         tmp_rand_index = i
