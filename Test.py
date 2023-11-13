@@ -406,7 +406,7 @@ if __name__ == '__main__':
                 raise Exception(f"{origin} is not included in Groups 1.txt, ...")
         
 
-    one_to_one_indicator = 0
+    one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
     one_to_one_lst = unclassified_words_lst
     retry_banned_lst = []
     try:
@@ -440,8 +440,8 @@ if __name__ == '__main__':
             is_kanji = False
             classified_name = ""
             
-            # verb, compound, expressions
-            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [4] and not input_retry:
+            # verb, compound, expressions : 40%
+            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [1,4] and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -452,8 +452,8 @@ if __name__ == '__main__':
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # adverbs
-            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num == 2 and not input_retry:
+            # adverbs : 20%
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [2] and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
                     rand_index = origins.index(adverb_lst[tmp_rand_index])
@@ -464,8 +464,8 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # grammers in adverbs
-            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [1,3] and not input_retry:
+            # grammers in adverbs : 20%
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [3] and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):
                     # Grammar part
@@ -482,7 +482,8 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            one_to_one_indicator = (one_to_one_indicator+1) % one_to_one_mode_extend_num
+            # one_to_one_indicator = (one_to_one_indicator+1) % one_to_one_mode_extend_num
+            one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
 
             classified_lst = []
             if origin in adverb_lst:
