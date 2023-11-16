@@ -10,7 +10,7 @@ from multiprocessing import Process, Value, Array
 import functions as func
 
 one_to_one_mode = True
-one_to_one_mode_extend_num = 10
+one_to_one_mode_extend_num = 20
 pronounciation_mode = True
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
@@ -464,8 +464,8 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # grammers in adverbs : 0%
-            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [] and not input_retry:
+            # grammers in adverbs : 10%
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [8] and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):    
                     # Grammar part
