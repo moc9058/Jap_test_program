@@ -10,7 +10,7 @@ from multiprocessing import Process, Value, Array
 import functions as func
 
 one_to_one_mode = True
-one_to_one_mode_extend_num = 5
+one_to_one_mode_extend_num = 10
 pronounciation_mode = True
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
@@ -441,7 +441,7 @@ if __name__ == '__main__':
             classified_name = ""
             
             # verb, compound, expressions : 40%
-            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [1,4] and not input_retry:
+            if one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [1,2,3,4] and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -452,8 +452,8 @@ if __name__ == '__main__':
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # adverbs : 40%
-            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [2,3] and not input_retry:
+            # adverbs : 30%
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [5,6,7] and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
                     rand_index = origins.index(adverb_lst[tmp_rand_index])
@@ -465,7 +465,7 @@ if __name__ == '__main__':
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
             # grammers in adverbs : 0%
-            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [3] and not input_retry:
+            elif one_to_one_mode and one_to_one_indicator % one_to_one_mode_extend_num in [] and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):    
                     # Grammar part
