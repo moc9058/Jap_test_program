@@ -18,12 +18,14 @@ example_generating_server_access = Value('i')
 
 def generate_example_sentence(word, example_sentence_array, pid_pointer, example_generating_server_access):
     pid_pointer.value = os.getpid()
-    grammer_component = []
+    grammer_components = []
+    grammer_component = ""
     honorific = ""
     require_additional_sentence = False
     if word[0] == '（':
+        require_additional_sentence = True
         if word[1] in ['お','ご']:
-            honorific = ['お','ご'][random.randrange(2)] + '＋'
+            honorific = ['お','ご'][random.randrange(2)]
             word = word[word.find('）')+1:]
         grammer_components = word[1:word.find('）')].split('、')
         for i in range(len(grammer_components)):
@@ -40,33 +42,44 @@ def generate_example_sentence(word, example_sentence_array, pid_pointer, example
                 grammer_component = '名詞＋の'
             else:
                 grammer_component = grammer_component + '形'
-            grammer_components[i] = grammer_component + '＋'
+            grammer_components[i] = grammer_component
         grammer_component = grammer_components[random.randrange(len(grammer_components))]
         word = word[word.index('）')+1:]
         # （よう）が（る、ない）まいが
         if word.find('（') != -1:
             word = word[:word.find('（')] + '～' + word[word.find('）')+1:]
-        word = honorific + grammer_component + word
 
+        if honorific != "":
+            word = honorific + '＋' + grammer_component + '＋' + word
+        else:
+            word = grammer_component + '＋' + word
             
     GPT_input_sentences = [{"role": "user", "content": f"「{word}」を用いる日本語文章を作ってください。"}]
-    if require_additional_sentence > 0:
-        GPT_input_sentences.append({"role": "assistant", "content": f'文法の要素（{grammer_component}を必ず含めてください。）'})
-    try:
-        client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
-        completion = client.chat.completions.create(
-            messages=GPT_input_sentences,
-            model="gpt-4"
-        )
-        content = completion.choices[0].message.content
-        for i in range(min(len(content),len(example_sentence_array))):
-            example_sentence_array[i] = ord(content[i])
-        # test = GPT_input_sentences[0]["content"]
-        # for i in range(len(test)):
-        #     example_sentence_array[i] = ord(test[i])
-    except Exception as e:
-        print(e)
-        example_generating_server_access.value = 0
+    if require_additional_sentence:
+        GPT_input_sentences.append({"role": "user", "content": f'文法の要素（{grammer_component}を必ず含めてください。）'})
+    client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+    completion = client.chat.completions.create(
+        messages=GPT_input_sentences,
+        model="gpt-4"
+    )
+    content = completion.choices[0].message.content
+    for i in range(min(len(content),len(example_sentence_array))):
+        example_sentence_array[i] = ord(content[i])
+    # try:
+    #     # client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+    #     # completion = client.chat.completions.create(
+    #     #     messages=GPT_input_sentences,
+    #     #     model="gpt-4"
+    #     # )
+    #     # content = completion.choices[0].message.content
+    #     # for i in range(min(len(content),len(example_sentence_array))):
+    #     #     example_sentence_array[i] = ord(content[i])
+    #     test = GPT_input_sentences[0]["content"]
+    #     for i in range(len(test)):
+    #         example_sentence_array[i] = ord(test[i])
+    # except Exception as e:
+    #     print(e)
+    #     example_generating_server_access.value = 0
         
 
 # Assume groups, classified units are always sorted
