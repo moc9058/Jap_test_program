@@ -18,19 +18,52 @@ example_generating_server_access = Value('i')
 
 def generate_example_sentence(word, example_sentence_array, pid_pointer, example_generating_server_access):
     pid_pointer.value = os.getpid()
+    grammer_component = []
+    honorific = ""
+    require_additional_sentence = False
     if word[0] == '（':
-        word = word[word.find('）')+1:]
+        if word[1] in ['お','ご']:
+            honorific = ['お','ご'][random.randrange(2)] + '＋'
+            word = word[word.find('）')+1:]
+        grammer_components = word[1:word.find('）')].split('、')
+        for i in range(len(grammer_components)):
+            grammer_component = grammer_components[i]
+            if grammer_component == 'る':
+                grammer_component = '辞書形'
+            elif grammer_component == 'よう':
+                grammer_component = '意志形'
+            elif grammer_component == 'い':
+                grammer_component = 'い形容詞'
+            elif grammer_component == 'な':
+                grammer_component = 'な形容詞'
+            elif grammer_component == 'の':
+                grammer_component = '名詞＋の'
+            else:
+                grammer_component = grammer_component + '形'
+            grammer_components[i] = grammer_component + '＋'
+        grammer_component = grammer_components[random.randrange(len(grammer_components))]
+        word = word[word.index('）')+1:]
+        # （よう）が（る、ない）まいが
+        if word.find('（') != -1:
+            word = word[:word.find('（')] + '～' + word[word.find('）')+1:]
+        word = honorific + grammer_component + word
+
+            
+    GPT_input_sentences = [{"role": "user", "content": f"「{word}」を用いる日本語文章を作ってください。"}]
+    if require_additional_sentence > 0:
+        GPT_input_sentences.append({"role": "assistant", "content": f'文法の要素（{grammer_component}を必ず含めてください。）'})
     try:
         client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
         completion = client.chat.completions.create(
-            messages=[
-            {"role": "user", "content": f"Compose a Japanese sentence using \"{word}\" without any additional explanation."}
-            ],
+            messages=GPT_input_sentences,
             model="gpt-4"
         )
         content = completion.choices[0].message.content
         for i in range(min(len(content),len(example_sentence_array))):
             example_sentence_array[i] = ord(content[i])
+        # test = GPT_input_sentences[0]["content"]
+        # for i in range(len(test)):
+        #     example_sentence_array[i] = ord(test[i])
     except Exception as e:
         print(e)
         example_generating_server_access.value = 0
@@ -468,7 +501,7 @@ if __name__ == '__main__':
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
             # grammers in adverbs : 10%
-            elif one_to_one_mode and one_to_one_indicator < 16 and not input_retry:
+            elif one_to_one_mode and one_to_one_indicator < 20 and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):    
                     # Grammar part
@@ -485,6 +518,7 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
+            # others: 20%
             else:
                 rand_index = random.randrange(len(origins))
                 origin = origins[rand_index].strip()
