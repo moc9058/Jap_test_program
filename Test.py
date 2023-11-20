@@ -449,7 +449,6 @@ if __name__ == '__main__':
                 one_to_one_lst = []
                 one_to_one_lst.extend(verb_lst)
                 one_to_one_lst.extend(compound_lst)
-                one_to_one_lst.extend(expression_lst)
                 one_to_one_lst.sort()
                 for i in range(len(one_to_one_lst)-1):
                     if one_to_one_lst[i] == one_to_one_lst[i+1]:
@@ -464,8 +463,8 @@ if __name__ == '__main__':
             else:
                 print(f"({len(origins)} left)", end=" ")
             
-            # verb, compound, expressions : 35%
-            if one_to_one_mode and one_to_one_indicator < 7 and not input_retry:
+            # verb, compound : 30%
+            if one_to_one_mode and one_to_one_indicator < 6 and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -476,7 +475,19 @@ if __name__ == '__main__':
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # retry_lst : 15%
+            # expression_lst : 10%
+            elif one_to_one_mode and one_to_one_indicator < 8 and not input_retry:
+                tmp_rand_index = random.randrange(len(expression_lst))
+                try:
+                    rand_index = origins.index(expression_lst[tmp_rand_index])
+                    origin = origins[rand_index].strip()
+                    answer = answers[rand_index].strip()
+                except:
+                    rand_index = -1
+                    origin = expression_lst[tmp_rand_index].strip()
+                    answer = answer_candidates[origin_candidates.index(origin)].strip()
+                is_katakana = func.is_katakana(origin)
+            # retry_lst : 10%
             elif one_to_one_mode and one_to_one_indicator < 10 and not input_retry:
                 tmp_rand_index = random.randrange(len(retry_lst))
                 try:
@@ -488,8 +499,8 @@ if __name__ == '__main__':
                     origin = retry_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # adverbs : 20%
-            elif one_to_one_mode and one_to_one_indicator < 14 and not input_retry:
+            # adverbs : 25%
+            elif one_to_one_mode and one_to_one_indicator < 15 and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
                     rand_index = origins.index(adverb_lst[tmp_rand_index])
@@ -501,7 +512,7 @@ if __name__ == '__main__':
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
             # grammers in adverbs : 10%
-            elif one_to_one_mode and one_to_one_indicator < 20 and not input_retry:
+            elif one_to_one_mode and one_to_one_indicator < 17 and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):    
                     # Grammar part
@@ -518,7 +529,7 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # others: 20%
+            # others: 15%
             else:
                 rand_index = random.randrange(len(origins))
                 origin = origins[rand_index].strip()
