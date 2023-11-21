@@ -6,12 +6,12 @@ from multiprocessing import Process, Value, Array
 from threading import Thread
 
 import functions as func
-purpose = "お知らせ"
+purpose = "答弁"
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 completion = client.chat.completions.create(
             messages=[
 				{"role": "user", "content": f"次の{purpose}文を修正してください。"},
-				{"role": "user", "content": f"皆さん、こんばんは！担当実行委員、ひょんうです。重要なお知らせをご案内させていただきます。\n１)OT日の決定について\n日程上、OTを来週に進行することとなりました。それに伴い、OT参加可能時間帯の入力の締切を11月23日（木曜日）13時に設定します！急な進行ですみません。\n２)自己紹介シート作成について\nOTでは、行事の概要説明、自己紹介、そして事前学習日程の設定などが行われます。その中で、自己紹介についてのミッションがあります！OTの日まで下のシートを作成していただくことをお願いします！言語は日本語、韓国語どちらでも対応可能です。\n忙しい中、ご協力ありがとうございます！私たちも全力を尽くして本番を準備しておりますので、どうぞ楽しみにお待ちください。どうぞよろしくお願いします！"}
+				{"role": "user", "content": f"私が二重専攻を申し込んだ時期が2020年だったのですけど、コロナ禍後の世界では情報技術が生活に一段と浸透するはずだと思ってこれを学んでみようと思って二重専攻をし始めました。"}
             ],
             model="gpt-4"
         )
