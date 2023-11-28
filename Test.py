@@ -41,7 +41,7 @@ def generate_example_sentence(word, example_sentence_array, pid_pointer, example
             elif grammer_component == 'の':
                 grammer_component = '名詞＋の'
             else:
-                grammer_component = grammer_component + '形'
+                grammer_component = grammer_component + '形の語幹'
             grammer_components[i] = grammer_component
         grammer_component = grammer_components[random.randrange(len(grammer_components))]
         word = word[word.index('）')+1:]
@@ -373,7 +373,6 @@ if __name__ == '__main__':
             elif first_input[i].lower() == 'p':
                 groups.append(os.path.join('classified','pure_kanjis.txt'))
     print()
-    
 
     origins = []
     answers = []
@@ -524,8 +523,8 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # grammers in adverbs : 10%
-            elif one_to_one_mode and one_to_one_indicator < 17 and not input_retry:
+            # grammers in adverbs : 15%
+            elif one_to_one_mode and one_to_one_indicator < 18 and not input_retry:
                 tmp_rand_index = 0
                 for i in range(len(adverb_lst)):    
                     # Grammar part
@@ -542,7 +541,7 @@ if __name__ == '__main__':
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
                 is_katakana = func.is_katakana(origin)
-            # others: 15%
+            # others: 10%
             else:
                 rand_index = random.randrange(len(origins))
                 origin = origins[rand_index].strip()
