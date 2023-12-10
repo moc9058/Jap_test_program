@@ -10,8 +10,8 @@ purpose = "答弁"
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 completion = client.chat.completions.create(
             messages=[
-				{"role": "user", "content": f"次の{purpose}文を修正してください。"},
-				{"role": "user", "content": f"私が二重専攻を申し込んだ時期が2020年だったのですけど、コロナ禍後の世界では情報技術が生活に一段と浸透するはずだと思ってこれを学んでみようと思って二重専攻をし始めました。"}
+				{"role": "user", "content": f"Can you revise the following statements?"},
+				{"role": "user", "content": f"I’ve concluded that separation of sex or age in training does not increase the performance of the model. There would be some reasons. First, it may be the case in which the distribution of male/female X-ray images or before40/after40 images have any differences. Second, for the age reason, it would have been different in the case when ages are separated more delicately(i.e 10s,20s, etc)."}
             ],
             model="gpt-4"
         )
