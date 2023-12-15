@@ -225,24 +225,8 @@ if __name__ == '__main__':
     for append_lst in append_lsts:
         classified_words_lst.extend(append_lst)
     classified_words_lst.sort()
-    # classified_words_lst = func.merge_sorted_lsts(append_lsts)
-    # for i in range(len(classified_words_lst)-1):
-    #     if not classified_words_lst[i] in origin_candidates:
-    #         print(classified_words_lst[i])
-    #     if classified_words_lst[i] >= classified_words_lst[i+1]:
-    #         print("Something wrong with classified_words_lst!")
-    #         print(f"{classified_words_lst[i]}, {classified_words_lst[i+1]}")
-    # if not classified_words_lst[i] in origin_candidates:
-    #     print(classified_words_lst[i])
-
-    #################################アピールポイント２#################################
-    # ただ各単語の分類有無を一々確認するより自分が考案したアルゴリズムが速やか！
-    # unclassified_words_lst = []
-    # for word in origin_candidates:
-    #     if not word in classified_words_lst:
-    #         unclassified_words_lst.append(word)
-    # unclassified_words_lst.sort()
-
+    
+    
     unclassified_words_lst = []
     i = j = 0
     while j < len(classified_words_lst):
@@ -286,7 +270,7 @@ if __name__ == '__main__':
                 line = f.readline()
                 if not line: break
                 line = line.strip()
-                if line in origin_candidates:
+                if line in origin_candidates and not line in completed_words_lst:
                     completed_words_lst.append(line)
                 # completed_words_lst.append(line)
 
@@ -294,30 +278,7 @@ if __name__ == '__main__':
         if completed_words_lst[i] >= completed_words_lst[i+1]:
             print("Something wrong with completed_words_lst!")
             print(f"{completed_words_lst[i]}, {completed_words_lst[i+1]}")
-    # Check and extract duplicated words of completed_words_lst in classified folder.
-    # ex)諮る in words and compound
-    # tmp_completed_words = completed_words_lst.copy()
-    # tmp_duplicated_count = 0
-    # while tmp_completed_words:
-    #     tmp_word = tmp_completed_words.pop(0)
-    #     tmp_count = 0
-    #     tmp_first_txt = ""
-    #     for tmp_append_lst in append_lsts:
-    #         if tmp_word in tmp_append_lst:
-    #             tmp_count += 1
-    #             if tmp_count == 1:
-    #                 tmp_first_txt = os.path.basename(append_txts[append_lsts.index(tmp_append_lst)])
-    #             if tmp_count == 2:
-    #                 tmp_duplicated_count += 1
-    #                 print(f"{tmp_word}: {tmp_first_txt} {os.path.basename(append_txts[append_lsts.index(tmp_append_lst)])}", end=' ')
-    #             if tmp_count > 2:
-    #                 print(os.path.basename(append_txts[append_lsts.index(tmp_append_lst)]), end=' ')
-        
-    #     if tmp_count > 1:
-    #         print()
-    # if tmp_duplicated_count > 1:
-    #     print(f"Total number of duplicated words is {tmp_duplicated_count}.")
-
+    
 
     # Initiate program!
     # func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates)
@@ -373,7 +334,8 @@ if __name__ == '__main__':
             elif first_input[i].lower() == 'p':
                 groups.append(os.path.join('classified','pure_kanjis.txt'))
     print()
-
+        
+    
     origins = []
     answers = []
     if not input_retry:
@@ -401,18 +363,7 @@ if __name__ == '__main__':
                 print("Something wrong with origins!")
                 print(f"{origins[i]}, {origins[i+1]}")
             
-        # origins_1 = origin_candidates.copy()
-        # answers_1 = answer_candidates.copy()
-        # for i in range(len(completed_words_lst)):
-        #     word = completed_words_lst[i]
-        #     if word in origins_1:
-        #         j = origins_1.index(word)
-        #         del origins_1[j]
-        #         del answers_1[j]
-        # for i in range(len(origins)):
-        #     print(f"{origins[i]}/-/{answers[i]}")
         
-        # raise Exception("Hi")
     elif first_input == 'r':
         with open(retry_txt,'r', encoding='utf-8') as f:
             while True:
@@ -486,7 +437,6 @@ if __name__ == '__main__':
                     rand_index = -1
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-                is_katakana = func.is_katakana(origin)
             # expression_lst : 10%
             elif one_to_one_mode and one_to_one_indicator < 8 and not input_retry:
                 tmp_rand_index = random.randrange(len(expression_lst))
@@ -498,21 +448,19 @@ if __name__ == '__main__':
                     rand_index = -1
                     origin = expression_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-                is_katakana = func.is_katakana(origin)
-            # retry_lst : 10%
-            elif one_to_one_mode and one_to_one_indicator < 10 and not input_retry:
-                tmp_rand_index = random.randrange(len(retry_lst))
+            # etc_lst : 30%
+            elif one_to_one_mode and one_to_one_indicator < 14 and not input_retry:
+                tmp_rand_index = random.randrange(len(etc_lst))
                 try:
-                    rand_index = origins.index(retry_lst[tmp_rand_index])
+                    rand_index = origins.index(etc_lst[tmp_rand_index])
                     origin = origins[rand_index].strip()
                     answer = answers[rand_index].strip()
                 except:
                     rand_index = -1
-                    origin = retry_lst[tmp_rand_index].strip()
+                    origin = etc_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-                is_katakana = func.is_katakana(origin)
-            # adverbs : 25%
-            elif one_to_one_mode and one_to_one_indicator < 15 and not input_retry:
+            # adverbs : 10%
+            elif one_to_one_mode and one_to_one_indicator < 16 and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
                     rand_index = origins.index(adverb_lst[tmp_rand_index])
@@ -522,33 +470,18 @@ if __name__ == '__main__':
                     rand_index = -1
                     origin = adverb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-                is_katakana = func.is_katakana(origin)
-            # grammers in adverbs : 15%
-            elif one_to_one_mode and one_to_one_indicator < 18 and not input_retry:
-                tmp_rand_index = 0
-                for i in range(len(adverb_lst)):    
-                    # Grammar part
-                    if adverb_lst[i][0] == '（' or adverb_lst[i][0] == '～':
-                        tmp_rand_index = i
-                        break
-                tmp_rand_index = random.randrange(tmp_rand_index, len(adverb_lst))
+            else:
+                tmp_rand_index = random.randrange(len(origin_candidates))
                 try:
-                    rand_index = origins.index(adverb_lst[tmp_rand_index])
+                    rand_index = origins.index(origin_candidates[tmp_rand_index])
                     origin = origins[rand_index].strip()
                     answer = answers[rand_index].strip()
                 except:
                     rand_index = -1
-                    origin = adverb_lst[tmp_rand_index].strip()
+                    origin = origin_candidates[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-                is_katakana = func.is_katakana(origin)
-            # others: 10%
-            else:
-                rand_index = random.randrange(len(origins))
-                origin = origins[rand_index].strip()
-                answer = answers[rand_index].strip()
-                is_katakana = func.is_katakana(origin)
 
-            # one_to_one_indicator = (one_to_one_indicator+1) % one_to_one_mode_extend_num
+            is_katakana = func.is_katakana(origin)
             one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
 
             is_kanji = False
@@ -925,8 +858,8 @@ if __name__ == '__main__':
                     del origins[rand_index]
                     del answers[rand_index]
             print()
-    except Exception as e:
-        print(e)
+    # except Exception as e:
+    #     print(e)
     except KeyboardInterrupt as keyboard_interrupt:
         print(keyboard_interrupt)
 
