@@ -412,6 +412,7 @@ if __name__ == '__main__':
                 one_to_one_lst = []
                 one_to_one_lst.extend(verb_lst)
                 one_to_one_lst.extend(compound_lst)
+                one_to_one_lst.extend(expression_lst)
                 one_to_one_lst.sort()
                 for i in range(len(one_to_one_lst)-1):
                     if one_to_one_lst[i] == one_to_one_lst[i+1]:
@@ -426,8 +427,8 @@ if __name__ == '__main__':
             else:
                 print(f"({len(origins)} left)", end=" ")
             
-            # verb, compound : 30%
-            if one_to_one_mode and one_to_one_indicator < 6 and not input_retry:
+            # verb, compound, expression : 25%
+            if one_to_one_mode and one_to_one_indicator < 5 and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -437,19 +438,8 @@ if __name__ == '__main__':
                     rand_index = -1
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # expression_lst : 10%
-            elif one_to_one_mode and one_to_one_indicator < 8 and not input_retry:
-                tmp_rand_index = random.randrange(len(expression_lst))
-                try:
-                    rand_index = origins.index(expression_lst[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = expression_lst[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # etc_lst : 30%
-            elif one_to_one_mode and one_to_one_indicator < 14 and not input_retry:
+            # etc : 25%
+            elif one_to_one_mode and one_to_one_indicator < 10 and not input_retry:
                 tmp_rand_index = random.randrange(len(etc_lst))
                 try:
                     rand_index = origins.index(etc_lst[tmp_rand_index])
@@ -459,8 +449,8 @@ if __name__ == '__main__':
                     rand_index = -1
                     origin = etc_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # adverbs : 10%
-            elif one_to_one_mode and one_to_one_indicator < 16 and not input_retry:
+            # adverb : 10%
+            elif one_to_one_mode and one_to_one_indicator < 12 and not input_retry:
                 tmp_rand_index = random.randrange(len(adverb_lst))
                 try:
                     rand_index = origins.index(adverb_lst[tmp_rand_index])
@@ -469,6 +459,17 @@ if __name__ == '__main__':
                 except:
                     rand_index = -1
                     origin = adverb_lst[tmp_rand_index].strip()
+                    answer = answer_candidates[origin_candidates.index(origin)].strip()
+            # adjective : 10%
+            elif one_to_one_mode and one_to_one_indicator < 14 and not input_retry:
+                tmp_rand_index = random.randrange(len(adjective_lst))
+                try:
+                    rand_index = origins.index(adjective_lst[tmp_rand_index])
+                    origin = origins[rand_index].strip()
+                    answer = answers[rand_index].strip()
+                except:
+                    rand_index = -1
+                    origin = adjective_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
             else:
                 tmp_rand_index = random.randrange(len(origin_candidates))
