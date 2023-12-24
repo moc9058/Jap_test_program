@@ -226,6 +226,13 @@ if __name__ == '__main__':
         classified_words_lst.extend(append_lst)
     classified_words_lst.sort()
     
+    for i in range(len(classified_words_lst)-1):
+        if classified_words_lst[i] >= classified_words_lst[i+1]:
+            print(classified_words_lst[i], classified_words_lst[i+1])
+
+    # for i in range(len(origin_candidates)-1):
+    #     if origin_candidates[i] >= origin_candidates[i+1]:
+    #         print(origin_candidates[i],origin_candidates[i+1])
     
     unclassified_words_lst = []
     i = j = 0

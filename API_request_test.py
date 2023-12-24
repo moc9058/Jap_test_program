@@ -5,6 +5,7 @@ from openai import OpenAI
 from multiprocessing import Process, Value, Array
 from threading import Thread
 
+import random
 import functions as func
 purpose = "ガクチカ"
 number_of_words = 200
@@ -21,4 +22,5 @@ completion = client.chat.completions.create(
         )
 content = completion.choices[0].message.content
 
-print(content)
+# print(content)
+
