@@ -11,7 +11,7 @@ import functions as func
 
 one_to_one_mode = True
 one_to_one_mode_extend_num = 20
-pronounciation_mode = True
+pronounciation_mode = False
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
 example_generating_server_access = Value('i')
@@ -606,7 +606,7 @@ if __name__ == '__main__':
                 print(f"{origin_to_print}{try_again}", end=" ")
                 input_X = input()
                 print(f"（正解）\n{answer} {classified_name}{answer_hononyms}")
-            elif pronounciation_mode:
+            elif pronounciation_mode and not is_kanji:
                 if func.contains_kanji(origin):
                     ans_split_index = answer.find(" ")
                     print(f"{answer[:ans_split_index].strip()}{try_again}", end=" ")
