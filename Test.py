@@ -424,7 +424,7 @@ if __name__ == '__main__':
                 for i in range(len(one_to_one_lst)-1):
                     if one_to_one_lst[i] == one_to_one_lst[i+1]:
                         print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
-
+            pronounciation_mode = False
             if not input_retry:
                 if len(unclassified_words_lst) > 0:
                     print(f"(left: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
@@ -509,6 +509,7 @@ if __name__ == '__main__':
             if origin in adverb_lst:
                 classified_lst = adverb_lst
                 classified_name = '(adverb.txt)'
+                pronounciation_mode = True
             elif origin in diff_kanji_lst:
                 classified_lst = diff_kanji_lst
                 classified_name = '(diff_kanjis.txt)'
