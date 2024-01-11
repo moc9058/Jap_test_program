@@ -591,7 +591,8 @@ if __name__ == '__main__':
 
             # Multiprocessing begins
             # case_for_GPT = classified_name in ['(compounds.txt)', '(verbs.txt)', '(adverb.txt)', '(adjectives.txt)']
-            case_for_GPT = not classified_name in ['(diff_kanjis.txt)', '(pure_kanjis.txt)']
+            # case_for_GPT = not classified_name in ['(diff_kanjis.txt)', '(pure_kanjis.txt)']
+            case_for_GPT = True
 
             if case_for_GPT:
                 for i in range(len(example_sentence_array)):
