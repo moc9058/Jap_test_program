@@ -188,7 +188,7 @@ if __name__ == '__main__':
     adjectives_txt = os.path.join(cwd,'classified','adjectives.txt')
     pure_kanjis_txt = os.path.join(cwd,'classified','pure_kanjis.txt')
     etc_txt = os.path.join(cwd,'classified','etc.txt')
-
+    
     retry_lst = []
     verb_lst = []
     adverb_lst = []
