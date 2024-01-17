@@ -244,7 +244,8 @@ def copy_txt2sorted_lst(lst,txt, candidate_lst):
             if not line: break
             line = line.strip()
             if line in candidate_lst:
-                lst.append(line.strip())
+                if not line in lst:
+                    lst.append(line.strip())
     lst.sort()
 
 def copy_txt2sorted_lst_combined(lsts, txts, candidate_lst):

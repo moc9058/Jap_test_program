@@ -529,6 +529,7 @@ if __name__ == '__main__':
             elif origin in adjective_lst:
                 classified_lst = adjective_lst
                 classified_name = '(adjectives.txt)'
+                pronounciation_mode = True
             elif origin in pure_kanji_lst:
                 classified_lst = pure_kanji_lst
                 classified_name = '(pure_kanjis.txt)'
