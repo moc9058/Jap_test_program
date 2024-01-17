@@ -216,7 +216,8 @@ if __name__ == '__main__':
     func.create_txt_combined(classified_txts)
     func.create_txt(retry_completed_txt)
 
-    func.copy_txt2sorted_lst_combined(classified_lsts, classified_txts, origin_candidates)
+    func.copy_txt2sorted_lst_combined(append_lsts, append_txts, origin_candidates)
+    func.copy_txt2sorted_lst(retry_lst, retry_txt, origin_candidates, delete_dup=1)
     func.copy_txt2sorted_lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
     #################################アピールポイント１#################################

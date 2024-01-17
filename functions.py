@@ -237,15 +237,23 @@ def properly_included(member_txt_lst, group_txt):
                     group_words.remove(line)
     return group_words
 
-def copy_txt2sorted_lst(lst,txt, candidate_lst):
+def copy_txt2sorted_lst(lst,txt, candidate_lst, delete_dup=0):
     with open(txt,'r',encoding='utf-8') as f:
-        while True:
-            line = f.readline()
-            if not line: break
-            line = line.strip()
-            if line in candidate_lst:
-                if not line in lst:
+        if delete_dup == 0:
+            while True:
+                line = f.readline()
+                if not line: break
+                line = line.strip()
+                if line in candidate_lst:
                     lst.append(line.strip())
+        else:
+            while True:
+                line = f.readline()
+                if not line: break
+                line = line.strip()
+                if line in candidate_lst:
+                    if not line in lst:
+                        lst.append(line.strip())
     lst.sort()
 
 def copy_txt2sorted_lst_combined(lsts, txts, candidate_lst):
