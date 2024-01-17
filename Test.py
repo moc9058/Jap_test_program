@@ -56,7 +56,7 @@ def generate_example_sentence(word, example_sentence_array, pid_pointer, example
             
     GPT_input_sentences = [{"role": "user", "content": f"「{word}」を用いる日本語文章を作ってください。"}]
     if require_additional_sentence:
-        GPT_input_sentences.append({"role": "user", "content": f'文法の要素（{grammer_component}を必ず含めてください。）'})
+        GPT_input_sentences.append({"role": "user", "content": f'文法要素の（{grammer_component}を必ず含めてください。）'})
     client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
     completion = client.chat.completions.create(
         messages=GPT_input_sentences,
@@ -410,13 +410,17 @@ if __name__ == '__main__':
                 raise Exception(f"{origin} is not included in Groups 1.txt, ...")
         
 
-    one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
-    one_to_one_lst = unclassified_words_lst
+    
+    one_to_one_lst = []
+    if not first_input:
+        one_to_one_lst = unclassified_words_lst
     retry_banned_lst = []
     try:
         while origins:
+            one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
             if len(one_to_one_lst) == 0:
-                print("All words are classified!!")
+                if not first_input:
+                    print("All words are classified!!")
                 one_to_one_lst = []
                 one_to_one_lst.extend(verb_lst)
                 one_to_one_lst.extend(compound_lst)
@@ -425,6 +429,7 @@ if __name__ == '__main__':
                 for i in range(len(one_to_one_lst)-1):
                     if one_to_one_lst[i] == one_to_one_lst[i+1]:
                         print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
+            
             pronounciation_mode = False
             if not input_retry:
                 if len(unclassified_words_lst) > 0:
@@ -491,18 +496,33 @@ if __name__ == '__main__':
                     origin = adjective_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
             else:
-                tmp_rand_index = random.randrange(len(origin_candidates))
-                try:
-                    rand_index = origins.index(origin_candidates[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = origin_candidates[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
+                if first_input == 'r':
+                    if one_to_one_indicator%2 == 0:
+                        tmp_rand_index = random.randrange(len(one_to_one_lst))
+                        try:
+                            rand_index = origins.index(one_to_one_lst[tmp_rand_index])
+                            origin = origins[rand_index].strip()
+                            answer = answers[rand_index].strip()
+                        except:
+                            rand_index = -1
+                            origin = one_to_one_lst[tmp_rand_index].strip()
+                            answer = answer_candidates[origin_candidates.index(origin)].strip()
+                    else:
+                        rand_index = random.randrange(len(origins))
+                        origin = origins[rand_index].strip()
+                        answer = answers[rand_index].strip()
+                else:
+                    tmp_rand_index = random.randrange(len(origin_candidates))
+                    try:
+                        rand_index = origins.index(origin_candidates[tmp_rand_index])
+                        origin = origins[rand_index].strip()
+                        answer = answers[rand_index].strip()
+                    except:
+                        rand_index = -1
+                        origin = origin_candidates[tmp_rand_index].strip()
+                        answer = answer_candidates[origin_candidates.index(origin)].strip()
 
             is_katakana = func.is_katakana(origin)
-            one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
 
             is_kanji = False
             classified_name = ""
@@ -859,13 +879,13 @@ if __name__ == '__main__':
                 input_X = input()
                 if input_X.lower() == 'x':
                     break
-                elif input_X.lower() in ['o','a','v','d','c','d','k','e','j','p']:
-                    retry_completed_lst.append(origins[rand_index])
+                elif input_X.lower() in ['o','a','v','d','c','d','k','e','j','p'] and rand_index != -1:
+                    retry_completed_lst.append(origin)
                     del origins[rand_index]
                     del answers[rand_index]
-                elif input_X.lower() == '2':
+                elif input_X.lower() == '2' and rand_index != -1:
                     retry_lst.remove(origin)
-                    retry_completed_lst.append(origins[rand_index])
+                    retry_completed_lst.append(origin)
                     try:
                         completed_words_lst.remove(origin)
                     except:
