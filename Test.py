@@ -8,7 +8,7 @@ from openai import OpenAI
 from multiprocessing import Process, Value, Array
 
 import functions as func
-
+default_num_secs = 2
 one_to_one_mode = True
 one_to_one_mode_extend_num = 20
 pronounciation_mode = False
@@ -16,70 +16,61 @@ example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
 example_generating_server_access = Value('i')
 
-def generate_example_sentence(word, example_sentence_array, pid_pointer, example_generating_server_access):
-    pid_pointer.value = os.getpid()
-    grammer_components = []
-    grammer_component = ""
-    honorific = ""
-    require_additional_sentence = False
-    if word[0] == '（':
-        require_additional_sentence = True
-        if word[1] in ['お','ご']:
-            honorific = ['お','ご'][random.randrange(2)]
-            word = word[word.find('）')+1:]
-        grammer_components = word[1:word.find('）')].split('、')
-        for i in range(len(grammer_components)):
-            grammer_component = grammer_components[i]
-            if grammer_component == 'る':
-                grammer_component = '辞書形'
-            elif grammer_component == 'よう':
-                grammer_component = '意志形'
-            elif grammer_component == 'い':
-                grammer_component = 'い形容詞'
-            elif grammer_component == 'な':
-                grammer_component = 'な形容詞'
-            elif grammer_component == 'の':
-                grammer_component = '名詞＋の'
-            else:
-                grammer_component = grammer_component + '形の語幹'
-            grammer_components[i] = grammer_component
-        grammer_component = grammer_components[random.randrange(len(grammer_components))]
-        word = word[word.index('）')+1:]
-        # （よう）が（る、ない）まいが
-        if word.find('（') != -1:
-            word = word[:word.find('（')] + '～' + word[word.find('）')+1:]
+def generate_example_sentence(word, pronounciation, example_sentence_array, pid_pointer, example_generating_server_access, num_sentences):
+    try:
+        pid_pointer.value = os.getpid()
+        grammer_components = []
+        grammer_component = ""
+        honorific = ""
+        require_additional_sentence = False
+        if word[0] == '（':
+            require_additional_sentence = True
+            if word[1] in ['お','ご']:
+                honorific = ['お','ご'][random.randrange(2)]
+                word = word[word.find('）')+1:]
+            grammer_components = word[1:word.find('）')].split('、')
+            for i in range(len(grammer_components)):
+                grammer_component = grammer_components[i]
+                if grammer_component == 'る':
+                    grammer_component = '辞書形'
+                elif grammer_component == 'よう':
+                    grammer_component = '意志形'
+                elif grammer_component == 'い':
+                    grammer_component = 'い形容詞'
+                elif grammer_component == 'な':
+                    grammer_component = 'な形容詞'
+                elif grammer_component == 'の':
+                    grammer_component = '名詞＋の'
+                else:
+                    grammer_component = grammer_component + '形の語幹'
+                grammer_components[i] = grammer_component
+            grammer_component = grammer_components[random.randrange(len(grammer_components))]
+            word = word[word.index('）')+1:]
+            # （よう）が（る、ない）まいが
+            if word.find('（') != -1:
+                word = word[:word.find('（')] + '～' + word[word.find('）')+1:]
 
-        if honorific != "":
-            word = honorific + '＋' + grammer_component + '＋' + word
+            if honorific != "":
+                word = honorific + '＋' + grammer_component + '＋' + word
+            else:
+                word = grammer_component + '＋' + word
         else:
-            word = grammer_component + '＋' + word
-            
-    GPT_input_sentences = [{"role": "user", "content": f"「{word}」の例文を挙げてもらえるかな？お願いね！"}]
-    if require_additional_sentence:
-        GPT_input_sentences.append({"role": "user", "content": f'文法要素の（{grammer_component}を必ず含めてください。）'})
-    client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
-    completion = client.chat.completions.create(
-        messages=GPT_input_sentences,
-        model="gpt-4"
-    )
-    content = completion.choices[0].message.content
-    for i in range(min(len(content),len(example_sentence_array))):
-        example_sentence_array[i] = ord(content[i])
-    # try:
-    #     # client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
-    #     # completion = client.chat.completions.create(
-    #     #     messages=GPT_input_sentences,
-    #     #     model="gpt-4"
-    #     # )
-    #     # content = completion.choices[0].message.content
-    #     # for i in range(min(len(content),len(example_sentence_array))):
-    #     #     example_sentence_array[i] = ord(content[i])
-    #     test = GPT_input_sentences[0]["content"]
-    #     for i in range(len(test)):
-    #         example_sentence_array[i] = ord(test[i])
-    # except Exception as e:
-    #     print(e)
-    #     example_generating_server_access.value = 0
+            word = f"{word}（{pronounciation}）"
+        GPT_input_sentences = [{"role": "user", "content": f"「{word}」の例文を挙げてもらえるかな？{num_sentences}文以内にお願いね！"}]
+        if require_additional_sentence:
+            GPT_input_sentences.append({"role": "user", "content": f'文法要素の（{grammer_component}を必ず含めてください。）'})
+        client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+        completion = client.chat.completions.create(
+            messages=GPT_input_sentences,
+            model="gpt-4"
+        )
+        content = completion.choices[0].message.content
+        for i in range(min(len(content),len(example_sentence_array))):
+            example_sentence_array[i] = ord(content[i])
+    except Exception as e:
+        # print(e)
+        example_generating_server_access.value = 0
+
         
 
 # Assume groups, classified units are always sorted
@@ -417,6 +408,8 @@ if __name__ == '__main__':
     retry_banned_lst = []
     try:
         while origins:
+            num_secs = default_num_secs
+            num_sentences = 1
             one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
             if len(one_to_one_lst) == 0:
                 if not first_input:
@@ -531,6 +524,8 @@ if __name__ == '__main__':
                 classified_lst = adverb_lst
                 classified_name = '(adverb.txt)'
                 pronounciation_mode = True
+                num_sentences = 2
+                num_secs = 3
             elif origin in diff_kanji_lst:
                 classified_lst = diff_kanji_lst
                 classified_name = '(diff_kanjis.txt)'
@@ -544,6 +539,8 @@ if __name__ == '__main__':
             elif origin in compound_lst:
                 classified_lst = compound_lst
                 classified_name = '(compounds.txt)'
+                num_sentences = 2
+                num_secs = 3
             elif origin in expression_lst:
                 classified_lst = expression_lst
                 classified_name = '(expressions.txt)'
@@ -558,6 +555,9 @@ if __name__ == '__main__':
             elif origin in verb_lst:
                 classified_lst = verb_lst
                 classified_name = '(verbs.txt)'
+                pronounciation_mode = True
+                num_sentences = 2
+                num_secs = 3
 
             try:
                 if origin.index('（') == 0:
@@ -620,11 +620,12 @@ if __name__ == '__main__':
                 for i in range(len(example_sentence_array)):
                     example_sentence_array[i] = 0
                 example_generating_server_access.value = 1
-                process = Process(target=generate_example_sentence, args=(f"{pronounciation}（{origin_to_print}）", example_sentence_array, example_generating_pid, example_generating_server_access))
+                process = Process(target=generate_example_sentence, args=(origin_to_print, pronounciation, example_sentence_array, example_generating_pid, example_generating_server_access, num_sentences))
                 # print(f'{pronounciation}（{origin_to_print}）')
                 try:
                     process.start()
                 except Exception as e:
+                    print('error in multiprocessing')
                     print(e)
                 
             if is_katakana:
@@ -650,28 +651,30 @@ if __name__ == '__main__':
             # Wait for at most 3~4 seconds.
             if case_for_GPT:
                 GPT_time_count = 0
-                while GPT_time_count < 6:
+                while GPT_time_count < 2*num_secs:
                     if example_generating_server_access.value == 0:
                         break
-                        time.sleep(0.5)
+                    # print('sleep 0.5sec')
+                    time.sleep(0.5)
                     GPT_time_count += 1
                     if example_sentence_array[0]:
                         GPT_time_count = 6
 
                 try:
+                    # print('I killed child process')
                     os.kill(example_generating_pid.value, signal.SIGTERM)
                 except Exception as e:
                     pass
-
+                
+                # print("Would you guess the result?")
                 # the value of example_generating_server_access can be changed
-                if example_generating_server_access.value == 1:
-                    if example_sentence_array[0] > 0:
-                        example_sentence = ""
-                        for i in range(len(example_sentence_array)):
-                            example_sentence += chr(example_sentence_array[i])
-                        print(f"（例文）\n{example_sentence}")
-                    else:
-                        print("（例文）\nThere\'s a problem with GPT connection.")
+                if example_generating_server_access.value == 1 and example_sentence_array[0] > 0:
+                    example_sentence = ""
+                    for i in range(len(example_sentence_array)):
+                        example_sentence += chr(example_sentence_array[i])
+                    print(f"（例文）\n{example_sentence}")
+                else:
+                    print("（例文）\nThere\'s a problem with GPT connection.")
 
             try:
                 process.join()
@@ -917,32 +920,32 @@ if __name__ == '__main__':
         with open(currtime_txt, 'wt', encoding='utf-8') as f:
             for word in completed_words_lst:
                 f.write(word+"\n")
+        # アピールポイント４
+        # Update Group 1.txt, Group 2.txt
+        classified_words_lst.sort()
+        with open(group_1_txt, 'w', encoding='utf-8') as f1:
+            with open(group_2_txt, 'w', encoding='utf-8') as f2:
+                i = j = 0
+                while j < len(classified_words_lst):
+                    while origin_candidates[i] == classified_words_lst[j]:
+                        f1.write(f"{origin_candidates[i]}/-/{answer_candidates[i]}\n")
+                        i += 1
+                        j += 1
+                        if j >= len(classified_words_lst):
+                            break
+                    if j >= len(classified_words_lst):
+                            break
+                    while origin_candidates[i] < classified_words_lst[j]:
+                        f2.write(f"{origin_candidates[i]}/-/{answer_candidates[i]}\n")
+                        i += 1
+                while i < len(origin_candidates):
+                    f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
+                    i += 1
     elif first_input == 'r':
         func.update_lst2sorted_txt(completed_words_lst, last_test, origin_candidates, mode=1)
         func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, mode=1)
         func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, retry_lst)
 
-    # アピールポイント４
-    # Update Group 1.txt, Group 2.txt
-    classified_words_lst.sort()
-    with open(group_1_txt, 'w', encoding='utf-8') as f1:
-        with open(group_2_txt, 'w', encoding='utf-8') as f2:
-            i = j = 0
-            while j < len(classified_words_lst):
-                while origin_candidates[i] == classified_words_lst[j]:
-                    f1.write(f"{origin_candidates[i]}/-/{answer_candidates[i]}\n")
-                    i += 1
-                    j += 1
-                    if j >= len(classified_words_lst):
-                        break
-                if j >= len(classified_words_lst):
-                        break
-                while origin_candidates[i] < classified_words_lst[j]:
-                    f2.write(f"{origin_candidates[i]}/-/{answer_candidates[i]}\n")
-                    i += 1
-            while i < len(origin_candidates):
-                f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
-                i += 1
 
         
 
