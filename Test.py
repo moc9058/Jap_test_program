@@ -54,7 +54,7 @@ def generate_example_sentence(word, example_sentence_array, pid_pointer, example
         else:
             word = grammer_component + '＋' + word
             
-    GPT_input_sentences = [{"role": "user", "content": f"「{word}」を用いる日本語文章を作ってください。"}]
+    GPT_input_sentences = [{"role": "user", "content": f"「{word}」の例文を挙げてもらえるかな？お願いね！"}]
     if require_additional_sentence:
         GPT_input_sentences.append({"role": "user", "content": f'文法要素の（{grammer_component}を必ず含めてください。）'})
     client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
@@ -620,7 +620,8 @@ if __name__ == '__main__':
                 for i in range(len(example_sentence_array)):
                     example_sentence_array[i] = 0
                 example_generating_server_access.value = 1
-                process = Process(target=generate_example_sentence, args=(origin_to_print, example_sentence_array, example_generating_pid, example_generating_server_access))
+                process = Process(target=generate_example_sentence, args=(f"{pronounciation}（{origin_to_print}）", example_sentence_array, example_generating_pid, example_generating_server_access))
+                # print(f'{pronounciation}（{origin_to_print}）')
                 try:
                     process.start()
                 except Exception as e:
