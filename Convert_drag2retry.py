@@ -15,6 +15,11 @@ with open(paste_copied_source_txt,'r',encoding='utf-8') as f1:
             if not line: break
             line = line.strip()
             if line:
-                origin_classifier = (origin_classifier+1)%2
-                if origin_classifier == 1:
-                    f2.write(line+'\n')
+                line_split = line.split('/-/')
+                if len(line_split) == 2:
+                    f2.write(line_split[0].strip()+'\n')
+                    origin_classifier = 0
+                else:    
+                    origin_classifier = (origin_classifier+1)%2
+                    if origin_classifier == 1:
+                        f2.write(line+'\n')
