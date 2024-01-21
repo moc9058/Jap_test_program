@@ -300,7 +300,7 @@ if __name__ == '__main__':
         input_retry = False 
         groups = group_txt_lst
         one_to_one_mode = True
-    elif first_input[0].lower() == 'r':
+    elif first_input[0] in ['r','R','ｒ']:
         groups = [os.path.join('classified','retry.txt')]
         first_input = 'r'
     else:
@@ -881,13 +881,13 @@ if __name__ == '__main__':
                         break
             elif first_input == 'r':
                 input_X = input()
-                if input_X.lower() == 'x':
+                if input_X.lower() in ['x','ｘ']:
                     break
                 elif input_X.lower() in ['o','a','v','d','c','d','k','e','j','p'] and rand_index != -1:
                     retry_completed_lst.append(origin)
                     del origins[rand_index]
                     del answers[rand_index]
-                elif input_X.lower() == '2' and rand_index != -1:
+                elif input_X.lower() in ['2','２'] and rand_index != -1:
                     retry_lst.remove(origin)
                     retry_completed_lst.append(origin)
                     try:
