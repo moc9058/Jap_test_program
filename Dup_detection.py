@@ -4,13 +4,13 @@ import functions as func
 cwd = os.getcwd()
 groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
 retry_txt = os.path.join(cwd,'classified','retry.txt')
-retry_lst = []
-with open(retry_txt, 'r', encoding='utf-8') as f:
-    while True:
-        line = f.readline()
-        if not line: break
-        line = line.strip()
-        retry_lst.append(line)
+# retry_lst = []
+# with open(retry_txt, 'r', encoding='utf-8') as f:
+#     while True:
+#         line = f.readline()
+#         if not line: break
+#         line = line.strip()
+#         retry_lst.append(line)
 
 def automatic_dup_detect(groups):
     cwd = os.getcwd()
@@ -79,6 +79,15 @@ def contains_word(word, origin):
 def contains_word_groups(word, groups):
     cwd = os.getcwd()
     found = False
+    
+    retry_lst = []
+    with open(retry_txt, 'r', encoding='utf-8') as f:
+        while True:
+            line = f.readline()
+            if not line: break
+            line = line.strip()
+            retry_lst.append(line)            
+
     for group_index in range(len(groups)):
         group = groups[group_index]
         filename = os.path.join(cwd, group)
@@ -86,7 +95,7 @@ def contains_word_groups(word, groups):
         if not os.path.isfile(filename):
             # print(filename)
             continue
-        
+
         with open(filename,'r', encoding='utf-8') as f:
             while True:
                 line = f.readline()
@@ -100,6 +109,7 @@ def contains_word_groups(word, groups):
                 retry_string = ""
                 if origin in retry_lst:
                     retry_string = " - (retry)"
+                    
                 if contains_word(word, origin):
                     print(f"({group}) {origin}: {answer}{retry_string}")
                     found = True
@@ -108,7 +118,7 @@ def contains_word_groups(word, groups):
                     if contains_word(word, func.extract_pronounciations(line)):
                         print(f"({group}) {origin}: {answer}{retry_string}")
                         found = True
-                
+            
     if not found:
         print(f"Not found")
 def real_time_dup_detect(groups):
@@ -121,14 +131,18 @@ def real_time_dup_detect(groups):
             break
         else:
             contains_word_groups(word, groups)
+            # try:
+            #     contains_word_groups(word, groups)
+            # except Exception as e:
+            #     print(e)
             print()
 print("Select mode")
 print("e: find duplication among existing txts.")
 print("r: find duplication for real time.")
 mode = input()
-if mode.lower() == 'e':
+if mode in ['E','e','え']:
     automatic_dup_detect(groups)
-elif mode.lower() == 'r':
+elif mode in ['R','r','ｒ']:
     real_time_dup_detect(groups)
 
 # print(duplicate(os.path.join('test_log','2023_09_01_18_43_53.txt')))
