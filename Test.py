@@ -313,24 +313,24 @@ if __name__ == '__main__':
             first_input = first_input + first_input_alphabets[i]
         
         for i in range(len(first_input)):
-            if first_input[i].lower() == 'x':
+            if first_input[i] in ['x','X','ｘ']:
                 func.update_lst2sorted_txt_combined(classified_lsts,classified_txts, origin_candidates)
                 break
-            elif first_input[i].lower() == 'v':
+            elif first_input[i]  in ['v','V','ｖ']:
                 groups.append(os.path.join('classified','verbs.txt'))
-            elif first_input[i].lower() == 'k':
+            elif first_input[i] in ['k','K','ｋ']:
                 groups.append(os.path.join('classified','katakanas.txt'))
-            elif first_input[i].lower() == 'a':
+            elif first_input[i] in ['a','A','あ']:
                 groups.append(os.path.join('classified','adverbs.txt'))
-            elif first_input[i].lower() == 'd':
+            elif first_input[i] in ['d','D','ｄ']:
                 groups.append(os.path.join('classified','diff_kanjis.txt'))
-            elif first_input[i].lower() == 'c':
+            elif first_input[i] in ['c','C','ｃ']:
                 groups.append(os.path.join('classified','compounds.txt'))
-            elif first_input[i].lower() == 'e':
+            elif first_input[i] in ['e','E','え']:
                 groups.append(os.path.join('classified','expressions.txt'))
-            elif first_input[i].lower() == 'j':
+            elif first_input[i] in ['j','J','ｊ']:
                 groups.append(os.path.join('classified','adjectives.txt'))
-            elif first_input[i].lower() == 'p':
+            elif first_input[i] in ['p','P','ｐ']:
                 groups.append(os.path.join('classified','pure_kanjis.txt'))
     print()
         
@@ -689,7 +689,7 @@ if __name__ == '__main__':
             
             if len(input_X) > 1:
                 input_X = input_X[0]
-            if input_X.lower() == 'x':
+            if input_X in ['x','X','ｘ']:
                 print()
                 break
             time.sleep(0.5)
@@ -699,7 +699,7 @@ if __name__ == '__main__':
                 if len(input_X) > 1:
                     input_Y = input_X[1]
                     input_X = input_X[0]
-                if input_X.lower() == 'x':
+                if input_X in ['x','X','ｘ']:
                     break
                 save2completed_words_lst = True
                 save2retry_lst = False
@@ -899,7 +899,7 @@ if __name__ == '__main__':
 
             else:
                 input_X = input()
-                if input_X.lower() == 'x':
+                if input_X in ['x','X','ｘ']:
                     break
                 elif input_X == '2' or input_X.lower() in ['o','a','v','d','c','d','k','e','j','p']:
                     del origins[rand_index]

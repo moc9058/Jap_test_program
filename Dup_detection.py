@@ -137,12 +137,14 @@ def real_time_dup_detect(groups):
             #     print(e)
             print()
 print("Select mode")
+print("Default: find duplication for real time.")
+print("-----------------------------------------")
 print("e: find duplication among existing txts.")
-print("r: find duplication for real time.")
+
 mode = input()
 if mode in ['E','e','え']:
     automatic_dup_detect(groups)
-elif mode in ['R','r','ｒ']:
+else:
     real_time_dup_detect(groups)
 
 # print(duplicate(os.path.join('test_log','2023_09_01_18_43_53.txt')))
