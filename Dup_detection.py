@@ -127,7 +127,7 @@ def real_time_dup_detect(groups):
         if not word:
             break
         word = word.strip()
-        if word.lower() == 'x':
+        if word.lower() in ['x','ｘ']:
             break
         else:
             contains_word_groups(word, groups)
