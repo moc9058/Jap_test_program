@@ -444,49 +444,16 @@ if __name__ == '__main__':
                     rand_index = -1
                     origin = one_to_one_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # pure_kanji : 10%
-            elif one_to_one_mode and one_to_one_indicator < 10 and not input_retry:
-                tmp_rand_index = random.randrange(len(pure_kanji_lst))
+            # retry : 50%
+            elif one_to_one_mode and one_to_one_indicator < 18 and not input_retry:
+                tmp_rand_index = random.randrange(len(retry_lst))
                 try:
-                    rand_index = origins.index(pure_kanji_lst[tmp_rand_index])
+                    rand_index = origins.index(retry_lst[tmp_rand_index])
                     origin = origins[rand_index].strip()
                     answer = answers[rand_index].strip()
                 except:
                     rand_index = -1
-                    origin = pure_kanji_lst[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # diff_kanji : 10%
-            elif one_to_one_mode and one_to_one_indicator < 12 and not input_retry:
-                tmp_rand_index = random.randrange(len(diff_kanji_lst))
-                try:
-                    rand_index = origins.index(diff_kanji_lst[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = diff_kanji_lst[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # adverb : 10%
-            elif one_to_one_mode and one_to_one_indicator < 14 and not input_retry:
-                tmp_rand_index = random.randrange(len(adverb_lst))
-                try:
-                    rand_index = origins.index(adverb_lst[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = adverb_lst[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # adjective : 10%
-            elif one_to_one_mode and one_to_one_indicator < 16 and not input_retry:
-                tmp_rand_index = random.randrange(len(adjective_lst))
-                try:
-                    rand_index = origins.index(adjective_lst[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = adjective_lst[tmp_rand_index].strip()
+                    origin = retry_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
             else:
                 if first_input == 'r':
