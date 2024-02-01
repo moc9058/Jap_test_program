@@ -415,7 +415,7 @@ if __name__ == '__main__':
                 if not first_input:
                     print("All words are classified!!")
                 one_to_one_lst = []
-                one_to_one_lst.extend(verb_lst)
+                # one_to_one_lst.extend(verb_lst)
                 one_to_one_lst.extend(compound_lst)
                 one_to_one_lst.extend(expression_lst)
                 one_to_one_lst.sort()
@@ -433,8 +433,8 @@ if __name__ == '__main__':
             else:
                 print(f"({len(origins)} left)", end=" ")
             
-            # verb, compound, expression : 40%
-            if one_to_one_mode and one_to_one_indicator < 8 and not input_retry:
+            # compound, expression : 10%
+            if one_to_one_mode and one_to_one_indicator < 2 and not input_retry:
                 tmp_rand_index = random.randrange(len(one_to_one_lst))
                 try:
                     rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -443,6 +443,17 @@ if __name__ == '__main__':
                 except:
                     rand_index = -1
                     origin = one_to_one_lst[tmp_rand_index].strip()
+                    answer = answer_candidates[origin_candidates.index(origin)].strip()
+            # verb : 30%
+            if one_to_one_mode and one_to_one_indicator < 8 and not input_retry:
+                tmp_rand_index = random.randrange(len(verb_lst))
+                try:
+                    rand_index = origins.index(verb_lst[tmp_rand_index])
+                    origin = origins[rand_index].strip()
+                    answer = answers[rand_index].strip()
+                except:
+                    rand_index = -1
+                    origin = verb_lst[tmp_rand_index].strip()
                     answer = answer_candidates[origin_candidates.index(origin)].strip()
             # retry : 50%
             elif one_to_one_mode and one_to_one_indicator < 18 and not input_retry:
