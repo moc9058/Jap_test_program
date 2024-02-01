@@ -10,7 +10,7 @@ from multiprocessing import Process, Value, Array
 import functions as func
 default_num_secs = 2
 one_to_one_mode = True
-one_to_one_mode_extend_num = 20
+one_to_one_mode_extend_num = 100
 pronounciation_mode = False
 example_sentence_array = Array('i',200)
 example_generating_pid = Value('i')
@@ -405,15 +405,21 @@ if __name__ == '__main__':
     one_to_one_lst = []
     if not first_input:
         one_to_one_lst = unclassified_words_lst
+    elif first_input == 'r':
+        one_to_one_lst.extend(compound_lst)
+        one_to_one_lst.extend(expression_lst)
+        one_to_one_lst.sort()
+        for i in range(len(one_to_one_lst)-1):
+            if one_to_one_lst[i] == one_to_one_lst[i+1]:
+                print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
     retry_banned_lst = []
     try:
         while origins:
             num_secs = default_num_secs
             num_sentences = 1
             one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
-            if len(one_to_one_lst) == 0:
-                if not first_input:
-                    print("All words are classified!!")
+            if not first_input and len(unclassified_words_lst) == 0 and len(unclassified_words_lst) == 0:
+                print("All words are classified!!")
                 one_to_one_lst = []
                 # one_to_one_lst.extend(verb_lst)
                 one_to_one_lst.extend(compound_lst)
@@ -433,42 +439,11 @@ if __name__ == '__main__':
             else:
                 print(f"({len(origins)} left)", end=" ")
             
-            # compound, expression : 10%
-            if one_to_one_mode and one_to_one_indicator < 2 and not input_retry:
-                tmp_rand_index = random.randrange(len(one_to_one_lst))
-                try:
-                    rand_index = origins.index(one_to_one_lst[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = one_to_one_lst[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # verb : 30%
-            if one_to_one_mode and one_to_one_indicator < 8 and not input_retry:
-                tmp_rand_index = random.randrange(len(verb_lst))
-                try:
-                    rand_index = origins.index(verb_lst[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = verb_lst[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
-            # retry : 50%
-            elif one_to_one_mode and one_to_one_indicator < 18 and not input_retry:
-                tmp_rand_index = random.randrange(len(retry_lst))
-                try:
-                    rand_index = origins.index(retry_lst[tmp_rand_index])
-                    origin = origins[rand_index].strip()
-                    answer = answers[rand_index].strip()
-                except:
-                    rand_index = -1
-                    origin = retry_lst[tmp_rand_index].strip()
-                    answer = answer_candidates[origin_candidates.index(origin)].strip()
-            else:
-                if first_input == 'r':
-                    if one_to_one_indicator%2 == 0:
+
+            if not first_input and one_to_one_mode:
+                if len(unclassified_words_lst) > 0:
+                    # unclassified : 50%
+                    if one_to_one_indicator < 50:
                         tmp_rand_index = random.randrange(len(one_to_one_lst))
                         try:
                             rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -478,20 +453,66 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = one_to_one_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
+                    # retry : 50%
                     else:
-                        rand_index = random.randrange(len(origins))
-                        origin = origins[rand_index].strip()
-                        answer = answers[rand_index].strip()
+                        tmp_rand_index = random.randrange(len(retry_lst))
+                        try:
+                            rand_index = origins.index(retry_lst[tmp_rand_index])
+                            origin = origins[rand_index].strip()
+                            answer = answers[rand_index].strip()
+                        except:
+                            rand_index = -1
+                            origin = retry_lst[tmp_rand_index].strip()
+                            answer = answer_candidates[origin_candidates.index(origin)].strip()
                 else:
-                    tmp_rand_index = random.randrange(len(origin_candidates))
-                    try:
-                        rand_index = origins.index(origin_candidates[tmp_rand_index])
-                        origin = origins[rand_index].strip()
-                        answer = answers[rand_index].strip()
-                    except:
-                        rand_index = -1
-                        origin = origin_candidates[tmp_rand_index].strip()
-                        answer = answer_candidates[origin_candidates.index(origin)].strip()
+                    # compound, expression : 10%
+                    if one_to_one_indicator < 10:
+                        tmp_rand_index = random.randrange(len(one_to_one_lst))
+                        try:
+                            rand_index = origins.index(one_to_one_lst[tmp_rand_index])
+                            origin = origins[rand_index].strip()
+                            answer = answers[rand_index].strip()
+                        except:
+                            rand_index = -1
+                            origin = one_to_one_lst[tmp_rand_index].strip()
+                            answer = answer_candidates[origin_candidates.index(origin)].strip()
+                    # verb : 30%
+                    elif one_to_one_indicator < 40:
+                        tmp_rand_index = random.randrange(len(verb_lst))
+                        try:
+                            rand_index = origins.index(verb_lst[tmp_rand_index])
+                            origin = origins[rand_index].strip()
+                            answer = answers[rand_index].strip()
+                        except:
+                            rand_index = -1
+                            origin = verb_lst[tmp_rand_index].strip()
+                            answer = answer_candidates[origin_candidates.index(origin)].strip()
+                    # retry : 50%
+                    elif one_to_one_indicator < 90:
+                        tmp_rand_index = random.randrange(len(retry_lst))
+                        try:
+                            rand_index = origins.index(retry_lst[tmp_rand_index])
+                            origin = origins[rand_index].strip()
+                            answer = answers[rand_index].strip()
+                        except:
+                            rand_index = -1
+                            origin = retry_lst[tmp_rand_index].strip()
+                            answer = answer_candidates[origin_candidates.index(origin)].strip()
+                    else:
+                        tmp_rand_index = random.randrange(len(origin_candidates))
+                        try:
+                            rand_index = origins.index(origin_candidates[tmp_rand_index])
+                            origin = origins[rand_index].strip()
+                            answer = answers[rand_index].strip()
+                        except:
+                            rand_index = -1
+                            origin = origin_candidates[tmp_rand_index].strip()
+                            answer = answer_candidates[origin_candidates.index(origin)].strip()
+            else:
+                rand_index = random.randrange(len(origins))
+                origin = origins[rand_index].strip()
+                answer = answers[rand_index].strip()
+            
 
             is_katakana = func.is_katakana(origin)
 
@@ -683,25 +704,27 @@ if __name__ == '__main__':
                 save2retry_lst = False
                 # retry_lst and classified
                 if try_again != "" and classified_name != "":
-                    # At first, it gets removed from retry_lst. If you want to keep it in retry_lst, just press enter or 'r'.
-                    try:
-                        retry_lst.remove(origin)
-                    except Exception as e:
-                        print(e)
+                    # # At first, it gets removed from retry_lst. If you want to keep it in retry_lst, just press enter or 'r'.
+                    # try:
+                    #     retry_lst.remove(origin)
+                    # except Exception as e:
+                    #     print(e)
                     retry_banned_lst.append(origin)
                     save2completed_words_lst = False
-                if input_X.lower() == 'n' and input_Y == "":
-                    save2completed_words_lst = False
-                elif input_X.lower() == 'n' and input_Y.lower() in ['v','a','d','k','c','e','j','p','2','o']:
-                    save2completed_words_lst = False
-                    input_X = input_Y.lower()
-                    input_Y = ""
-                elif input_X.lower() == 'r' and input_Y == "":
                     save2retry_lst = True
-                elif input_X.lower() == 'r' and input_Y.lower() in ['v','a','d','k','c','e','j','p','2','o']:
+
+
+                if input_X.lower() == 'n':
+                    save2completed_words_lst = False
+                    save2retry_lst = False
+                    if input_Y.lower() in ['v','a','d','k','c','e','j','p','2','o']:
+                        input_X = input_Y.lower()
+                        input_Y = ""
+                elif input_X.lower() == 'r':
                     save2retry_lst = True
-                    input_X = input_Y.lower()
-                    input_Y = ""
+                    if input_Y.lower() in ['v','a','d','k','c','e','j','p','2','o']:
+                        input_X = input_Y.lower()
+                        input_Y = ""
                 
 
                 if input_X.lower() == 'v':
@@ -847,7 +870,8 @@ if __name__ == '__main__':
                         del answers[rand_index]
 
                 if save2retry_lst:
-                    retry_lst.append(origin)
+                    if not origin in retry_lst:
+                        retry_lst.append(origin)
                     try:
                         retry_banned_lst.remove(origin)
                     except:
@@ -879,7 +903,7 @@ if __name__ == '__main__':
                 input_X = input()
                 if input_X in ['x','X','ｘ']:
                     break
-                elif input_X == '2' or input_X.lower() in ['o','a','v','d','c','d','k','e','j','p']:
+                elif input_X.lower() in ['2','２'] or input_X.lower() in ['o','a','v','d','c','d','k','e','j','p']:
                     del origins[rand_index]
                     del answers[rand_index]
             print()
