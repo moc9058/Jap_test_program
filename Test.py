@@ -403,31 +403,27 @@ if __name__ == '__main__':
 
     
     one_to_one_lst = []
-    if not first_input:
+    if not first_input and len(unclassified_words_lst) > 0:
         one_to_one_lst = unclassified_words_lst
-    elif first_input == 'r':
+    else:
+        if not first_input and len(unclassified_words_lst) == 0:
+            print("All words are classified!!")
+        one_to_one_lst = []
+        # one_to_one_lst.extend(verb_lst)
         one_to_one_lst.extend(compound_lst)
         one_to_one_lst.extend(expression_lst)
         one_to_one_lst.sort()
         for i in range(len(one_to_one_lst)-1):
             if one_to_one_lst[i] == one_to_one_lst[i+1]:
                 print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
+        
+    
     retry_banned_lst = []
     try:
         while origins:
             num_secs = default_num_secs
             num_sentences = 1
             one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
-            if not first_input and len(unclassified_words_lst) == 0 and len(unclassified_words_lst) == 0:
-                print("All words are classified!!")
-                one_to_one_lst = []
-                # one_to_one_lst.extend(verb_lst)
-                one_to_one_lst.extend(compound_lst)
-                one_to_one_lst.extend(expression_lst)
-                one_to_one_lst.sort()
-                for i in range(len(one_to_one_lst)-1):
-                    if one_to_one_lst[i] == one_to_one_lst[i+1]:
-                        print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
             
             pronounciation_mode = False
             if not input_retry:
@@ -476,8 +472,8 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = one_to_one_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
-                    # verb : 30%
-                    elif one_to_one_indicator < 40:
+                    # verb : 40%
+                    elif one_to_one_indicator < 50:
                         tmp_rand_index = random.randrange(len(verb_lst))
                         try:
                             rand_index = origins.index(verb_lst[tmp_rand_index])
@@ -487,7 +483,7 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = verb_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
-                    # retry : 50%
+                    # retry : 40%
                     elif one_to_one_indicator < 90:
                         tmp_rand_index = random.randrange(len(retry_lst))
                         try:
@@ -876,7 +872,11 @@ if __name__ == '__main__':
                         retry_banned_lst.remove(origin)
                     except:
                         pass
-
+                elif not origin in retry_banned_lst:
+                    try:
+                        retry_lst.remove(origin)
+                    except:
+                        pass
 
                 if input_X:
                     if input_X.lower() == input_Y.lower():
