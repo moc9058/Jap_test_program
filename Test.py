@@ -472,8 +472,8 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = one_to_one_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
-                    # verb : 40%
-                    elif one_to_one_indicator < 50:
+                    # verb : 50%
+                    elif one_to_one_indicator < 60:
                         tmp_rand_index = random.randrange(len(verb_lst))
                         try:
                             rand_index = origins.index(verb_lst[tmp_rand_index])
@@ -483,7 +483,7 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = verb_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
-                    # retry : 40%
+                    # retry : 30%
                     elif one_to_one_indicator < 90:
                         tmp_rand_index = random.randrange(len(retry_lst))
                         try:
