@@ -698,13 +698,8 @@ if __name__ == '__main__':
                     break
                 save2completed_words_lst = True
                 save2retry_lst = False
-                # retry_lst and classified
+                
                 if try_again != "" and classified_name != "":
-                    # # At first, it gets removed from retry_lst. If you want to keep it in retry_lst, just press enter or 'r'.
-                    # try:
-                    #     retry_lst.remove(origin)
-                    # except Exception as e:
-                    #     print(e)
                     retry_banned_lst.append(origin)
                     save2completed_words_lst = False
                     save2retry_lst = True
@@ -872,12 +867,7 @@ if __name__ == '__main__':
                         retry_banned_lst.remove(origin)
                     except:
                         pass
-                elif not origin in retry_banned_lst:
-                    try:
-                        retry_lst.remove(origin)
-                    except:
-                        pass
-
+                
                 if input_X:
                     if input_X.lower() == input_Y.lower():
                         break
@@ -914,8 +904,6 @@ if __name__ == '__main__':
 
     if not input_retry:
         func.update_lst2sorted_txt_combined(append_lsts, append_txts, origin_candidates)
-        # if retry_banned_lst:
-        #     print(retry_banned_lst)
         func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, banned_lst=retry_banned_lst)
         currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
         completed_words_lst.sort()
