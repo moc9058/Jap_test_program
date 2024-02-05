@@ -210,6 +210,12 @@ if __name__ == '__main__':
     func.copy_txt2sorted_lst_combined(append_lsts, append_txts, origin_candidates)
     func.copy_txt2sorted_lst(retry_lst, retry_txt, origin_candidates, delete_dup=1)
     func.copy_txt2sorted_lst(retry_completed_lst, retry_completed_txt, origin_candidates)
+    
+    
+    # easy verbs
+    easy_verb_txt = os.path.join(cwd,'easy_verb.txt')
+    easy_verb_lst = []
+    func.copy_txt2sorted_lst(easy_verb_lst, easy_verb_txt, origin_candidates)
 
     #################################アピールポイント１#################################
     # 単純にリストをイックステンドしてから整列するのより私の整列アルゴリズムの効率がもっと高い！
@@ -472,8 +478,8 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = one_to_one_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
-                    # verb : 50%
-                    elif one_to_one_indicator < 60:
+                    # verb : 60%
+                    elif one_to_one_indicator < 70:
                         tmp_rand_index = random.randrange(len(verb_lst))
                         try:
                             rand_index = origins.index(verb_lst[tmp_rand_index])
@@ -483,7 +489,7 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = verb_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
-                    # retry : 30%
+                    # retry : 20%
                     elif one_to_one_indicator < 90:
                         tmp_rand_index = random.randrange(len(retry_lst))
                         try:
@@ -515,12 +521,14 @@ if __name__ == '__main__':
             is_kanji = False
             classified_name = ""
             classified_lst = []
+            case_for_GPT = False
             if origin in adverb_lst:
                 classified_lst = adverb_lst
                 classified_name = '(adverb.txt)'
                 pronounciation_mode = True
                 num_sentences = 2
                 num_secs = 3
+                case_for_GPT = True
             elif origin in diff_kanji_lst:
                 classified_lst = diff_kanji_lst
                 classified_name = '(diff_kanjis.txt)'
@@ -528,6 +536,7 @@ if __name__ == '__main__':
             elif origin in etc_lst:
                 classified_lst = etc_lst
                 classified_name = '(etc.txt)'
+                case_for_GPT = True
             elif origin in katakana_lst:
                 classified_lst = katakana_lst
                 classified_name = '(katakanas.txt)'
@@ -536,13 +545,16 @@ if __name__ == '__main__':
                 classified_name = '(compounds.txt)'
                 num_sentences = 2
                 num_secs = 3
+                case_for_GPT = True
             elif origin in expression_lst:
                 classified_lst = expression_lst
                 classified_name = '(expressions.txt)'
+                case_for_GPT = True
             elif origin in adjective_lst:
                 classified_lst = adjective_lst
                 classified_name = '(adjectives.txt)'
                 pronounciation_mode = True
+                case_for_GPT = True
             elif origin in pure_kanji_lst:
                 classified_lst = pure_kanji_lst
                 classified_name = '(pure_kanjis.txt)'
@@ -553,6 +565,7 @@ if __name__ == '__main__':
                 pronounciation_mode = True
                 num_sentences = 2
                 num_secs = 3
+                case_for_GPT = not origin in easy_verb_lst
 
             try:
                 if origin.index('（') == 0:
@@ -609,7 +622,7 @@ if __name__ == '__main__':
             # Multiprocessing begins
             # case_for_GPT = classified_name in ['(compounds.txt)', '(verbs.txt)', '(adverb.txt)', '(adjectives.txt)']
             # case_for_GPT = not classified_name in ['(diff_kanjis.txt)', '(pure_kanjis.txt)']
-            case_for_GPT = True
+            
 
             if case_for_GPT:
                 for i in range(len(example_sentence_array)):
