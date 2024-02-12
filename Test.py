@@ -169,7 +169,7 @@ if __name__ == '__main__':
     retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
     retry_completed_lst = []
 
-    retry_txt = os.path.join(cwd,'classified','retry.txt')
+    retry_txt = os.path.join(cwd,'retry.txt')
     verbs_txt = os.path.join(cwd,'classified','verbs.txt')
     adverbs_txt = os.path.join(cwd,'classified','adverbs.txt')
     diff_kanjis_txt = os.path.join(cwd,'classified','diff_kanjis.txt')
@@ -213,9 +213,9 @@ if __name__ == '__main__':
     
     
     # easy verbs
-    easy_verb_txt = os.path.join(cwd,'easy_verb.txt')
-    easy_verb_lst = []
-    func.copy_txt2sorted_lst(easy_verb_lst, easy_verb_txt, origin_candidates)
+    easy_txt = os.path.join(cwd,'easy.txt')
+    easy_lst = []
+    func.copy_txt2sorted_lst(easy_lst, easy_txt, origin_candidates)
 
     #################################アピールポイント１#################################
     # 単純にリストをイックステンドしてから整列するのより私の整列アルゴリズムの効率がもっと高い！
@@ -286,7 +286,6 @@ if __name__ == '__main__':
     
 
     # Initiate program!
-    # func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates)
     print('Default is \"NO\" and applying 1:1 mode.')
     print('(Classified Mode)')
     print('A: adverbs.txt')
@@ -307,7 +306,7 @@ if __name__ == '__main__':
         groups = group_txt_lst
         one_to_one_mode = True
     elif first_input[0] in ['r','R','ｒ']:
-        groups = [os.path.join('classified','retry.txt')]
+        groups = [os.path.join('retry.txt')]
         first_input = 'r'
     else:
         first_input_alphabets = []
@@ -467,8 +466,8 @@ if __name__ == '__main__':
                             origin = retry_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
                 else:
-                    # compound, expression : 10%
-                    if one_to_one_indicator < 10:
+                    # compound, expression : 20%
+                    if one_to_one_indicator < 20:
                         tmp_rand_index = random.randrange(len(one_to_one_lst))
                         try:
                             rand_index = origins.index(one_to_one_lst[tmp_rand_index])
@@ -478,7 +477,7 @@ if __name__ == '__main__':
                             rand_index = -1
                             origin = one_to_one_lst[tmp_rand_index].strip()
                             answer = answer_candidates[origin_candidates.index(origin)].strip()
-                    # verb : 60%
+                    # verb : 50%
                     elif one_to_one_indicator < 70:
                         tmp_rand_index = random.randrange(len(verb_lst))
                         try:
@@ -565,7 +564,10 @@ if __name__ == '__main__':
                 pronounciation_mode = True
                 num_sentences = 2
                 num_secs = 3
-                case_for_GPT = not origin in easy_verb_lst
+                case_for_GPT = True
+            
+            if origin in easy_lst:
+                case_for_GPT = False
 
             try:
                 if origin.index('（') == 0:
@@ -917,7 +919,7 @@ if __name__ == '__main__':
 
     if not input_retry:
         func.update_lst2sorted_txt_combined(append_lsts, append_txts, origin_candidates)
-        func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, banned_lst=retry_banned_lst)
+        func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, get_mode=1, banned_lst=retry_banned_lst)
         currtime_txt = os.path.join(save_folder, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")+".txt")
         completed_words_lst.sort()
         with open(currtime_txt, 'wt', encoding='utf-8') as f:
@@ -945,10 +947,11 @@ if __name__ == '__main__':
                     f1.write(f"{origin_candidates[i]}/-/{answer_candidates[j]}\n")
                     i += 1
     elif first_input == 'r':
-        func.update_lst2sorted_txt(completed_words_lst, last_test, origin_candidates, mode=1)
-        func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, mode=1)
-        func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, retry_lst)
+        func.update_lst2sorted_txt(completed_words_lst, last_test, origin_candidates)
+        func.update_lst2sorted_txt(retry_lst, retry_txt, origin_candidates, get_mode=1)
+        func.update_lst2sorted_txt(retry_completed_lst, retry_completed_txt, retry_lst, get_mode=1)
 
+    func.update_lst2sorted_txt(easy_lst, easy_txt, origin_candidates, get_mode=1)
 
         
 

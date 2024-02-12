@@ -4,7 +4,7 @@ import random
 
 cwd = os.getcwd()
 groups = ['Group 1.txt', 'Group 2.txt', 'Group 3.txt', 'Group 4.txt', 'Group 5.txt', 'Group 6.txt']
-retry_txt = os.path.join(cwd,'classified','retry.txt')
+retry_txt = os.path.join(cwd,'retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
 adverbs_txt = os.path.join(cwd,'classified','adverbs.txt')
 diff_kanjis_txt = os.path.join(cwd,'classified','diff_kanjis.txt')

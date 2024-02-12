@@ -263,9 +263,9 @@ def copy_txt2sorted_lst_combined(lsts, txts, candidate_lst):
     for i in range(len(lsts)):
         copy_txt2sorted_lst(lsts[i],txts[i], candidate_lst)
 
-def update_lst2sorted_txt(lst, txt, candidate_lst, mode = 0, banned_lst = []):
+def update_lst2sorted_txt(lst, txt, candidate_lst, get_mode = 0, banned_lst = []):
     tmp_lst = lst.copy()
-    if mode == 0 and (os.path.basename(txt) == 'retry.txt' or os.path.basename(txt) == 'retry_completed_txt.txt'):
+    if get_mode == 1:
         txt_lst = []
         with open(txt, 'r', encoding='utf-8') as f:
             while True:
@@ -295,12 +295,12 @@ def update_lst2sorted_txt(lst, txt, candidate_lst, mode = 0, banned_lst = []):
             else:
                 print(f"({os.path.basename(txt)}){word} is not included in the Group.")
 
-def update_lst2sorted_txt_combined(lsts, txts, candidate_lst):
+def update_lst2sorted_txt_combined(lsts, txts, candidate_lst, get_mode = 0):
     if len(lsts) != len(txts):
         print("Lengths are different.")
         return
     for i in range(len(lsts)):
-        update_lst2sorted_txt(lsts[i], txts[i], candidate_lst)
+        update_lst2sorted_txt(lsts[i], txts[i], candidate_lst, get_mode=get_mode)
 
 def word_count(txt_name):
     count = 0
