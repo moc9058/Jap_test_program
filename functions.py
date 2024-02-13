@@ -263,7 +263,7 @@ def copy_txt2sorted_lst_combined(lsts, txts, candidate_lst):
     for i in range(len(lsts)):
         copy_txt2sorted_lst(lsts[i],txts[i], candidate_lst)
 
-def update_lst2sorted_txt(lst, txt, candidate_lst, get_mode = 0, banned_lst = []):
+def update_lst2sorted_txt(lst, txt, candidate_lst, get_mode=0, banned_lst=[]):
     tmp_lst = lst.copy()
     if get_mode == 1:
         txt_lst = []
@@ -295,7 +295,7 @@ def update_lst2sorted_txt(lst, txt, candidate_lst, get_mode = 0, banned_lst = []
             else:
                 print(f"({os.path.basename(txt)}){word} is not included in the Group.")
 
-def update_lst2sorted_txt_combined(lsts, txts, candidate_lst, get_mode = 0):
+def update_lst2sorted_txt_combined(lsts, txts, candidate_lst, get_mode=0):
     if len(lsts) != len(txts):
         print("Lengths are different.")
         return
