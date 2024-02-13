@@ -8,6 +8,9 @@ from openai import OpenAI
 from multiprocessing import Process, Value, Array
 
 import functions as func
+
+GPT_OK = False
+
 default_num_secs = 2
 one_to_one_mode = True
 one_to_one_mode_extend_num = 100
@@ -568,7 +571,10 @@ if __name__ == '__main__':
             
             if origin in easy_lst:
                 case_for_GPT = False
-
+            
+            if not GPT_OK:
+                case_for_GPT = False
+            
             try:
                 if origin.index('（') == 0:
                     origin_to_print = origin

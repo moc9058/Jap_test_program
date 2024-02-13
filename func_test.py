@@ -93,7 +93,7 @@ for i in range(len(origin_candidates)-1):
 retry_completed_txt = os.path.join(cwd,'retry_completed_txt.txt')
 retry_completed_lst = []
 
-retry_txt = os.path.join(cwd,'classified','retry.txt')
+retry_txt = os.path.join(cwd,'retry.txt')
 verbs_txt = os.path.join(cwd,'classified','verbs.txt')
 adverbs_txt = os.path.join(cwd,'classified','adverbs.txt')
 diff_kanjis_txt = os.path.join(cwd,'classified','diff_kanjis.txt')
@@ -135,74 +135,19 @@ func.copy_txt2sorted_lst_combined(classified_lsts, classified_txts, origin_candi
 func.copy_txt2sorted_lst(retry_completed_lst, retry_completed_txt, origin_candidates)
 
 
-count = 100
+# easy verbs
+easy_txt = os.path.join(cwd,'easy.txt')
+easy_lst = []
+func.copy_txt2sorted_lst(easy_lst, easy_txt, origin_candidates)
 
-#################################アピールポイント１#################################
-print("（アピールポイント１）")
-
-start_time = time.time()
-for i in range(1):
-    classified_words_lst_1 = []
-    for append_lst in append_lsts:
-        classified_words_lst_1.extend(append_lst)
-    classified_words_lst_1.sort()
-end_time = time.time()
-print(f"Basic: {(end_time - start_time)*1000/count}ms.")
-
-start_time = time.time()
-for i in range(1):
-    classified_words_lst_2 = []
-    classified_words_lst_2 = func.merge_sorted_lsts(append_lsts)
-end_time = time.time()
-print(f"Advanced: {(end_time - start_time)*1000/count}ms.")
-print()
-
-for i in range(len(classified_words_lst_1)):
-    if classified_words_lst_1[i] != classified_words_lst_2[i]:
-        print(f"{classified_words_lst_1[i]}, {classified_words_lst_2[i]}")
-
-
-
-#################################アピールポイント２#################################
-print("（アピールポイント２）")
-
-classified_words_lst = classified_words_lst_1
-start_time = time.time()
-for i in range(count):
-    unclassified_words_lst = []
-    for word in origin_candidates:
-        if not word in classified_words_lst:
-            unclassified_words_lst.append(word)
-    # unclassified_words_lst.sort()
-end_time = time.time()
-print(f"Basic: {(end_time - start_time)*1000/count}ms.")
-
-classified_words_lst = classified_words_lst_2
-start_time = time.time()
-for i in range(count):
-    unclassified_words_lst = []
-    i = j = 0
-    while j < len(classified_words_lst_2):
-        while origin_candidates[i] == classified_words_lst_2[j]:
-            i += 1
-            j += 1
-            if j >= len(classified_words_lst_2):
-                break
-        if j >= len(classified_words_lst_2):
-            break
-        while origin_candidates[i] < classified_words_lst_2[j]:
-            unclassified_words_lst.append(origin_candidates[i])
-            i += 1
-    while i < len(classified_words_lst_2):
-        unclassified_words_lst.append(origin_candidates[i])
-        i += 1
-end_time = time.time()
-print(f"Advanced: {(end_time - start_time)*1000/count}ms.")
-
-
-
-
-
+with open(os.path.join('C:\\','Users','moc90','OneDrive','바탕 화면','quizlet.txt'), 'w', encoding='utf-8') as f:
+    for i in range(len(origin_candidates)):
+        word = origin_candidates[i]
+        answer = answer_candidates[i]
+        if word in easy_lst:
+            continue
+        elif word in verb_lst:
+            f.write(f'{word}/-/{answer}\n')
 
     
 # print(ord('ぁ'))
