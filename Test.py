@@ -417,7 +417,6 @@ if __name__ == '__main__':
         if not first_input and len(unclassified_words_lst) == 0:
             print("All words are classified!!")
         one_to_one_lst = []
-        # one_to_one_lst.extend(verb_lst)
         one_to_one_lst.extend(compound_lst)
         one_to_one_lst.extend(expression_lst)
         one_to_one_lst.sort()
@@ -429,6 +428,7 @@ if __name__ == '__main__':
     retry_banned_lst = []
     try:
         while origins:
+            # print(len(one_to_one_lst))
             num_secs = default_num_secs
             num_sentences = 1
             one_to_one_indicator = random.randrange(one_to_one_mode_extend_num)
@@ -438,6 +438,15 @@ if __name__ == '__main__':
                 if len(unclassified_words_lst) > 0:
                     print(f"(left: {len(origins)}, unclassified: {len(unclassified_words_lst)})", end=" ")
                 else:
+                    if len(one_to_one_lst) == 0:
+                        print("All words are classified!!")
+                        one_to_one_lst = []
+                        one_to_one_lst.extend(compound_lst)
+                        one_to_one_lst.extend(expression_lst)
+                        one_to_one_lst.sort()
+                        for i in range(len(one_to_one_lst)-1):
+                            if one_to_one_lst[i] == one_to_one_lst[i+1]:
+                                print(f"Duplicated in one_to_one_lst: {one_to_one_lst[i]}")
                     print(f"(left: {len(origins)})", end=" ")
 
             else:
