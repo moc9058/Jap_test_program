@@ -289,7 +289,7 @@ if __name__ == '__main__':
     
 
     # Initiate program!
-    print('Default is \"NO\" and applying 1:1 mode.')
+    print('Default is \"NO\" and applying 1:1 mode. If you press T, GPT generates examples.')
     print('(Classified Mode)')
     print('A: adverbs.txt')
     print('C: compounds.txt')
@@ -308,6 +308,12 @@ if __name__ == '__main__':
         input_retry = False 
         groups = group_txt_lst
         one_to_one_mode = True
+        GPT_OK = False
+    elif first_input in ['t','T','ｔ']:
+        input_retry = False 
+        groups = group_txt_lst
+        one_to_one_mode = True
+        GPT_OK = True
     elif first_input[0] in ['r','R','ｒ']:
         groups = [os.path.join('retry.txt')]
         first_input = 'r'
