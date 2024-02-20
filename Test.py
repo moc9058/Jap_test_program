@@ -310,6 +310,7 @@ if __name__ == '__main__':
         one_to_one_mode = True
         GPT_OK = False
     elif first_input in ['t','T','ｔ']:
+        first_input = ""
         input_retry = False 
         groups = group_txt_lst
         one_to_one_mode = True
