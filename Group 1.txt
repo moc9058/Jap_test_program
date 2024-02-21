@@ -1002,7 +1002,6 @@
 ミッション/-/MISSION
 ミネラル/-/MINERAL
 ミルク/-/MILK
-ムカつく/-/むかつく 짜증나다, 화가 치밀다
 メカニズム/-/MECHANISM
 メジャー/-/MEASURE, 자
 メダル/-/MEDAL
