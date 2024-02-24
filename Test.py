@@ -224,7 +224,14 @@ if __name__ == '__main__':
     for easy_word in easy_lst:
         try:
             verb_lst.remove(easy_word)
+        except:
+            pass
+        try:
             compound_lst.remove(easy_word)
+        except:
+            pass
+        try:
+            etc_lst.remove(easy_word)
         except:
             pass
 
