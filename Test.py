@@ -220,6 +220,14 @@ if __name__ == '__main__':
     easy_lst = []
     func.copy_txt2sorted_lst(easy_lst, easy_txt, origin_candidates)
 
+    # remove elements in easy_lst from verb_lst, compound_lst
+    for easy_word in easy_lst:
+        try:
+            verb_lst.remove(easy_word)
+            compound_lst.remove(easy_word)
+        except:
+            pass
+
     #################################アピールポイント１#################################
     # 単純にリストをイックステンドしてから整列するのより私の整列アルゴリズムの効率がもっと高い！
     classified_words_lst = []
