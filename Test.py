@@ -214,26 +214,6 @@ if __name__ == '__main__':
     func.copy_txt2sorted_lst(retry_lst, retry_txt, origin_candidates, delete_dup=1)
     func.copy_txt2sorted_lst(retry_completed_lst, retry_completed_txt, origin_candidates)
     
-    
-    # easy verbs
-    easy_txt = os.path.join(cwd,'easy.txt')
-    easy_lst = []
-    func.copy_txt2sorted_lst(easy_lst, easy_txt, origin_candidates)
-
-    # remove elements in easy_lst from verb_lst, compound_lst
-    for easy_word in easy_lst:
-        try:
-            verb_lst.remove(easy_word)
-        except:
-            pass
-        try:
-            compound_lst.remove(easy_word)
-        except:
-            pass
-        try:
-            etc_lst.remove(easy_word)
-        except:
-            pass
 
     #################################アピールポイント１#################################
     # 単純にリストをイックステンドしてから整列するのより私の整列アルゴリズムの効率がもっと高い！
@@ -246,9 +226,6 @@ if __name__ == '__main__':
         if classified_words_lst[i] >= classified_words_lst[i+1]:
             print(classified_words_lst[i], classified_words_lst[i+1])
 
-    # for i in range(len(origin_candidates)-1):
-    #     if origin_candidates[i] >= origin_candidates[i+1]:
-    #         print(origin_candidates[i],origin_candidates[i+1])
     
     unclassified_words_lst = []
     i = j = 0
@@ -430,7 +407,29 @@ if __name__ == '__main__':
             except:
                 raise Exception(f"{origin} is not included in Groups 1.txt, ...")
         
+    # easy verbs
+    easy_txt = os.path.join(cwd,'easy.txt')
+    easy_lst = []
+    func.copy_txt2sorted_lst(easy_lst, easy_txt, origin_candidates)
 
+    easy_verb_lst = []
+    easy_compound_lst = []
+    easy_etc_lst = []
+    for easy_word in easy_lst:
+        try:
+            origin.remove(easy_word)
+        except:
+            pass
+
+        if easy_word in verb_lst:
+            easy_verb_lst.append(easy_word)
+            verb_lst.remove(easy_word)
+        elif easy_word in compound_lst:
+            easy_compound_lst.append(easy_word)
+            compound_lst.remove(easy_word)
+        elif easy_word in etc_lst:
+            easy_etc_lst.append(easy_word)
+            etc_lst.remove(easy_word)
     
     one_to_one_lst = []
     if not first_input and len(unclassified_words_lst) > 0:
@@ -949,10 +948,20 @@ if __name__ == '__main__':
                     del origins[rand_index]
                     del answers[rand_index]
             print()
-    # except Exception as e:
-    #     print(e)
     except KeyboardInterrupt as keyboard_interrupt:
         print(keyboard_interrupt)
+    except Exception as e:
+        print(e)
+
+    for easy_word in easy_verb_lst:
+        if not easy_word in verb_lst:
+            verb_lst.append(easy_word)
+    for easy_word in easy_compound_lst:    
+        if not easy_word in compound_lst:
+            compound_lst.append(easy_word)
+    for easy_word in easy_etc_lst:
+        if not easy_word in etc_lst:
+            etc_lst.append(easy_word)
 
     if not input_retry:
         func.update_lst2sorted_txt_combined(append_lsts, append_txts, origin_candidates)
