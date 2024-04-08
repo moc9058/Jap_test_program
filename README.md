@@ -17,3 +17,5 @@ You can set OPENAI_API_KEY in your environment setting or assign directly.
 For more details, refer to Quickstart in OpenAI webpage.
 https://platform.openai.com/docs/quickstart?context=python
 
+## Step3: Run Test.py
+I recommend you to use IDE, such as Visual Studio Code.
