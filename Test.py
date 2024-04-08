@@ -9,6 +9,8 @@ from multiprocessing import Process, Value, Array
 
 import functions as func
 
+API_your_key = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+
 GPT_OK = False
 
 default_num_secs = 2
@@ -62,7 +64,7 @@ def generate_example_sentence(word, pronounciation, example_sentence_array, pid_
         GPT_input_sentences = [{"role": "user", "content": f"「{word}」の例文を挙げてもらえるかな？{num_sentences}文以内にお願いね！"}]
         if require_additional_sentence:
             GPT_input_sentences.append({"role": "user", "content": f'文法要素の（{grammer_component}を必ず含めてください。）'})
-        client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+        client = API_your_key
         completion = client.chat.completions.create(
             messages=GPT_input_sentences,
             model="gpt-4"
