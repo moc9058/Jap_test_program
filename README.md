@@ -3,6 +3,6 @@
 キムチ/-/김치
 
 # Prerequisites
-'''
-    pip install --upgrade openai
-'''
+```
+pip install --upgrade openai
+```
