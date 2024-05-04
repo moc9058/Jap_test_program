@@ -1,0 +1,35 @@
+Date : 2024-05-04 17:40:50
+Directory : c:\Users\moc90\OneDrive\デスクトップ\test_program
+Total : 10 files,  1597 codes, 75 comments, 216 blanks, all 1888 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |          9 |      1,579 |         75 |        212 |      1,866 |
+| Markdown |          1 |         18 |          0 |          4 |         22 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                              | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                 |         10 |      1,597 |         75 |        216 |      1,888 |
++-------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                          | language | code       | comment    | blank      | total      |
++-------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\API_request_test.py   | Python   |         18 |          4 |          5 |         27 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\Convert_drag2retry.py | Python   |         24 |          0 |          1 |         25 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\Dup_detection.py      | Python   |        174 |         10 |         19 |        203 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\README.md             | Markdown |         18 |          0 |          4 |         22 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\Test.py               | Python   |        859 |         41 |        110 |      1,010 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\func_test.py          | Python   |        131 |         10 |         20 |        161 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\functions.py          | Python   |        309 |          9 |         40 |        358 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\origin_seperator.py   | Python   |         17 |          0 |          4 |         21 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\tmp.py                | Python   |          3 |          0 |          2 |          5 |
+| c:\Users\moc90\OneDrive\デスクトップ\test_program\txt_merge.py          | Python   |         44 |          1 |         11 |         56 |
+| Total                                                             |          |      1,597 |         75 |        216 |      1,888 |
++-------------------------------------------------------------------+----------+------------+------------+------------+------------+
