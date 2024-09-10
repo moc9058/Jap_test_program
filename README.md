@@ -18,4 +18,4 @@ For more details, refer to Quickstart in OpenAI webpage.
 https://platform.openai.com/docs/quickstart?context=python
 
 ## Step3: Run Test.py
-I recommend you to use IDE, such as Visual Studio Code.
+I recommend you to use Visual Studio Code.
